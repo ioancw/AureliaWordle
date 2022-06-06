@@ -51,6 +51,7 @@ type GameState =
 
 type State =
     { Wordle: string
+      Hint: string
       Guesses: (Position * Guess) list
       UsedLetters: Map<string, Status>
       State: GameState
@@ -63,7 +64,7 @@ let letters = 5
 let validLetterPosition n = n >= 0 && n < letters
 
 let validRound state =
-    if state.State = Lost || state.State = Won 
+    if state.State = Lost || state.State = Won
     then false
     else (state.Round >= 0 && state.Round < rounds)
 
@@ -94,7 +95,7 @@ let keyBoard =
       Bottom = [ "Ent"; "z"; "x"; "c"; "v"; "b"; "n"; "m"; "Del" ] }
 
 // persisted game state stuff.
-let gameStateKey = "gameState"
+let gameStateKey = "gameStateAureliav1"
 
 let saveGameStateLocalStorage (state: State) =
     let statusToString status =
@@ -160,9 +161,9 @@ let startNewGame =
     let loadedStorage = loadGameStateLocalStorage ()
     let guesses = emptyGuesses
 
-    let wordle () =
+    let wordle () : string * string=
         let today = DateTime.Now
-        let startDate = DateTime(2022, 5, 21)
+        let startDate = DateTime(2022, 6, 4)
         let todayDate = DateTime(today.Year, today.Month, today.Day)
         let differenceMilli = (todayDate - startDate).TotalMilliseconds
         let millisInDay = 60 * 60 * 24 * 1000 |> double
@@ -181,7 +182,7 @@ let startNewGame =
 
     match loadedStorage with
     | Some stored when
-        todaysWordle = stored.Solution
+        fst todaysWordle = stored.Solution
         && localState stored <> NotStarted
         ->
         let localGuesses =
@@ -193,7 +194,7 @@ let startNewGame =
                     |> Array.toList
                     |> List.map (fun (guessLetter, guessStatus) ->
                         let letterOption =
-                            if guessLetter = "" 
+                            if guessLetter = ""
                             then None
                             else Some guessLetter
 
@@ -215,13 +216,15 @@ let startNewGame =
             |> List.map snd
             |> List.fold (fun state guess -> getUsedLetters guess.Letters state) Map.empty
 
-        { Wordle = todaysWordle
+        { Wordle = fst todaysWordle
+          Hint = snd todaysWordle
           Guesses = localGuesses
           Round = stored.Round
           State = localState stored
           UsedLetters = storageUsedLetters }
     | _ ->
-        { Wordle = todaysWordle
+        { Wordle = fst todaysWordle
+          Hint = snd todaysWordle
           Guesses = guesses
           Round = 0
           State = NotStarted
@@ -330,7 +333,7 @@ let submitEnter state =
                 UsedLetters = updatedUsedLetters
                 State = updatedState
                 Round =
-                    if updatedState = Won || updatedState = Lost 
+                    if updatedState = Won || updatedState = Lost
                     then state.Round
                     else state.Round + 1 }
         else
@@ -430,13 +433,16 @@ let MatchComponent () =
             | 3, Won -> "The greatest teacher, failure is."
             | 4, Won -> "Fear is the path to the dark side."
             | _, Lost -> "This is why you must fail"
-            | _ -> "Do or do not, there is no try."
+            | _ -> "/aw/"
 
         html
             $"""
             <div class="min-h-screen space-y-3 bg-black">
                 <div class="flex justify-center mb-1 font-mono text-3xl text-white">
-                    Hardle
+                    Aurelia-dle
+                </div>
+                <div class="flex justify-center font-mono text-white">
+                    Today's phonic hint is: {state.Hint}
                 </div>
                 <div class="flex justify-center mb-1">
                     {List.item 0 state.Guesses |> letterToDisplayBox}
@@ -462,12 +468,8 @@ let MatchComponent () =
                 <div class="flex justify-center mb-1">
                     {keyBoard.Bottom |> List.map keyboardKey}
                 </div>
-                <div class="flex justify-center font-mono text-white">
-                    {outputText}
-                </div>
             </div>
         """
-
 
     // do we always do the same thing irrespective of state?
     match gameState.State with
