@@ -351,18 +351,18 @@ let submitEnter state =
 
 let boxedChar (c, status) =
     // https://tailwindcss.com/docs/border-style
-    let colour =
+    let colour, border =
         match status with
-        | Black -> "bg-black"
-        | Grey -> "bg-slate-600"
-        | Green -> "bg-green-600"
-        | Yellow -> "bg-yellow-400"
-        | Invalid -> "bg-pink-400"
+        | Black -> "bg-stone-900", "border-neutral-500"
+        | Grey -> "bg-neutral-700", "border-neutral-700"
+        | Green -> "bg-green-700", "border-green-700"
+        | Yellow -> "bg-yellow-500", "border-yellow-500"
+        | Invalid -> "bg-red-500", "border-red-500"
 
     html
         $"""
         <div class="border-solid border-transparent flex border-2 items-center rounded">
-            <button class="w-14 h-14 {colour} text-center leading-none text-3xl font-bold text-white border-2 border-gray-400">{c}</button>
+            <button class="w-14 h-14 {colour} text-center leading-none text-3xl font-bold text-white border-2 {border}">{c}</button>
         </div>
     """
 
@@ -374,21 +374,22 @@ let keyboardChar usedLetters handler (c: string) =
             | None -> Black
 
         match letterStatus with
-        | Black -> "bg-gray-400"
-        | Yellow -> "bg-yellow-400"
-        | Grey -> "bg-slate-600"
-        | Green -> "bg-green-600"
+        | Black -> "bg-neutral-500"
+        | Yellow -> "bg-yellow-500"
+        | Grey -> "bg-neutral-700"
+        | Green -> "bg-green-700"
         | Invalid -> "bg-gray-400"
 
+    let width =
+        match c with
+        | "Del"| "Ent" -> "w-12"
+        | _ -> "w-9"
     html
         $"""
-        <div class="w-11 px-1 mb-2">
-            <button
-                @click={handler c}
-
-                  class="flex w-full h-12 rounded {colour} items-center justify-center uppercase"
-            >{c}</button>
-        </div>
+        <button
+            @click={handler c}
+                class="flex items-center justify-center rounded mx-0.5 {width} h-14 {colour} uppercase text-white"
+        >{c}</button>
     """
 
 [<LitElement("wordle-app")>]
@@ -437,7 +438,7 @@ let MatchComponent () =
 
         html
             $"""
-            <div class="min-h-screen space-y-3 bg-black">
+            <div class="min-h-screen space-y-3 bg-stone-900">
                 <div class="flex justify-center mb-1 font-mono text-3xl text-white">
                     Aurelia-dle
                 </div>

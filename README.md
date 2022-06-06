@@ -1,16 +1,23 @@
-# Lit.Wordle
+# Lit.AureliaWordle
 
-Forked from https://aaronmu.github.io/MathGame/
+Originally forked from https://aaronmu.github.io/MathGame/
 
-When I know how to, I will rename this to Lit.Wordle, but at the moment that seems to fail, when I publish (npm publish) although it works locally.
+This is designed for R and Y1/Y2 children to use phonics, so that a hint is provided for one of the phonic sounds in the word.
+As an example:
+If the wordle is RAINS, then the phonic hint with be /ai/.
+The sound /ai/ is also a phonic hint for the AY graphemes, so it would also be a valid
+hint for SPRAY and.
 
 TODO
 * Properly structure the code into modules etc.
 * Add tests (especially around the masking function)
 * Implement game statistics
-* Implement persitence, i.e. saving the statistics locally.
-* Properly handle terminal states, i.e. Won or Lost.
 * Sharing the results.
+
+Further ideas
+* hint button which provides all the graphemes (the most common ones) for the phonic sound hint.
+* phonic keyboard, i.e. the button represents the phonic, which also allows you to choose the corresponding grapheme
+    e.g. if the button is /ai/ then it would show AI, AY etc
 
 [Fable.Lit](https://github.com/fable-compiler/Fable.Lit) app. To start a development server run:
 
