@@ -6,29 +6,77 @@
           "DRIED", "/ie/"
           "SPRAY", "/ai/"
           "HORSE", "/or/"
-          "CRAWL", "/or/"
-          "FIRST", "/er/"
-          "THIRD", "/er/"
           "ENJOY", "/oy/"
+          "FIRST", "/er/"
+          "THROW", "/oe/"
+          "SHACK", "/sh/"
+          "THIRD", "/er/"
           "ANNOY", "/oy/"
           "SPEAK", "/ee/"
           "TRIED", "/ie/"
-          "DRIED", "/ie/"
           "SPRAY", "/ai/"
+          "SPOIL", "/oy/"
+          "DRIED", "/ie/"
           "HORSE", "/or/"
           "COUNT", "/ow/"
-          "THERE", "/ere/"
-          "DAIRY", "/ai/"
-          "CURED", "/ure/"
-          "CLEAR", "/ea/"
+          "SLOPE", "/oe/"
+          "FLESH", "/sh"
           "VOICE", "/oy/"
+          "BEACH", "/ee/"
           "NOISE", "/oy/"
           "BROWN", "/ow/"
+          "BRAIN", "/ai/"
+          "LIGHT", "/ie/"
+          "CHIRP", "/er/"
+          "CRAWL", "/or/"
           "GROWL", "/ow/"
-          "SMART", "/a/"
           "THREW", "/ue/"
+          "TODAY", "/ai/"
           "ARGUE", "/ue/"
-          "COULD", "/oo/ as in book"
+          "COULD", "/oo/ as in \u1d47oo\u2096"
+          "STRAY", "/ai/"
+          "MIGHT", "/ie/"
+          "BLUSH", "/sh/"
+          "RIVER", "/er/"
+          "POINT", "/oi/"
+          "SNAKE", "/ai/"
+          "STEEP", "/ee"
+          "PRIZE", "/ie/"
+          "TEACH", "/ee/"
+          "GRAPE", "/ai/"
+          "RIGHT", "/ie/"
+          "PLANE", "/ai/"
+          "DAIRY", "/air/"
+          "CURED", "/ure/"
+          "VALUE", "/ue/"
+          "FAULT", "/or/"
+          "FLIRT", "/er/"
+          "DRIVE", "/ie/"
+          "SMOKE", "/oe/"
+          "THERE", "/ere/"
+          "TOOTH", "/oo/ as in \u1d47oo\u2096"
+          "TWIRL", "/er/"
+          "FORTY", "/or/"
+          "VOICE", "/oy/"
+          //add more here as needed, try to even out the phonemes so they get a different one everyday
+
+        ]
+
+    let phonemeGraphemeCorresspondances =
+        [
+            "/e/", ["e"; "ea"; "ai"; "ie"]
+            "/a/", ["a"]
+            "/o/", ["o"; "a"]
+            "/i/", ["i"; "y"]
+            "/u/", ["u"; "ou"; "o"]
+            "/ee/", ["ee"; "e"; "ea"; "ie"; "ey"; "y"; "e-e"; "ei"; "i"]
+            "/ai/", ["a-e"; "a"; "ai"; "ay"; "ea"; "ei"; "ey"; "aigh"; "eigh"]
+            "/oe/", ["o-e"; "o"; "oa"; "oe"; "ow"; "ou"; "ough"]
+            "/ie", ["i-e"; "i"; "ie"; "y"; "igh"]
+            "/ue/", ["u-e"; "u"; "ue"; "ew"]
+            "/oy/", ["oy"; "oi"]
+            "/ar/", ["ar"; "al"; "a"; "au"]
+            "/oo/", ["oo"; "ou"; "ue"; "ui"; "o"; "u"; "oe"; "ough"]
         ]
 
     // These are the acceptable five letter words that you can type into the guess boxes.
@@ -87,7 +135,7 @@
             "acing"
             "acini"
             "acmes"
-            "acmic"
+            "acm, ic"
             "acned"
             "acnes"
             "acock"

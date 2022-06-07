@@ -8,6 +8,7 @@ open Fable.Core
 
 JsInterop.importSideEffects "./index.css"
 
+
 type KeyBoard =
     { Top: string list
       Middle: string list
@@ -28,7 +29,16 @@ type LocalStorageGameState =
     { Guesses: (int * (string * string) []) []
       Solution: string
       Round: int
-      State: string }
+      State: string
+      GamesWon: int
+      GamesLost: int
+      WinDistribution: int [] }
+
+type LocalStorageGameStats =
+    { GamesWon: int
+      GamesLost: int
+      WinDistribution: int list
+    }
 
 type Guess =
     { Letters: GuessLetter list }
@@ -55,7 +65,10 @@ type State =
       Guesses: (Position * Guess) list
       UsedLetters: Map<string, Status>
       State: GameState
-      Round: int }
+      Round: int
+      GamesWon: int
+      GamesLost: int
+      WinDistribution: int list }
 
 let rounds = 5
 
@@ -95,9 +108,9 @@ let keyBoard =
       Bottom = [ "Ent"; "z"; "x"; "c"; "v"; "b"; "n"; "m"; "Del" ] }
 
 // persisted game state stuff.
-let gameStateKey = "gameStateAureliav1"
+let gameStateKey = "gameStateAureliav2"
 
-let saveGameStateLocalStorage (state: State) =
+module StateHelpers =
     let statusToString status =
         match status with
         | Yellow -> "Yellow"
@@ -113,12 +126,29 @@ let saveGameStateLocalStorage (state: State) =
         | Lost -> "Lost"
         | Started -> "Started"
 
+    let stateFromString (stored: LocalStorageGameState) =
+        match stored.State with
+        | "Not Started" -> NotStarted
+        | "Won" -> Won
+        | "Lost" -> Lost
+        | "Started" -> Started
+        | _ -> NotStarted
+
+    let statusFromString guessStatus=
+        match guessStatus with
+        | "Yellow" -> Yellow
+        | "Grey" -> Grey
+        | "Black" -> Black
+        | "Green" -> Green
+        | _ -> Invalid
+
+let saveGameStateLocalStorage (state: State) =
     let guessedWords =
         state.Guesses
         |> List.map (fun (position, guess) ->
             position,
             guess.Letters
-            |> List.map (fun gl -> defaultArg gl.Letter "", statusToString gl.Status)
+            |> List.map (fun gl -> defaultArg gl.Letter "", StateHelpers.statusToString gl.Status)
             |> List.toArray)
         |> List.toArray
 
@@ -129,13 +159,16 @@ let saveGameStateLocalStorage (state: State) =
             { Guesses = guessedWords
               Solution = state.Wordle
               Round = state.Round
-              State = stateToString state.State }
+              State = StateHelpers.stateToString state.State
+              GamesWon = state.GamesWon
+              GamesLost = state.GamesLost
+              WinDistribution = state.WinDistribution |> List.toArray}
     )
 
 let loadGameStateLocalStorage () =
     Console.WriteLine("Now reading from local storoage")
     let localState = Browser.WebStorage.localStorage.getItem (gameStateKey)
-
+    Console.WriteLine(sprintf "Local %A" localState)
     match localState with
     | null -> None
     | _ -> Some(localState |> JS.JSON.parse :?> LocalStorageGameState)
@@ -159,6 +192,7 @@ let getUsedLetters letterGuesses (state: Map<string, Status>) =
 let startNewGame =
     Console.WriteLine("Starting a new game")
     let loadedStorage = loadGameStateLocalStorage ()
+    // load the statistics at the start of a game.
     let guesses = emptyGuesses
 
     let wordle () : string * string=
@@ -173,17 +207,10 @@ let startNewGame =
 
     let todaysWordle = wordle ()
 
-    let localState (stored: LocalStorageGameState) =
-        match stored.State with
-        | "Not Started" -> NotStarted
-        | "Won" -> Won
-        | "Lost" -> Lost
-        | "Started" -> Started
-
     match loadedStorage with
     | Some stored when
-        fst todaysWordle = stored.Solution
-        && localState stored <> NotStarted
+        fst todaysWordle = stored.Solution //we know that it's a previously saved game for today
+        && StateHelpers.stateFromString stored <> NotStarted
         ->
         let localGuesses =
             stored.Guesses
@@ -198,16 +225,8 @@ let startNewGame =
                             then None
                             else Some guessLetter
 
-                        let status =
-                            match guessStatus with
-                            | "Yellow" -> Yellow
-                            | "Grey" -> Grey
-                            | "Black" -> Black
-                            | "Green" -> Green
-                            | _ -> Invalid
-
                         { Letter = letterOption
-                          Status = status }) })
+                          Status = StateHelpers.statusFromString guessStatus}) })
             |> Array.toList
 
         //fold local guesses in order to colour the keyboard.
@@ -220,15 +239,22 @@ let startNewGame =
           Hint = snd todaysWordle
           Guesses = localGuesses
           Round = stored.Round
-          State = localState stored
-          UsedLetters = storageUsedLetters }
+          State = StateHelpers.stateFromString stored
+          UsedLetters = storageUsedLetters
+          GamesLost = stored.GamesLost
+          GamesWon = stored.GamesWon
+          WinDistribution = stored.WinDistribution |> List.ofArray }
     | _ ->
+        //the case where we haven't played before
         { Wordle = fst todaysWordle
           Hint = snd todaysWordle
           Guesses = guesses
           Round = 0
           State = NotStarted
-          UsedLetters = Map.empty }
+          UsedLetters = Map.empty
+          GamesLost = 0
+          GamesWon = 0
+          WinDistribution = List.init rounds (fun _ -> 0) }
 
 // this can be improved quite a bit - need tests though
 let getAnswerMask (actual: string) (guess: string) =
@@ -283,15 +309,13 @@ let applyLetterUpdate updateFunction state =
         state
 
 let submitLetter input state =
-    let getNewWordStateAdd newLetter (position, guessLetters) =
+    let getNewWordStateAdd (position, guessLetters) =
         if validLetterPosition position then
-            position + 1, { Letters = listSet guessLetters.Letters newLetter position }
+            position + 1, { Letters = listSet guessLetters.Letters { Letter = Some input; Status = Black } position }
         else
             position, { Letters = guessLetters.Letters }
 
-    let addLetterToWord = getNewWordStateAdd { Letter = Some input; Status = Black }
-
-    applyLetterUpdate addLetterToWord state
+    applyLetterUpdate getNewWordStateAdd state
 
 let submitDelete state =
     let getNewWordStateDelete (position, guessLetters) =
@@ -327,7 +351,7 @@ let submitEnter state =
         if allValidLetters state.Round state.Guesses then
             let updatedGuess, updatedState, updatedUsedLetters =
                 updateRoundStatus (List.item state.Round state.Guesses)
-
+            let winDistribution = List.item state.Round state.WinDistribution
             { state with
                 Guesses = listSet state.Guesses updatedGuess state.Round
                 UsedLetters = updatedUsedLetters
@@ -335,7 +359,19 @@ let submitEnter state =
                 Round =
                     if updatedState = Won || updatedState = Lost
                     then state.Round
-                    else state.Round + 1 }
+                    else state.Round + 1
+                GamesWon =
+                    if updatedState = Won
+                    then state.GamesWon + 1
+                    else state.GamesWon
+                GamesLost =
+                    if updatedState = Lost
+                    then state.GamesLost + 1
+                    else state.GamesLost
+                WinDistribution =
+                    if updatedState = Won
+                    then listSet state.WinDistribution (winDistribution + 1) state.Round
+                    else state.WinDistribution            }
         else
             let (position, letters) = state.Guesses |> List.item state.Round
 
@@ -399,7 +435,7 @@ let MatchComponent () =
     let gameState, setGameState = Hook.useState startedGame
 
     let writeState state =
-        saveGameStateLocalStorage gameState |> ignore
+        saveGameStateLocalStorage state |> ignore
 
         let letterToDisplayBox =
             let getLetter (_, word) =
@@ -425,25 +461,39 @@ let MatchComponent () =
             )
 
         let keyboardKey = keyboardChar state.UsedLetters onKeyClick
-
-        let outputText =
-            match state.Round, state.State with
-            | 0, Won -> "Jedi Knight you are"
-            | 1, Won -> "Feel the force."
-            | 2, Won -> "A Jedi's strength flows from the force."
-            | 3, Won -> "The greatest teacher, failure is."
-            | 4, Won -> "Fear is the path to the dark side."
-            | _, Lost -> "This is why you must fail"
-            | _ -> "/aw/"
+        let stats = sprintf "Won: %d, Lost: %d" state.GamesWon state.GamesLost
+        let message =
+            match state.State with
+            | NotStarted | Started ->
+                sprintf "Today's phonic hint is: %s" state.Hint
+            | Won ->
+                sprintf "Congratulations! %s" stats
+            | Lost ->
+                sprintf "Today's wordle was %s: %s" state.Wordle stats
 
         html
             $"""
             <div class="min-h-screen space-y-3 bg-stone-900">
-                <div class="flex justify-center mb-1 font-mono text-3xl text-white">
-                    Aurelia-dle
+                <div class="mb-2">
+                    <div class="flex items-center justify-between h-12 px-5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p class="ml-2.5 justify-center font-mono text-3xl text-white">Aurelia-dle</p>
+                        <div class="flex">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3 text-white"  fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <hr></hr>
                 </div>
                 <div class="flex justify-center font-mono text-white">
-                    Today's phonic hint is: {state.Hint}
+                    {message}
                 </div>
                 <div class="flex justify-center mb-1">
                     {List.item 0 state.Guesses |> letterToDisplayBox}
@@ -466,7 +516,7 @@ let MatchComponent () =
                 <div class="flex justify-center mb-1">
                     {keyBoard.Middle |> List.map keyboardKey}
                 </div>
-                <div class="flex justify-center mb-1">
+                <div class="flex justify-center ">
                     {keyBoard.Bottom |> List.map keyboardKey}
                 </div>
             </div>
@@ -474,7 +524,12 @@ let MatchComponent () =
 
     // do we always do the same thing irrespective of state?
     match gameState.State with
-    | NotStarted -> gameState |> writeState
-    | Started -> gameState |> writeState
-    | Won -> gameState |> writeState
-    | Lost -> gameState |> writeState //then stats?
+    | NotStarted ->
+        gameState |> writeState
+    | Started ->
+        gameState |> writeState
+    | Won ->
+        gameState
+        |> writeState
+    | Lost ->
+        gameState |> writeState
