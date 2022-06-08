@@ -33,11 +33,6 @@ type LocalStorageGameState =
       GamesLost: int
       WinDistribution: int [] }
 
-type LocalStorageGameStats =
-    { GamesWon: int
-      GamesLost: int
-      WinDistribution: int list }
-
 module Letter =
     let letterToString guessLetter = defaultArg guessLetter.Letter ""
 
@@ -238,10 +233,7 @@ let startNewGame =
     let todaysWordle = wordle ()
 
     match loadedStorage with
-    | Some stored when
-        fst todaysWordle = stored.Solution //we know that it's a previously saved game for today
-        && StateHelpers.stateFromString stored <> NotStarted
-        ->
+    | Some stored ->
         let localGuesses =
             stored.Guesses
             |> Array.map (fun (position, letters) ->
@@ -266,15 +258,28 @@ let startNewGame =
             |> List.map snd
             |> List.fold (fun state guess -> getUsedLetters guess.Letters state) Map.empty
 
-        { Wordle = fst todaysWordle
-          Hint = snd todaysWordle
-          Guesses = localGuesses
-          Round = stored.Round
-          State = StateHelpers.stateFromString stored
-          UsedLetters = storageUsedLetters
-          GamesLost = stored.GamesLost
-          GamesWon = stored.GamesWon
-          WinDistribution = stored.WinDistribution |> List.ofArray }
+        let loadedGame =
+            { Wordle = fst todaysWordle
+              Hint = snd todaysWordle
+              Guesses = localGuesses
+              Round = stored.Round
+              State = StateHelpers.stateFromString stored
+              UsedLetters = storageUsedLetters
+              GamesLost = stored.GamesLost
+              GamesWon = stored.GamesWon
+              WinDistribution = stored.WinDistribution |> List.ofArray }
+
+        let newGameWithStats =
+            { loadedGame with
+                Guesses = guesses
+                Round = 0
+                State = NotStarted
+                UsedLetters = Map.empty }
+
+        if fst todaysWordle <> stored.Solution then
+            newGameWithStats
+        else
+            loadedGame
     | _ ->
         //the case where we haven't played before and there is no local storage
         { Wordle = fst todaysWordle
@@ -286,46 +291,6 @@ let startNewGame =
           GamesLost = 0
           GamesWon = 0
           WinDistribution = List.init rounds (fun _ -> 0) }
-
-// this can be improved quite a bit - need tests though
-let getAnswerMaskOld (actual: string) (guess: string) =
-    let removeFirstInstance remove fromList =
-        let rec removeFirst predicate =
-            function
-            | [] -> []
-            | h :: t when predicate h -> t //terminates
-            | h :: t -> h :: removeFirst predicate t
-
-        removeFirst (fun i -> i = remove) fromList
-
-    let getCounts letters matchOn =
-        letters
-        |> List.filter (fun i -> i = matchOn)
-        |> List.length
-
-    let rec masker ls count mask =
-        match (ls, count) with
-        | [], _ -> mask
-        | (a, g) :: t, cs ->
-            if a = g then
-                masker t cs (Green :: mask)
-            else if Seq.contains g actual && getCounts cs g > 0 then
-                masker t (removeFirstInstance g cs) (Yellow :: mask)
-            else
-                masker t cs (Grey :: mask)
-
-    let notMatched zipped =
-        zipped
-        |> List.filter (fun (a, g) -> a <> g)
-        |> List.map fst
-
-    let letters = Seq.zip actual guess |> Seq.toList
-    let masked = masker letters (notMatched letters) [] |> List.rev
-
-    { Letters =
-        Seq.zip guess masked
-        |> Seq.toList
-        |> List.map (fun (a, m) -> { Letter = Some(string a); Status = m }) }
 
 module Counter =
     let createCounter items =
@@ -349,18 +314,20 @@ let getAnswerMask actual guess =
 
     let letters = Seq.zip actual guess |> Seq.toList
 
-    let folder ((count, mask): Map<'a,int> * Status list) (a, g) =
+    let folder ((count, mask): Map<'a, int> * Status list) (a, g) =
         if a = g then
             count, Green :: mask
-        elif Seq.contains g actual && Counter.countOf count g > 0 then
+        elif Seq.contains g actual
+             && Counter.countOf count g > 0 then
             Counter.updateCount count g, Yellow :: mask
         else
             count, Grey :: mask
 
-    let masked =
-        List.fold folder (Counter.createCounter letters, []) letters |> snd |> List.rev
     { Letters =
-        Seq.zip guess masked
+        List.fold folder (Counter.createCounter letters, []) letters
+        |> snd
+        |> List.rev
+        |> Seq.zip guess
         |> Seq.toList
         |> List.map (fun (a, m) -> { Letter = Some(string a); Status = m }) }
 
