@@ -200,10 +200,7 @@ let saveGameStateLocalStorage (state: State) =
     )
 
 let loadGameStateLocalStorage () =
-    Console.WriteLine("Now reading from local storoage")
     let localState = Browser.WebStorage.localStorage.getItem (gameStateKey)
-    Console.WriteLine(sprintf "Local %A" localState)
-
     match localState with
     | null -> None
     | _ -> Some(localState |> JS.JSON.parse :?> LocalStorageGameState)
@@ -326,7 +323,6 @@ module Counter =
         | None -> counter
 
 let getAnswerMask actual guess =
-
     let letters = Seq.zip actual guess |> Seq.toList
 
     let folder ((count, mask): Map<'a, int> * Status list) (a, g) =
@@ -464,8 +460,8 @@ let littleBoxedChar (c, status) =
         match status with
         | Black -> "bg-stone-900", "border-neutral-500"
         | Grey -> "bg-neutral-700", "border-neutral-700"
-        | Green -> "bg-green-700", "border-green-700"
-        | Yellow -> "bg-yellow-500", "border-yellow-500"
+        | Green -> "bg-blue-700", "border-blue-700"
+        | Yellow -> "bg-red-800", "border-red-800"
         | Invalid -> "bg-neutral-400", "border-neutral-400"
 
     html
@@ -511,27 +507,31 @@ let modal customHead bodyText modalDisplayState handler =
     html
         $"""
         <!-- Modal -->
-        <div class="modal fade fixed {hidden} outline-none overflow-x-hidden overflow-y-auto"
-        id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered relative w-auto pointer-events-none">
-            <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-neutral-400 bg-clip-padding rounded-md outline-none text-current">
-                <div class="modal-header flex flex-shrink-0 items-center justify-between p-2 border-b border-stone-600 rounded-t-md">
-                    <h5 class="text-xl font-medium leading-normal text-stone-800" id="exampleModalLabel">{customHead}</h5>
-                    <button type="button" @click={handler} class="px-2
-                        py-2
-                        bg-stone-800
-                        text-white
-                        font-medium
-                        text-xs
-                        leading-tight
-                        uppercase
-                        rounded
-                        shadow-md
-                        transition
-                        duration-150
-                        ease-in-out" data-bs-dismiss="modal">X</button>
+        <div class="modal fade fixed {hidden} outline-none overflow-x-hidden overflow-y-auto" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered relative w-auto pointer-events-none">
+                <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-neutral-400 bg-clip-padding rounded-md outline-none text-current">
+                    <div class="modal-header flex flex-shrink-0 items-center justify-between p-2 border-b border-stone-600 rounded-t-md">
+                        <h5 class="text-xl font-medium leading-normal text-stone-800" id="exampleModalLabel">
+                            {customHead}
+                        </h5>
+                        <button type="button" @click={handler} class="px-2
+                            py-2
+                            bg-stone-800
+                            text-white
+                            font-medium
+                            text-xs
+                            leading-tight
+                            uppercase
+                            rounded
+                            shadow-md
+                            transition
+                            duration-150
+                            ease-in-out" data-bs-dismiss="modal">
+                            X
+                        </button>
+                    </div>
+                    {bodyText}
                 </div>
-                {bodyText}
             </div>
         </div>
     """
@@ -544,7 +544,7 @@ let infoText =
             </br>
             <p>For each wordle, a phonic hint is given as a phoneme (i.e. the sound).</p>
             </br>
-            <p>For example, if the word to be guessed is SHACK, then the phoneme hint given is <a class="underline decoration-solid text-green-700 text-bold">/sh/</a>.
+            <p>For example, if the word to be guessed is <span class="text-green-700 font-bold">SHACK</span>, then the phoneme hint given is <span class="text-green-700 font-bold">/sh/</span>.
             Not all phonemes in the word are provided, rather the more complex phoneme is given in the hint.</p>
             </br>
             <p>Children can their use their grapheme, phoneme correspondence knowledge in order to determine the appropriate grapheme (spelling) for the phoneme in question.</p>
@@ -593,9 +593,10 @@ let helpText hint=
 
         [ for (grapheme, exampleWord) in hintedGraphemes do
             let pad = maxLenGrapheme - (String.length grapheme)
-            let padded = Seq.init (pad + 1) (fun _ -> ' ', Invalid)
-            let gs = grapheme |> Seq.map (fun g -> g, Yellow)
-            let paddedGs = Seq.concat [gs; padded]
+            let padded =
+                Seq.concat
+                    [grapheme |> Seq.map (fun g -> g, Yellow)
+                     Seq.init (pad + 1) (fun _ -> ' ', Invalid)]
             let ls =
                 exampleWord
                 |> Seq.map (fun l ->
@@ -603,7 +604,7 @@ let helpText hint=
             html
                 $"""
                 <div class="flex justify-left mb-1">
-                    {paddedGs |> Seq.map littleBoxedChar}
+                    {padded |> Seq.map littleBoxedChar}
                     {ls |> Seq.map littleBoxedChar}
                 </div>
             """]
@@ -612,7 +613,9 @@ let helpText hint=
         $"""
         <div class="modal-body p-2 text-slate-800">
             <p>Graphemes corresponding to today's phoneme
-                <span class="text-green-700 font-semibold">{hint}</span>
+                <span class="text-green-700 font-semibold">
+                    {hint}
+                </span>
             </p>
             </br>
             <p>
