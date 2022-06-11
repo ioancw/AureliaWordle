@@ -59,6 +59,8 @@ type State =
     { Wordle: string
       Hint: string
       Guesses: (Position * Guess) list
+      ShowInfo: bool
+      ShowStats: bool
       UsedLetters: Map<string, Status>
       State: GameState
       Round: int
@@ -261,6 +263,8 @@ let startNewGame =
         let loadedGame =
             { Wordle = fst todaysWordle
               Hint = snd todaysWordle
+              ShowInfo = false
+              ShowStats = false
               Guesses = localGuesses
               Round = stored.Round
               State = StateHelpers.stateFromString stored
@@ -284,6 +288,8 @@ let startNewGame =
         //the case where we haven't played before and there is no local storage
         { Wordle = fst todaysWordle
           Hint = snd todaysWordle
+          ShowInfo = false
+          ShowStats = false
           Guesses = guesses
           Round = 0
           State = NotStarted
@@ -471,6 +477,64 @@ let keyboardChar usedLetters handler (c: string) =
         >{c}</button>
     """
 
+[<HookComponent>]
+let Dialog (mode) =
+    let _, setProject = Hook.useState("")
+    Console.WriteLine("something xxx")
+    Hook.useEffectOnChange(mode, fun mode ->
+        match mode with
+        | "O" -> setProject("O")
+        | _ -> setProject(""))
+    let hidden = ""
+    let save () =
+        Console.WriteLine("something")
+    html
+        $"""
+        <!-- Modal -->
+        <div class="modal fade fixed {hidden} outline-none overflow-x-hidden overflow-y-auto"
+        id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered relative w-auto pointer-events-none">
+            <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-stone-400 bg-clip-padding rounded-md outline-none text-current">
+                <div class="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-stone-600 rounded-t-md">
+                    <h5 class="text-xl font-medium leading-normal text-stone-800" id="exampleModalLabel">Information</h5>
+                </div>
+                <div class="modal-body relative p-4 text-white">
+                    Lots of information about the game goes here.
+                    Not really sure how to format this stuff, but will give it a go.
+                    This bit of HTML should be wrapped in a function and then called from the main 'game' loop.
+                </div>
+                <div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-stone-600 rounded-b-md">
+                    <button type="button" class="px-4
+                        py-2.5
+                        bg-stone-800
+                        text-white
+                        font-medium
+                        text-xs
+                        leading-tight
+                        uppercase
+                        rounded
+                        shadow-md
+                        hover:bg-purple-700 hover:shadow-lg
+                        focus:bg-purple-700 focus:shadow-lg focus:outline-none focus:ring-0
+                        active:bg-purple-800 active:shadow-lg
+                        transition
+                        duration-150
+                        ease-in-out" data-bs-dismiss="modal">X</button>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="border-solid border-transparent flex border-2 items-center rounded">
+            <button class="w-14 h-14 bg-pink-500 text-center leading-none text-3xl font-bold text-white border-2">H</button>
+        </div> -->
+    """
+
+    // html $"""
+    //     <sl-dialog
+    //         label="Hello"
+    //         .open{mode <> "C"}>
+    //     </sl-dialog>
+    // """
+
 [<LitElement("wordle-app")>]
 let MatchComponent () =
     let _ = LitElement.init (fun cfg -> cfg.useShadowDom <- false)
@@ -502,6 +566,16 @@ let MatchComponent () =
 
                 state |> submitEntry |> setGameState)
 
+        let onInfoClick =
+            Ev (fun ev ->
+                ev.preventDefault ()
+                Console.WriteLine("Info Clicked")
+                let newShowInfo =
+                    match state.ShowInfo with
+                    | true -> false
+                    | false -> true
+                {state with ShowInfo = newShowInfo} |> setGameState)
+
         let keyboardKey = keyboardChar state.UsedLetters onKeyClick
         let stats = sprintf "Won: %d, Lost: %d" state.GamesWon state.GamesLost
 
@@ -522,17 +596,16 @@ let MatchComponent () =
                         </svg>
                         <p class="ml-2.5 justify-center font-mono text-3xl text-white">Aurelia-dle</p>
                         <div class="flex">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3 text-white"  fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" viewBox="0 0 20 20" fill="currentColor">
+                            <svg @click={onInfoClick} xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" viewBox="0 0 20 20" fill="currentColor"  >
                                 <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
                             </svg>
                         </div>
                     </div>
                     <hr></hr>
                 </div>
+
+                {if state.ShowInfo then Dialog ("O") else Lit.nothing}
+
                 <div class="flex justify-center font-mono text-white">
                     {message}
                 </div>
