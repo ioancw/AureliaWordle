@@ -497,13 +497,13 @@ let modal bodyText modalDisplayState handler =
         id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered relative w-auto pointer-events-none">
             <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-stone-400 bg-clip-padding rounded-md outline-none text-current">
-                <div class="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-stone-600 rounded-t-md">
+                <div class="modal-header flex flex-shrink-0 items-center justify-between p-2 border-b border-stone-600 rounded-t-md">
                     <h5 class="text-xl font-medium leading-normal text-stone-800" id="exampleModalLabel">Information</h5>
                 </div>
                 {bodyText}
-                <div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-stone-600 rounded-b-md">
+                <div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-2 border-t border-stone-600 rounded-b-md">
                     <button type="button" @click={handler} class="px-4
-                        py-2.5
+                        py-2
                         bg-stone-800
                         text-white
                         font-medium
