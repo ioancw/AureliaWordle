@@ -485,7 +485,7 @@ let keyboardChar usedLetters handler (c: string) =
         >{c}</button>
     """
 
-let modal bodyText modalDisplayState handler =
+let modal customHead bodyText modalDisplayState handler =
     let hidden =
         match modalDisplayState with
         | true -> ""
@@ -498,11 +498,8 @@ let modal bodyText modalDisplayState handler =
         <div class="modal-dialog modal-dialog-centered relative w-auto pointer-events-none">
             <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-stone-400 bg-clip-padding rounded-md outline-none text-current">
                 <div class="modal-header flex flex-shrink-0 items-center justify-between p-2 border-b border-stone-600 rounded-t-md">
-                    <h5 class="text-xl font-medium leading-normal text-stone-800" id="exampleModalLabel">Information</h5>
-                </div>
-                {bodyText}
-                <div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-2 border-t border-stone-600 rounded-b-md">
-                    <button type="button" @click={handler} class="px-4
+                    <h5 class="text-xl font-medium leading-normal text-stone-800" id="exampleModalLabel">{customHead}</h5>
+                    <button type="button" @click={handler} class="px-2
                         py-2
                         bg-stone-800
                         text-white
@@ -516,6 +513,7 @@ let modal bodyText modalDisplayState handler =
                         duration-150
                         ease-in-out" data-bs-dismiss="modal">X</button>
                 </div>
+                {bodyText}
             </div>
         </div>
     """
@@ -523,12 +521,12 @@ let modal bodyText modalDisplayState handler =
 let infoText =
     html
         $"""
-        <div class="modal-body relative p-4 text-white">
+        <div class="modal-body relative p-2 text-white">
             <p>This is a wordle type game to help children with their phonics.</p>
             </br>
-            <p>For each wordle, a phonic hint is given.</p>
+            <p>For each wordle, a phonic hint is given as a phoneme (i.e. the sound).</p>
             </br>
-            <p>For example, if the word to be guesses is SHACK, then the phoneme hint given is /sh/.
+            <p>For example, if the word to be guessed is SHACK, then the phoneme hint given is <a class="underline decoration-solid text-green-700 text-bold">/sh/</a>.
             Note that not all phonemes in the word are provided, rather the more complex phoneme is given in the hint.</p>
             </br>
             <p>Children can their use their grapheme, phoneme correspondence knowledge in order to determine the appropriate grapheme (spelling) for the phoneme in question.</p>
@@ -539,22 +537,33 @@ let infoText =
         </div>
     """
 
-let helpText =
+let helpText hint=
+    //go get the graphemes from the phonemes.
+    let hintedGraphemes =
+        match Map.tryFind hint phonemeGraphemeCorresspondances with
+        | Some g -> g
+        | None -> []
+    let graphemes =
+        [for (grapheme, exampleWord) in hintedGraphemes do
+            html
+                $"""
+                <li class="indent-4 text-white">
+                    <a class="text-yellow-500 text-bold">{grapheme}</a>
+                    <a>as in</a>
+                    <a class="text-red-500 text-bold">{exampleWord}</a>
+                </li>
+
+            """]
     html
         $"""
-        <div class="modal-body relative p-4 text-white">
-            <p>This is a wordle type game to help children with their phonics.</p>
+        <div class="modal-body relative p-4 text-slate-800">
+            <p>Graphemes correspond to today's phoneme
+                <a class="underline decoration-solid text-green-700 text-bold">{hint}</a></p></p>
             </br>
-            <p>For each wordle, a phonic hint is given.</p>
-            </br>
-            <p>For example, if the word to be guesses is SHACK, then the phoneme hint given is /sh/.
-            Note that not all phonemes in the word are provided, rather the more complex phoneme is given in the hint.</p>
-            </br>
-            <p>Children can their use their grapheme, phoneme correspondence knowledge in order to determine the appropriate grapheme (spelling) for the phoneme in question.</p>
-            </br>
-            <p>GPC examples for the phoneme hint can be seen by clicking the ? button.</p>
-            </br>
-            <p>This application was developed using the F# language using Fable.Lit</p>
+            <ul>
+                {graphemes}
+            </ul>
+
         </div>
     """
 
@@ -631,8 +640,8 @@ let MatchComponent () =
                     <hr></hr>
                 </div>
 
-                {modal infoText state.ShowInfo (onModalClick Info)}
-                {modal helpText state.ShowHelp (onModalClick Help)}
+                {modal "Information" infoText state.ShowInfo (onModalClick Info)}
+                {modal "Grapheme Phoneme Correspondance" (helpText state.Hint) state.ShowHelp (onModalClick Help)}
 
                 <div class="flex justify-center font-mono text-white">
                     {message}

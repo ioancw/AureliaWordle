@@ -64,20 +64,62 @@
 
     let phonemeGraphemeCorresspondances =
         [
-            "/e/", ["e"; "ea"; "ai"; "ie"]
-            "/a/", ["a"]
-            "/o/", ["o"; "a"]
-            "/i/", ["i"; "y"]
-            "/u/", ["u"; "ou"; "o"]
-            "/ee/", ["ee"; "e"; "ea"; "ie"; "ey"; "y"; "e-e"; "ei"; "i"]
-            "/ai/", ["a-e"; "a"; "ai"; "ay"; "ea"; "ei"; "ey"; "aigh"; "eigh"]
-            "/oe/", ["o-e"; "o"; "oa"; "oe"; "ow"; "ou"; "ough"]
-            "/ie", ["i-e"; "i"; "ie"; "y"; "igh"]
-            "/ue/", ["u-e"; "u"; "ue"; "ew"]
-            "/oy/", ["oy"; "oi"]
-            "/ar/", ["ar"; "al"; "a"; "au"]
-            "/oo/", ["oo"; "ou"; "ue"; "ui"; "o"; "u"; "oe"; "ough"]
+            "/e/",
+                ["e", "bed"
+                 "ea", "bread"
+                 "ai", "said"
+                 "ie", "friend"]
+            "/a/", ["a", "cat"]
+            "/o/", ["o", "not"; "a", "was"; "ou", "cough"]
+            "/i/", ["i", "in"; "y", "myth"]
+            "/u/", ["u", "tub"; "ou", "touch"; "o", "Monday"]
+            "/ee/", ["ee", "keep"
+                     "e", "me"
+                     "ea", "seat"
+                     "ie", "chief"
+                     "ey", "key"
+                     "y", "funny"
+                     "e-e", "?"
+                     "ei", "?"
+                     "i", "?"]
+            "/ai/", ["a-e", "game"
+                     "a", "table"
+                     "ai", "rain"
+                     "ay", "they"
+                     "ea", "great"
+                     "ei", "?"
+                     "ey", "they"
+                     "aigh", "straight"
+                     "eigh", "eight"]
+            "/oe/", ["o-e", "note"
+                     "o", "most"
+                     "oa", "boat"
+                     "oe", "toe"
+                     "ow", "grow"
+                     "ou", "?"
+                     "ough", "bough?"]
+            "/ie", ["i-e", "like"
+                    "i", "wild"
+                    "ie", "pie"
+                    "y", "dry"
+                    "igh", "night"]
+            "/ue/", ["u-e", "tune"
+                     "u", "pupil"
+                     "ue", "cue"
+                     "ew", "few"]
+            "/oy/", ["oy", "boy"; "oi", "coin"]
+            "/ar/", ["ar", "jar"; "al", "calm"; "a", "glass"; "au", "?"]
+            "/oo/", ["oo", "boot"
+                     "ou", "?"
+                     "ue", "blue"
+                     "ui", "?"
+                     "o", "do"
+                     "u", "super"
+                     "oe", "?"
+                     "ough", "?"]
+            "/sh/", ["sh", "shop"; "ch", "machine"; "s", "sugar"]
         ]
+        |> Map.ofList
 
     // These are the acceptable five letter words that you can type into the guess boxes.
     // This list hasn't been curated, it's take from a larger set of words, which was filtered to those containing five letters.
