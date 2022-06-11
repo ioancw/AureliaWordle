@@ -41,24 +41,24 @@ import{y as ar,n as ir}from"./vendor.299b0ab0.js";const lr=function(){const s=do
 <p>For each wordle, a phonic hint is given as a phoneme (i.e. the sound).</p>
 </br>
 <p>For example, if the word to be guessed is SHACK, then the phoneme hint given is <a class="underline decoration-solid text-green-700 text-bold">/sh/</a>.
-Note that not all phonemes in the word are provided, rather the more complex phoneme is given in the hint.</p>
+Not all phonemes in the word are provided, rather the more complex phoneme is given in the hint.</p>
 </br>
 <p>Children can their use their grapheme, phoneme correspondence knowledge in order to determine the appropriate grapheme (spelling) for the phoneme in question.</p>
 </br>
 <p>GPC examples for the phoneme hint can be seen by clicking the ? button.</p>
 </br>
-<p>This application was developed using the F# language using Fable.Lit</p>
+<p>This application was developed using the <a href="https://fsharp.org" class="text-blue-600">F#</a> language using <a href="https://fable.io/Fable.Lit/" class="text-blue-600">Fable.Lit</a></p>
 </div>
 `);function ra(e){let s;const t=ms(e,vo);s=t==null?Ss():t;const r=Ke(ze(()=>so(n=>Kn(ge(me`
     <li class="indent-4 text-white">
-    <a class="text-yellow-500 text-bold">${n[0]}</a>
+    <a class="text-yellow-500 font-bold">${n[0]}</a>
     <a>as in</a>
-    <a class="text-red-500 text-bold">${n[1]}</a>
+    <a class="text-red-500 font-semibold">${n[1]}</a>
     </li>
     `)),s)));return ge(me`
     <div class="modal-body relative p-4 text-slate-800">
     <p>Graphemes correspond to today's phoneme
-    <a class="underline decoration-solid text-green-700 text-bold">${e}</a></p></p>
+    <a class="underline decoration-solid text-green-700 font-semibold">${e}</a></p></p>
     </br>
     <ul>
     ${r}
@@ -81,7 +81,7 @@ Note that not all phonemes in the word are provided, rather the more complex pho
         <hr></hr>
         </div>
         ${or("Information",ta,o.ShowInfo,i(new ys(0)))}
-        ${or("Grapheme Phoneme Correspondance",ra(o.Hint),o.ShowHelp,i(new ys(1)))}
+        ${or("Grapheme Phoneme Correspondence",ra(o.Hint),o.ShowHelp,i(new ys(1)))}
         <div class="flex justify-center font-mono text-white">
         ${d}
         </div>
