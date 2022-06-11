@@ -5,6 +5,7 @@ open Lit
 open Wordles
 open Fable.Import
 open Fable.Core
+open System.Text.RegularExpressions
 
 JsInterop.importSideEffects "./index.css"
 
@@ -457,6 +458,23 @@ let boxedChar (c, status) =
         </div>
     """
 
+let littleBoxedChar (c, status) =
+    // https://tailwindcss.com/docs/border-style
+    let colour, border =
+        match status with
+        | Black -> "bg-stone-900", "border-neutral-500"
+        | Grey -> "bg-neutral-700", "border-neutral-700"
+        | Green -> "bg-green-700", "border-green-700"
+        | Yellow -> "bg-yellow-500", "border-yellow-500"
+        | Invalid -> "bg-neutral-400", "border-neutral-400"
+
+    html
+        $"""
+        <div class="border-solid border-transparent flex border-2 items-center rounded">
+            <button class="w-8 h-8 {colour} text-center leading-none text-1xl font-bold text-white border-2 {border}">{c}</button>
+        </div>
+    """
+
 let keyboardChar usedLetters handler (c: string) =
     let colour =
         let letterStatus =
@@ -496,7 +514,7 @@ let modal customHead bodyText modalDisplayState handler =
         <div class="modal fade fixed {hidden} outline-none overflow-x-hidden overflow-y-auto"
         id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered relative w-auto pointer-events-none">
-            <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-stone-400 bg-clip-padding rounded-md outline-none text-current">
+            <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-neutral-400 bg-clip-padding rounded-md outline-none text-current">
                 <div class="modal-header flex flex-shrink-0 items-center justify-between p-2 border-b border-stone-600 rounded-t-md">
                     <h5 class="text-xl font-medium leading-normal text-stone-800" id="exampleModalLabel">{customHead}</h5>
                     <button type="button" @click={handler} class="px-2
@@ -521,7 +539,7 @@ let modal customHead bodyText modalDisplayState handler =
 let infoText =
     html
         $"""
-        <div class="modal-body relative p-2 text-white">
+        <div class="modal-body relative p-2 text-slate-800">
             <p>This is a wordle type game to help children with their phonics.</p>
             </br>
             <p>For each wordle, a phonic hint is given as a phoneme (i.e. the sound).</p>
@@ -544,25 +562,64 @@ let helpText hint=
         | Some g -> g
         | None -> []
     let graphemes =
-        [for (grapheme, exampleWord) in hintedGraphemes do
+        // [for (grapheme, exampleWord) in hintedGraphemes do
+        //     let split = Regex.Split(exampleWord, (sprintf "(%s)" grapheme)) |> List.ofArray
+        //     Console.WriteLine(split)
+        //     let parts =
+        //         [ for part in split do
+        //             let colour =
+        //                 if part = grapheme then
+        //                     "text-blue-700"
+        //                 else
+        //                     "text-red-800"
+        //             html
+        //                 $"""
+        //                 <span class="indent-0 whitespace-pre-line {colour} font-semibold">{part}</span>
+        //             """
+        //         ]
+        //     html
+        //         $"""
+        //         <li class="indent-0">
+        //             <span class="text-blue-700 font-bold">{grapheme}</span>
+        //             <span>as in {parts}</span>
+
+        //         </li>
+
+        //     """]
+        let maxLenGrapheme =
+            hintedGraphemes
+            |> List.map (fun (g, w) -> String.length g)
+            |> List.max
+
+        [ for (grapheme, exampleWord) in hintedGraphemes do
+            let pad = maxLenGrapheme - (String.length grapheme)
+            let padded = Seq.init (pad + 1) (fun _ -> ' ', Invalid)
+            let gs = grapheme |> Seq.map (fun g -> g, Yellow)
+            let paddedGs = Seq.concat [gs; padded]
+            let ls =
+                exampleWord
+                |> Seq.map (fun l ->
+                    l, if (Seq.contains l grapheme) then Yellow else Green)
             html
                 $"""
-                <li class="indent-4 text-white">
-                    <a class="text-yellow-500 font-bold">{grapheme}</a>
-                    <a>as in</a>
-                    <a class="text-red-500 font-semibold">{exampleWord}</a>
-                </li>
-
+                <div class="flex justify-left mb-1">
+                    {paddedGs |> Seq.map littleBoxedChar}
+                    {ls |> Seq.map littleBoxedChar}
+                </div>
             """]
+
     html
         $"""
-        <div class="modal-body relative p-4 text-slate-800">
-            <p>Graphemes correspond to today's phoneme
-                <a class="underline decoration-solid text-green-700 font-semibold">{hint}</a></p></p>
+        <div class="modal-body p-2 text-slate-800">
+            <p>Graphemes corresponding to today's phoneme
+                <span class="text-green-700 font-semibold">{hint}</span>
+            </p>
             </br>
-            <ul>
-                {graphemes}
-            </ul>
+            <p>
+                <ul class="list-inside" >
+                    {graphemes}
+                </ul>
+            </p>
 
         </div>
     """
@@ -646,20 +703,22 @@ let MatchComponent () =
                 <div class="flex justify-center font-mono text-white">
                     {message}
                 </div>
-                <div class="flex justify-center mb-1">
-                    {List.item 0 state.Guesses |> letterToDisplayBox}
-                </div>
-                <div class="flex justify-center mb-1">
-                    {List.item 1 state.Guesses |> letterToDisplayBox}
-                </div>
-                <div class="flex justify-center mb-1">
-                    {List.item 2 state.Guesses |> letterToDisplayBox}
-                </div>
-                <div class="flex justify-center mb-1">
-                    {List.item 3 state.Guesses |> letterToDisplayBox}
-                </div>
-                <div class="flex justify-center mb-1">
-                    {List.item 4 state.Guesses |> letterToDisplayBox}
+                <div>
+                    <div class="flex justify-center mb-1">
+                        {List.item 0 state.Guesses |> letterToDisplayBox}
+                    </div>
+                    <div class="flex justify-center mb-1">
+                        {List.item 1 state.Guesses |> letterToDisplayBox}
+                    </div>
+                    <div class="flex justify-center mb-1">
+                        {List.item 2 state.Guesses |> letterToDisplayBox}
+                    </div>
+                    <div class="flex justify-center mb-1">
+                        {List.item 3 state.Guesses |> letterToDisplayBox}
+                    </div>
+                    <div class="flex justify-center mb-1">
+                        {List.item 4 state.Guesses |> letterToDisplayBox}
+                    </div>
                 </div>
                 <div class="flex justify-center mb-1">
                     {keyBoard.Top |> List.map keyboardKey}

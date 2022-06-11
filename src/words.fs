@@ -69,6 +69,12 @@
                  "ea", "bread"
                  "ai", "said"
                  "ie", "friend"]
+            "/er/",
+                ["er", "her"
+                 "ur", "turn"
+                 "ir", "girl"
+                 "or", "world"
+                 "ear", "learn"]
             "/a/", ["a", "cat"]
             "/o/", ["o", "not"; "a", "was"; "ou", "cough"]
             "/i/", ["i", "in"; "y", "myth"]
