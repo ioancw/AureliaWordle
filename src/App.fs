@@ -13,6 +13,11 @@ type KeyBoard =
       Middle: string list
       Bottom: string list }
 
+type Modal =
+    | Info
+    | Help
+    | Stats
+
 type Status =
     | Green
     | Yellow
@@ -61,6 +66,7 @@ type State =
       Guesses: (Position * Guess) list
       ShowInfo: bool
       ShowStats: bool
+      ShowHelp: bool
       UsedLetters: Map<string, Status>
       State: GameState
       Round: int
@@ -265,6 +271,7 @@ let startNewGame =
               Hint = snd todaysWordle
               ShowInfo = false
               ShowStats = false
+              ShowHelp = false
               Guesses = localGuesses
               Round = stored.Round
               State = StateHelpers.stateFromString stored
@@ -290,6 +297,7 @@ let startNewGame =
           Hint = snd todaysWordle
           ShowInfo = false
           ShowStats = false
+          ShowHelp = false
           Guesses = guesses
           Round = 0
           State = NotStarted
@@ -477,17 +485,11 @@ let keyboardChar usedLetters handler (c: string) =
         >{c}</button>
     """
 
-[<HookComponent>]
-let Dialog (mode) =
-    let _, setProject = Hook.useState("")
-    Console.WriteLine("something xxx")
-    Hook.useEffectOnChange(mode, fun mode ->
-        match mode with
-        | "O" -> setProject("O")
-        | _ -> setProject(""))
-    let hidden = ""
-    let save () =
-        Console.WriteLine("something")
+let modal bodyText modalDisplayState handler =
+    let hidden =
+        match modalDisplayState with
+        | true -> ""
+        | false -> "hidden"
     html
         $"""
         <!-- Modal -->
@@ -498,13 +500,9 @@ let Dialog (mode) =
                 <div class="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-stone-600 rounded-t-md">
                     <h5 class="text-xl font-medium leading-normal text-stone-800" id="exampleModalLabel">Information</h5>
                 </div>
-                <div class="modal-body relative p-4 text-white">
-                    Lots of information about the game goes here.
-                    Not really sure how to format this stuff, but will give it a go.
-                    This bit of HTML should be wrapped in a function and then called from the main 'game' loop.
-                </div>
+                {bodyText}
                 <div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-stone-600 rounded-b-md">
-                    <button type="button" class="px-4
+                    <button type="button" @click={handler} class="px-4
                         py-2.5
                         bg-stone-800
                         text-white
@@ -514,26 +512,51 @@ let Dialog (mode) =
                         uppercase
                         rounded
                         shadow-md
-                        hover:bg-purple-700 hover:shadow-lg
-                        focus:bg-purple-700 focus:shadow-lg focus:outline-none focus:ring-0
-                        active:bg-purple-800 active:shadow-lg
                         transition
                         duration-150
                         ease-in-out" data-bs-dismiss="modal">X</button>
                 </div>
             </div>
         </div>
-        <!-- <div class="border-solid border-transparent flex border-2 items-center rounded">
-            <button class="w-14 h-14 bg-pink-500 text-center leading-none text-3xl font-bold text-white border-2">H</button>
-        </div> -->
     """
 
-    // html $"""
-    //     <sl-dialog
-    //         label="Hello"
-    //         .open{mode <> "C"}>
-    //     </sl-dialog>
-    // """
+let infoText =
+    html
+        $"""
+        <div class="modal-body relative p-4 text-white">
+            <p>This is a wordle type game to help children with their phonics.</p>
+            </br>
+            <p>For each wordle, a phonic hint is given.</p>
+            </br>
+            <p>For example, if the word to be guesses is SHACK, then the phoneme hint given is /sh/.
+            Note that not all phonemes in the word are provided, rather the more complex phoneme is given in the hint.</p>
+            </br>
+            <p>Children can their use their grapheme, phoneme correspondence knowledge in order to determine the appropriate grapheme (spelling) for the phoneme in question.</p>
+            </br>
+            <p>GPC examples for the phoneme hint can be seen by clicking the ? button.</p>
+            </br>
+            <p>This application was developed using the F# language using Fable.Lit</p>
+        </div>
+    """
+
+let helpText =
+    html
+        $"""
+        <div class="modal-body relative p-4 text-white">
+            <p>This is a wordle type game to help children with their phonics.</p>
+            </br>
+            <p>For each wordle, a phonic hint is given.</p>
+            </br>
+            <p>For example, if the word to be guesses is SHACK, then the phoneme hint given is /sh/.
+            Note that not all phonemes in the word are provided, rather the more complex phoneme is given in the hint.</p>
+            </br>
+            <p>Children can their use their grapheme, phoneme correspondence knowledge in order to determine the appropriate grapheme (spelling) for the phoneme in question.</p>
+            </br>
+            <p>GPC examples for the phoneme hint can be seen by clicking the ? button.</p>
+            </br>
+            <p>This application was developed using the F# language using Fable.Lit</p>
+        </div>
+    """
 
 [<LitElement("wordle-app")>]
 let MatchComponent () =
@@ -566,15 +589,16 @@ let MatchComponent () =
 
                 state |> submitEntry |> setGameState)
 
-        let onInfoClick =
+        let onModalClick modalTyoe =
             Ev (fun ev ->
                 ev.preventDefault ()
                 Console.WriteLine("Info Clicked")
-                let newShowInfo =
-                    match state.ShowInfo with
-                    | true -> false
-                    | false -> true
-                {state with ShowInfo = newShowInfo} |> setGameState)
+
+                match modalTyoe with
+                | Info -> { state with ShowInfo = if state.ShowInfo = true then false else true }
+                | Stats -> { state with ShowStats = if state.ShowStats = true then false else true }
+                | Help -> {state with ShowHelp = if state.ShowHelp = true then false else true}
+                |> setGameState)
 
         let keyboardKey = keyboardChar state.UsedLetters onKeyClick
         let stats = sprintf "Won: %d, Lost: %d" state.GamesWon state.GamesLost
@@ -585,26 +609,30 @@ let MatchComponent () =
             | Started -> sprintf "Today's phonic hint is: %s" state.Hint
             | Won -> sprintf "Congratulations! %s" stats
             | Lost -> sprintf "Today's wordle was %s: %s" state.Wordle stats
+        // <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" viewBox="0 0 20 20" fill="currentColor"  >
+        //     <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+        // </svg>
 
         html
             $"""
             <div class="min-h-screen space-y-3 bg-stone-900">
                 <div class="mb-2">
                     <div class="flex items-center justify-between h-12 px-5">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <svg @click={onModalClick Info} xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <p class="ml-2.5 justify-center font-mono text-3xl text-white">Aurelia-dle</p>
                         <div class="flex">
-                            <svg @click={onInfoClick} xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" viewBox="0 0 20 20" fill="currentColor"  >
-                                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                            <svg @click={onModalClick Help} xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
                     </div>
                     <hr></hr>
                 </div>
 
-                {if state.ShowInfo then Dialog ("O") else Lit.nothing}
+                {modal infoText state.ShowInfo (onModalClick Info)}
+                {modal helpText state.ShowHelp (onModalClick Help)}
 
                 <div class="flex justify-center font-mono text-white">
                     {message}
