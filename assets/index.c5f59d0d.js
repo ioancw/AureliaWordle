@@ -4,9 +4,9 @@ import{y as lr,n as ur}from"./vendor.299b0ab0.js";const cr=function(){const s=do
     <div class="border-solid border-transparent flex border-2 items-center rounded">
     <button class="w-14 h-14 ${t[0]} text-center leading-none text-3xl font-bold text-white border-2 ${t[1]}">${e}</button>
     </div>
-    `)}function Us(e,s){const t=s.tag===2?["bg-red-700","border-red-700"]:s.tag===0?["bg-green-700","border-green-700"]:s.tag===1?["bg-yellow-600","border-yellow-600"]:s.tag===4?["bg-neutral-400","border-neutral-400"]:["bg-stone-900","border-neutral-500"];return ie(oe`
+    `)}function Us(e,s){const t=s.tag===2?["bg-blue-700","border-blue-700"]:s.tag===0?["bg-green-700","border-green-700"]:s.tag===1?["bg-yellow-600","border-yellow-600"]:s.tag===4?["bg-neutral-400","border-neutral-400"]:["bg-stone-900","border-neutral-500"];return ie(oe`
     <div class="border-solid border-transparent flex border-0 items-center rounded">
-    <button class="w-6 h-8 ${t[0]} text-center leading-none text-2xl font-bold text-white border-0 ${t[1]}">${e}</button>
+    <button class="w-7 h-8 ${t[0]} text-center leading-none text-2xl font-bold text-white border-0 ${t[1]}">${e}</button>
     </div>
     `)}function la(e,s,t){let r,n;const o=ps(t.toLocaleUpperCase(),e);switch(n=o==null?new w(3):o,n.tag){case 1:{r="bg-yellow-500";break}case 2:{r="bg-neutral-700";break}case 0:{r="bg-green-700";break}case 4:{r="bg-gray-400";break}default:r="bg-neutral-500"}const a=t==="Del"||t==="Ent"?"w-12":"w-9";return ie(oe`
     <button
@@ -63,8 +63,8 @@ Not all phonemes in the word are provided, rather the more complex phoneme is gi
         ${_(c=>Us(c[0],c[1]),u)}
         </div>
         `))},s))),ie(oe`
-    <div class="modal-body p-2 text-slate-800">
-    <p>Graphemes corresponding to today's phoneme
+    <div class="modal-body p-2 text-slate-800 text-center">
+    <p>Graphemes corresponding to today's phoneme.
     <div class="flex justify-center mb-1">
     ${_(o=>Us(o[0],o[1]),_(o=>[o,new w(2)],e.split("")))}
     </div>
