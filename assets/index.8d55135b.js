@@ -94,7 +94,7 @@ Not all phonemes in the word are provided, rather the more complex phoneme is gi
         </div>
         ${ir("Information",ua,o.ShowInfo,i(new gs(0)))}
         ${ir("Grapheme Phoneme Correspondence",ca(o.Hint),o.ShowHelp,i(new gs(1)))}
-        <div class="flex justify-center text-xl font-mono text-white">
+        <div class="flex justify-center text-lg font-mono text-white">
         ${c}
         </div>
         <div>
