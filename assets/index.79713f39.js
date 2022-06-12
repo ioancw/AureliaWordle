@@ -4,9 +4,9 @@ import{y as lr,n as ur}from"./vendor.299b0ab0.js";const cr=function(){const s=do
     <div class="border-solid border-transparent flex border-2 items-center rounded">
     <button class="w-14 h-14 ${t[0]} text-center leading-none text-3xl font-bold text-white border-2 ${t[1]}">${e}</button>
     </div>
-    `)}function ar(e,s){const t=s.tag===2?["bg-neutral-700","border-neutral-700"]:s.tag===0?["bg-blue-700","border-blue-700"]:s.tag===1?["bg-red-800","border-red-800"]:s.tag===4?["bg-neutral-400","border-neutral-400"]:["bg-stone-900","border-neutral-500"];return ie(oe`
-    <div class="border-solid border-transparent flex border-2 items-center rounded">
-    <button class="w-8 h-8 ${t[0]} text-center leading-none text-1xl font-bold text-white border-2 ${t[1]}">${e}</button>
+    `)}function ar(e,s){const t=s.tag===2?["bg-neutral-700","border-neutral-700"]:s.tag===0?["bg-green-700","border-green-700"]:s.tag===1?["bg-yellow-600","border-yellow-600"]:s.tag===4?["bg-neutral-400","border-neutral-400"]:["bg-stone-900","border-neutral-500"];return ie(oe`
+    <div class="border-solid border-transparent flex border-0 items-center rounded">
+    <button class="w-8 h-8 ${t[0]} text-center leading-none text-2xl font-bold text-white border-0 ${t[1]}">${e}</button>
     </div>
     `)}function la(e,s,t){let r,n;const o=ps(t.toLocaleUpperCase(),e);switch(n=o==null?new k(3):o,n.tag){case 1:{r="bg-yellow-500";break}case 2:{r="bg-neutral-700";break}case 0:{r="bg-green-700";break}case 4:{r="bg-gray-400";break}default:r="bg-neutral-500"}const a=t==="Del"||t==="Ent"?"w-12":"w-9";return ie(oe`
     <button
@@ -57,7 +57,7 @@ Not all phonemes in the word are provided, rather the more complex phoneme is gi
 </br>
 <p>This application was developed using the <a href="https://fsharp.org" class="text-blue-600">F#</a> language using <a href="https://fable.io/Fable.Lit/" class="text-blue-600">Fable.Lit</a></p>
 </div>
-`);function ca(e){let s;const t=ps(e,zo);s=t==null?js():t;let r;const n=Pn(F(o=>o[0].length,s),{Compare:(o,a)=>wr(o,a)})|0;return r=Ke(ze(()=>lo(o=>{const a=o[0],i=n-a.length|0,l=Ds([C(c=>[c,new k(1)],a.split("")),oo(i+1,c=>[" ",new k(4)])]),u=C(c=>[c,jt(c,a.split(""),{Equals:(f,d)=>f===d,GetHashCode:f=>vs(f)})?new k(1):new k(0)],o[1].split(""));return so(ie(oe`
+`);function ca(e){let s;const t=ps(e,zo);s=t==null?js():t;let r;const n=Pn(F(o=>o[0].length,s),{Compare:(o,a)=>wr(o,a)})|0;return r=Ke(ze(()=>lo(o=>{const a=o[0],i=n-a.length|0,l=Ds([C(c=>[c,new k(0)],a.split("")),oo(i+1,c=>[" ",new k(4)])]),u=C(c=>[c,jt(c,a.split(""),{Equals:(f,d)=>f===d,GetHashCode:f=>vs(f)})?new k(0):new k(1)],o[1].split(""));return so(ie(oe`
         <div class="flex justify-left mb-1">
         ${C(c=>ar(c[0],c[1]),l)}
         ${C(c=>ar(c[0],c[1]),u)}
