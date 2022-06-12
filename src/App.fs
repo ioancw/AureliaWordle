@@ -201,6 +201,7 @@ let saveGameStateLocalStorage (state: State) =
 
 let loadGameStateLocalStorage () =
     let localState = Browser.WebStorage.localStorage.getItem (gameStateKey)
+
     match localState with
     | null -> None
     | _ -> Some(localState |> JS.JSON.parse :?> LocalStorageGameState)
@@ -467,7 +468,7 @@ let littleBoxedChar (c, status) =
     html
         $"""
         <div class="border-solid border-transparent flex border-0 items-center rounded">
-            <button class="w-7 h-8 {colour} text-center leading-none text-2xl font-bold text-white border-0 {border}">{c}</button>
+            <button class="w-7 h-8 {colour} text-center leading-none text-2xl font-bold font-sans text-white border-0 {border}">{c}</button>
         </div>
     """
 
@@ -504,10 +505,11 @@ let modal customHead bodyText modalDisplayState handler =
         match modalDisplayState with
         | true -> ""
         | false -> "hidden"
+
     html
         $"""
         <!-- Modal -->
-        <div class="modal fade fixed w-full {hidden} items-center outline-none overflow-x-hidden overflow-y-auto" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade fixed font-sans w-full {hidden} items-center outline-none overflow-x-hidden overflow-y-auto" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered w-auto pointer-events-none">
                 <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-neutral-400 bg-clip-padding rounded-md outline-none text-current">
                     <div class="modal-header flex flex-shrink-0 items-center justify-between p-2 border-b border-stone-600 rounded-t-md">
@@ -555,12 +557,13 @@ let infoText =
         </div>
     """
 
-let helpText hint=
+let helpText hint =
     //go get the graphemes from the phonemes.
     let hintedGraphemes =
         match Map.tryFind hint phonemeGraphemeCorresspondances with
         | Some g -> g
         | None -> []
+
     let graphemes =
         let maxLenGrapheme =
             hintedGraphemes
@@ -568,29 +571,36 @@ let helpText hint=
             |> List.max
 
         [ for (grapheme, exampleWord) in hintedGraphemes do
-            let pad = maxLenGrapheme - (String.length grapheme)
-            let padded =
-                Seq.concat
-                    [grapheme |> Seq.map (fun g -> g, Green)
-                     Seq.init (pad + 1) (fun _ -> ' ', Invalid)]
-            let ls =
-                exampleWord
-                |> Seq.map (fun l ->
-                    l, if (Seq.contains l grapheme) then Green else Yellow)
-            html
-                $"""
+              let pad = maxLenGrapheme - (String.length grapheme)
+
+              let padded =
+                  Seq.concat [ grapheme |> Seq.map (fun g -> g, Green)
+                               Seq.init (pad + 1) (fun _ -> ' ', Invalid) ]
+
+              let ls =
+                  exampleWord
+                  |> Seq.map (fun l ->
+                      l,
+                      if (Seq.contains l grapheme) then
+                          Green
+                      else
+                          Yellow)
+
+              html
+                  $"""
                 <div class="flex justify-left mb-1">
                     {padded |> Seq.map littleBoxedChar}
                     {ls |> Seq.map littleBoxedChar}
                 </div>
-            """]
+            """ ]
 
     html
         $"""
         <div class="modal-body p-2 text-slate-800 text-center">
             <p>Graphemes corresponding to today's phoneme.
                 <div class="flex justify-center mb-1">
-                    {(hint |> Seq.map (fun l -> l, Grey)) |> Seq.map littleBoxedChar}
+                    {(hint |> Seq.map (fun l -> l, Grey))
+                     |> Seq.map littleBoxedChar}
                 </div>
             </p>
             </br>
@@ -640,9 +650,27 @@ let MatchComponent () =
                 Console.WriteLine("Info Clicked")
 
                 match modalTyoe with
-                | Info -> { state with ShowInfo = if state.ShowInfo = true then false else true }
-                | Stats -> { state with ShowStats = if state.ShowStats = true then false else true }
-                | Help -> {state with ShowHelp = if state.ShowHelp = true then false else true}
+                | Info ->
+                    { state with
+                        ShowInfo =
+                            if state.ShowInfo = true then
+                                false
+                            else
+                                true }
+                | Stats ->
+                    { state with
+                        ShowStats =
+                            if state.ShowStats = true then
+                                false
+                            else
+                                true }
+                | Help ->
+                    { state with
+                        ShowHelp =
+                            if state.ShowHelp = true then
+                                false
+                            else
+                                true }
                 |> setGameState)
 
         let keyboardKey = keyboardChar state.UsedLetters onKeyClick
@@ -679,7 +707,7 @@ let MatchComponent () =
                 {modal "Information" infoText state.ShowInfo (onModalClick Info)}
                 {modal "Grapheme Phoneme Correspondence" (helpText state.Hint) state.ShowHelp (onModalClick Help)}
 
-                <div class="flex justify-center font-mono text-white">
+                <div class="flex justify-center text-lg font-mono text-white">
                     {message}
                 </div>
                 <div>
