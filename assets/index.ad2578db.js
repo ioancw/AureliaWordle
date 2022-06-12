@@ -15,8 +15,8 @@ import{y as lr,n as ur}from"./vendor.299b0ab0.js";const cr=function(){const s=do
     >${t}</button>
     `)}function ir(e,s,t,r){return ie(oe`
     <!-- Modal -->
-    <div class="modal fade fixed ${t?"":"hidden"} outline-none overflow-x-hidden overflow-y-auto" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered relative w-auto pointer-events-none">
+    <div class="modal fade fixed w-full ${t?"":"hidden"} items-center outline-none overflow-x-hidden overflow-y-auto" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered w-auto pointer-events-none">
     <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-neutral-400 bg-clip-padding rounded-md outline-none text-current">
     <div class="modal-header flex flex-shrink-0 items-center justify-between p-2 border-b border-stone-600 rounded-t-md">
     <h5 class="text-xl font-medium leading-normal text-stone-800" id="exampleModalLabel">
