@@ -459,15 +459,15 @@ let littleBoxedChar (c, status) =
     let colour, border =
         match status with
         | Black -> "bg-stone-900", "border-neutral-500"
-        | Grey -> "bg-neutral-700", "border-neutral-700"
-        | Green -> "bg-blue-700", "border-blue-700"
-        | Yellow -> "bg-red-800", "border-red-800"
+        | Grey -> "bg-red-800", "border-red-800"
+        | Green -> "bg-green-700", "border-green-700"
+        | Yellow -> "bg-yellow-600", "border-yellow-600"
         | Invalid -> "bg-neutral-400", "border-neutral-400"
 
     html
         $"""
-        <div class="border-solid border-transparent flex border-2 items-center rounded">
-            <button class="w-8 h-8 {colour} text-center leading-none text-1xl font-bold text-white border-2 {border}">{c}</button>
+        <div class="border-solid border-transparent flex border-0 items-center rounded">
+            <button class="w-7 h-8 {colour} text-center leading-none text-2xl font-bold text-white border-0 {border}">{c}</button>
         </div>
     """
 
@@ -507,8 +507,8 @@ let modal customHead bodyText modalDisplayState handler =
     html
         $"""
         <!-- Modal -->
-        <div class="modal fade fixed {hidden} outline-none overflow-x-hidden overflow-y-auto" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered relative w-auto pointer-events-none">
+        <div class="modal fade fixed w-full {hidden} items-center outline-none overflow-x-hidden overflow-y-auto" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered w-auto pointer-events-none">
                 <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-neutral-400 bg-clip-padding rounded-md outline-none text-current">
                     <div class="modal-header flex flex-shrink-0 items-center justify-between p-2 border-b border-stone-600 rounded-t-md">
                         <h5 class="text-xl font-medium leading-normal text-stone-800" id="exampleModalLabel">
@@ -562,30 +562,6 @@ let helpText hint=
         | Some g -> g
         | None -> []
     let graphemes =
-        // [for (grapheme, exampleWord) in hintedGraphemes do
-        //     let split = Regex.Split(exampleWord, (sprintf "(%s)" grapheme)) |> List.ofArray
-        //     Console.WriteLine(split)
-        //     let parts =
-        //         [ for part in split do
-        //             let colour =
-        //                 if part = grapheme then
-        //                     "text-blue-700"
-        //                 else
-        //                     "text-red-800"
-        //             html
-        //                 $"""
-        //                 <span class="indent-0 whitespace-pre-line {colour} font-semibold">{part}</span>
-        //             """
-        //         ]
-        //     html
-        //         $"""
-        //         <li class="indent-0">
-        //             <span class="text-blue-700 font-bold">{grapheme}</span>
-        //             <span>as in {parts}</span>
-
-        //         </li>
-
-        //     """]
         let maxLenGrapheme =
             hintedGraphemes
             |> List.map (fun (g, w) -> String.length g)
@@ -595,12 +571,12 @@ let helpText hint=
             let pad = maxLenGrapheme - (String.length grapheme)
             let padded =
                 Seq.concat
-                    [grapheme |> Seq.map (fun g -> g, Yellow)
+                    [grapheme |> Seq.map (fun g -> g, Green)
                      Seq.init (pad + 1) (fun _ -> ' ', Invalid)]
             let ls =
                 exampleWord
                 |> Seq.map (fun l ->
-                    l, if (Seq.contains l grapheme) then Yellow else Green)
+                    l, if (Seq.contains l grapheme) then Green else Yellow)
             html
                 $"""
                 <div class="flex justify-left mb-1">
@@ -611,11 +587,11 @@ let helpText hint=
 
     html
         $"""
-        <div class="modal-body p-2 text-slate-800">
-            <p>Graphemes corresponding to today's phoneme
-                <span class="text-green-700 font-semibold">
-                    {hint}
-                </span>
+        <div class="modal-body p-2 text-slate-800 text-center">
+            <p>Graphemes corresponding to today's phoneme.
+                <div class="flex justify-center mb-1">
+                    {(hint |> Seq.map (fun l -> l, Grey)) |> Seq.map littleBoxedChar}
+                </div>
             </p>
             </br>
             <p>
