@@ -6,24 +6,24 @@ let wordles =
       "DRIED", "/ie/"
       "SPRAY", "/ai/"
       "HORSE", "/or/"
-      "ENJOY", "/oy/"
+      "ENJOY", "/oi/"
       "FIRST", "/er/"
       "THROW", "/oe/"
       "SHACK", "/sh/"
       "THIRD", "/er/"
-      "ANNOY", "/oy/"
+      "ANNOY", "/oi/"
       "SPEAK", "/ee/"
       "TRIED", "/ie/"
       "SPRAY", "/ai/"
-      "SPOIL", "/oy/"
+      "SPOIL", "/oi/"
       "DRIED", "/ie/"
       "HORSE", "/or/"
       "COUNT", "/ow/"
       "SLOPE", "/oe/"
       "FLESH", "/sh"
-      "VOICE", "/oy/"
+      "VOICE", "/oi/"
       "BEACH", "/ee/"
-      "NOISE", "/oy/"
+      "NOISE", "/oi/"
       "BROWN", "/ow/"
       "BRAIN", "/ai/"
       "LIGHT", "/ie/"
@@ -57,7 +57,7 @@ let wordles =
       "TOOTH", "/oo/ as in \u1d47oo\u2096"
       "TWIRL", "/er/"
       "FORTY", "/or/"
-      "VOICE", "/oy/"
+      "VOICE", "/oi/"
       //add more here as needed, try to even out the phonemes so they get a different one everyday
 
       ]
@@ -134,7 +134,7 @@ let phonemeGraphemeCorresspondances =
         "u", "pupil"
         "ue", "cue"
         "ew", "few" ]
-      "/oy/", [ "oy", "boy"; "oi", "coin" ]
+      "/oi/", [ "oy", "boy"; "oi", "coin" ]
       "/ar/",
       [ "ar", "jar"
         "al", "calm"

@@ -336,9 +336,9 @@ let getAnswerMask actual guess =
             count, Grey :: mask
 
     { Letters =
-        List.fold folder (Counter.createCounter letters, []) letters
+        Seq.fold folder (Counter.createCounter letters, []) letters
         |> snd
-        |> List.rev
+        |> Seq.rev
         |> Seq.zip guess
         |> Seq.toList
         |> List.map (fun (a, m) -> { Letter = Some(string a); Status = m }) }
@@ -468,7 +468,7 @@ let littleBoxedChar (c, status) =
     html
         $"""
         <div class="border-solid border-transparent flex border-0 items-center rounded">
-            <button class="w-7 h-8 {colour} text-center leading-none text-2xl font-bold font-sans text-white border-0 {border}">{c}</button>
+            <button class="w-6 h-8 {colour} text-center leading-none text-2xl font-bold font-sans text-white border-0 {border}">{c}</button>
         </div>
     """
 
@@ -508,7 +508,6 @@ let modal customHead bodyText modalDisplayState handler =
 
     html
         $"""
-        <!-- Modal -->
         <div class="modal fade fixed font-sans w-full {hidden} items-center outline-none overflow-x-hidden overflow-y-auto" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered w-auto pointer-events-none">
                 <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-neutral-400 bg-clip-padding rounded-md outline-none text-current">
@@ -546,10 +545,10 @@ let infoText =
             </br>
             <p>For each wordle, a phonic hint is given as a phoneme (i.e. the sound).</p>
             </br>
-            <p>For example, if the word to be guessed is <span class="text-green-700 font-bold">SHACK</span>, then the phoneme hint given is <span class="text-green-700 font-bold">/sh/</span>.
+            <p>For example, if the word to be guessed is <span class="text-green-700 font-bold">SHACK</span>, then the phoneme hint given is <span class="text-red-800 font-bold">/sh/</span>.
             Not all phonemes in the word are provided, rather the more complex phoneme is given in the hint.</p>
             </br>
-            <p>Children can their use their grapheme, phoneme correspondence knowledge in order to determine the appropriate grapheme (spelling) for the phoneme in question.</p>
+            <p>Children can use their grapheme-phoneme correspondence knowledge in order to determine the appropriate grapheme (spelling) for the phoneme in question.</p>
             </br>
             <p>GPC examples for the phoneme hint can be seen by clicking the ? button.</p>
             </br>
@@ -581,7 +580,7 @@ let helpText hint =
                   exampleWord
                   |> Seq.map (fun l ->
                       l,
-                      if (Seq.contains l grapheme) then
+                      if (Seq.contains l grapheme) then //need to improve this
                           Green
                       else
                           Yellow)
@@ -599,17 +598,11 @@ let helpText hint =
         <div class="modal-body p-2 text-slate-800 text-center">
             <p>Graphemes corresponding to today's phoneme.
                 <div class="flex justify-center mb-1">
-                    {(hint |> Seq.map (fun l -> l, Grey))
-                     |> Seq.map littleBoxedChar}
+                    {hint |> Seq.map (fun l -> (l, Grey) |> littleBoxedChar)}
                 </div>
             </p>
             </br>
-            <p>
-                <ul class="list-inside" >
-                    {graphemes}
-                </ul>
-            </p>
-
+            <p>{graphemes}</p>
         </div>
     """
 
@@ -704,7 +697,7 @@ let MatchComponent () =
                     <hr></hr>
                 </div>
 
-                {modal "Information" infoText state.ShowInfo (onModalClick Info)}
+                {modal "About" infoText state.ShowInfo (onModalClick Info)}
                 {modal "Grapheme Phoneme Correspondence" (helpText state.Hint) state.ShowHelp (onModalClick Help)}
 
                 <div class="flex justify-center text-lg font-mono text-white">
