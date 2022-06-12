@@ -4,7 +4,7 @@ import{y as lr,n as ur}from"./vendor.299b0ab0.js";const cr=function(){const s=do
     <div class="border-solid border-transparent flex border-2 items-center rounded">
     <button class="w-14 h-14 ${t[0]} text-center leading-none text-3xl font-bold text-white border-2 ${t[1]}">${e}</button>
     </div>
-    `)}function Us(e,s){const t=s.tag===2?["bg-blue-700","border-blue-700"]:s.tag===0?["bg-green-700","border-green-700"]:s.tag===1?["bg-yellow-600","border-yellow-600"]:s.tag===4?["bg-neutral-400","border-neutral-400"]:["bg-stone-900","border-neutral-500"];return ie(oe`
+    `)}function Us(e,s){const t=s.tag===2?["bg-red-800","border-red-800"]:s.tag===0?["bg-green-700","border-green-700"]:s.tag===1?["bg-yellow-600","border-yellow-600"]:s.tag===4?["bg-neutral-400","border-neutral-400"]:["bg-stone-900","border-neutral-500"];return ie(oe`
     <div class="border-solid border-transparent flex border-0 items-center rounded">
     <button class="w-7 h-8 ${t[0]} text-center leading-none text-2xl font-bold text-white border-0 ${t[1]}">${e}</button>
     </div>
