@@ -508,18 +508,18 @@ let modal customHead bodyText modalDisplayState handler =
 
     html
         $"""
-        <div class="modal fade fixed font-sans w-full {hidden} items-center outline-none overflow-x-hidden overflow-y-auto" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered w-auto pointer-events-none">
+        <div class="modal fade fixed inset-0 flex justify-center {hidden} outline-none overflow-x-hidden overflow-y-auto" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog pointer-events-none">
                 <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-neutral-400 bg-clip-padding rounded-md outline-none text-current">
                     <div class="modal-header flex flex-shrink-0 items-center justify-between p-2 border-b border-stone-600 rounded-t-md">
-                        <h5 class="text-xl font-medium leading-normal text-stone-800" id="exampleModalLabel">
+                        <h5 class="text-lg text-left font-medium leading-normal text-stone-800" id="exampleModalLabel">
                             {customHead}
                         </h5>
                         <button type="button" @click={handler} class="px-2
-                            py-2
+                            py-1
                             bg-stone-800
                             text-white
-                            font-medium
+                            font-bold
                             text-xs
                             leading-tight
                             uppercase
@@ -580,10 +580,9 @@ let helpText hint =
                   exampleWord
                   |> Seq.map (fun l ->
                       l,
-                      if (Seq.contains l grapheme) then //need to improve this
-                          Green
-                      else
-                          Yellow)
+                      if (Seq.contains l grapheme)
+                      then Green
+                      else Yellow)
 
               html
                   $"""
@@ -646,24 +645,21 @@ let MatchComponent () =
                 | Info ->
                     { state with
                         ShowInfo =
-                            if state.ShowInfo = true then
-                                false
-                            else
-                                true }
+                            if state.ShowInfo = true
+                            then false
+                            else true }
                 | Stats ->
                     { state with
                         ShowStats =
-                            if state.ShowStats = true then
-                                false
-                            else
-                                true }
+                            if state.ShowStats = true
+                            then false
+                            else true }
                 | Help ->
                     { state with
                         ShowHelp =
-                            if state.ShowHelp = true then
-                                false
-                            else
-                                true }
+                            if state.ShowHelp = true
+                            then false
+                            else true }
                 |> setGameState)
 
         let keyboardKey = keyboardChar state.UsedLetters onKeyClick
