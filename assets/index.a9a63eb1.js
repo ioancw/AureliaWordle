@@ -14,18 +14,18 @@ import{y as lr,n as ur}from"./vendor.299b0ab0.js";const cr=function(){const s=do
     class="flex items-center justify-center rounded mx-0.5 ${a} h-14 ${r} uppercase text-white"
     >${t}</button>
     `)}function ir(e,s,t,r){return ae(ne`
-    <div class="modal fade fixed font-sans w-full ${t?"":"hidden"} items-center outline-none overflow-x-hidden overflow-y-auto" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered w-auto pointer-events-none">
+    <div class="modal fade fixed inset-0 flex justify-center ${t?"":"hidden"} outline-none overflow-x-hidden overflow-y-auto" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog pointer-events-none">
     <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-neutral-400 bg-clip-padding rounded-md outline-none text-current">
     <div class="modal-header flex flex-shrink-0 items-center justify-between p-2 border-b border-stone-600 rounded-t-md">
-    <h5 class="text-xl font-medium leading-normal text-stone-800" id="exampleModalLabel">
+    <h5 class="text-lg text-left font-medium leading-normal text-stone-800" id="exampleModalLabel">
     ${e}
     </h5>
     <button type="button" @click=${r} class="px-2
-    py-2
+    py-1
     bg-stone-800
     text-white
-    font-medium
+    font-bold
     text-xs
     leading-tight
     uppercase
