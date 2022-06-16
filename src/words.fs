@@ -123,7 +123,7 @@ let phonemeGraphemeCorresspondances =
         "ou", "soul"
         "ough", "though"
         "ew", "sew" ]
-      "/ie",
+      "/ie/",
       [ "i-e", "like"
         "i", "wild"
         "ie", "pie"
