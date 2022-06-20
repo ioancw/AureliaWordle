@@ -37,6 +37,8 @@ module Phoneme =
     [<Literal>]
     let ow = "/ow/"
 
+    [<Literal>]
+    let e = "/e/"
 
 
 // Curated list of words, these words should exist in the larger set.
@@ -68,7 +70,7 @@ let wordles =
       "LIGHT", Phoneme.ie
       "CHIRP", Phoneme.er
       "CRAWL", Phoneme.``or``
-      "GROWL", "/ow/"
+      "GROWL", Phoneme.ow
       "THREW", "/ue/"
       "TODAY", "/ai/"
       "ARGUE", "/ue/"
@@ -102,7 +104,7 @@ let wordles =
       ]
 
 let phonemeGraphemeCorresspondances =
-    [ "/e/",
+    [ Phoneme.e,
       [ "e", "bed"
         "ea", "bread"
         "ai", "said"
@@ -140,8 +142,6 @@ let phonemeGraphemeCorresspondances =
         "ey", "key"
         "y", "funny"
         "e-e", "eve"
-        //"ei", "receive" //need to chance the highlight code for these to work.
-        //"i", "?"
         ]
       Phoneme.ai,
       [ "a-e", "game"
