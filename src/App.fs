@@ -5,7 +5,6 @@ open Lit
 open Wordles
 open Fable.Import
 open Fable.Core
-open System.Text.RegularExpressions
 
 JsInterop.importSideEffects "./index.css"
 
@@ -94,7 +93,7 @@ let emptyGuesses =
     List.init rounds (fun _ -> emptyGuess)
 
 let allValidLetters n (guesses: (Position * Guess) list) =
-    let (_, guess) = List.item n guesses
+    let _, guess = List.item n guesses
 
     let fiveLetterWords =
         words
@@ -200,7 +199,7 @@ let saveGameStateLocalStorage (state: State) =
     )
 
 let loadGameStateLocalStorage () =
-    let localState = Browser.WebStorage.localStorage.getItem (gameStateKey)
+    let localState = Browser.WebStorage.localStorage.getItem gameStateKey
 
     match localState with
     | null -> None
@@ -208,7 +207,8 @@ let loadGameStateLocalStorage () =
 
 // fold over each letter in the guess to determine keyboard colours
 let getUsedLetters letterGuesses (state: Map<string, Status>) =
-    List.fold
+    (state, letterGuesses)
+    ||> List.fold
         (fun (state: Map<string, Status>) gl ->
             let l = Letter.letterToString gl
             let s = gl.Status
@@ -219,8 +219,7 @@ let getUsedLetters letterGuesses (state: Map<string, Status>) =
                 state.Add(l, s)
             else
                 state)
-        state
-        letterGuesses
+
 
 let startNewGame =
     Console.WriteLine("Starting a new game")
@@ -426,7 +425,7 @@ let submitEnter state =
                     else
                         state.WinDistribution }
         else
-            let (position, letters) = state.Guesses |> List.item state.Round
+            let position, letters = state.Guesses |> List.item state.Round
 
             let updated =
                 { letters with
@@ -566,10 +565,10 @@ let helpText hint =
     let graphemes =
         let maxLenGrapheme =
             hintedGraphemes
-            |> List.map (fun (g, w) -> String.length g)
+            |> List.map (fun (g, _) -> String.length g)
             |> List.max
 
-        [ for (grapheme, exampleWord) in hintedGraphemes do
+        [ for grapheme, exampleWord in hintedGraphemes do
               let pad = maxLenGrapheme - (String.length grapheme)
 
               let padded =
@@ -580,9 +579,10 @@ let helpText hint =
                   exampleWord
                   |> Seq.map (fun l ->
                       l,
-                      if (Seq.contains l grapheme)
-                      then Green
-                      else Yellow)
+                      if (Seq.contains l grapheme) then
+                          Green
+                      else
+                          Yellow)
 
               html
                   $"""
@@ -597,7 +597,8 @@ let helpText hint =
         <div class="modal-body p-2 text-slate-800 text-center">
             <p>Graphemes corresponding to today's phoneme.
                 <div class="flex justify-center mb-1">
-                    {hint |> Seq.map (fun l -> (l, Grey) |> littleBoxedChar)}
+                    {hint
+                     |> Seq.map (fun l -> (l, Grey) |> littleBoxedChar)}
                 </div>
             </p>
             </br>
@@ -612,7 +613,7 @@ let MatchComponent () =
     let gameState, setGameState = Hook.useState startedGame
 
     let writeState state =
-        saveGameStateLocalStorage state |> ignore
+        saveGameStateLocalStorage state
 
         let letterToDisplayBox =
             let getLetter (_, word) =
@@ -636,41 +637,26 @@ let MatchComponent () =
 
                 state |> submitEntry |> setGameState)
 
-        let onModalClick modalTyoe =
+        let onModalClick modalType =
             Ev (fun ev ->
                 ev.preventDefault ()
                 Console.WriteLine("Info Clicked")
 
-                match modalTyoe with
-                | Info ->
-                    { state with
-                        ShowInfo =
-                            if state.ShowInfo = true
-                            then false
-                            else true }
-                | Stats ->
-                    { state with
-                        ShowStats =
-                            if state.ShowStats = true
-                            then false
-                            else true }
-                | Help ->
-                    { state with
-                        ShowHelp =
-                            if state.ShowHelp = true
-                            then false
-                            else true }
+                match modalType with
+                | Info -> { state with ShowInfo = state.ShowInfo <> true }
+                | Stats -> { state with ShowStats = state.ShowStats <> true }
+                | Help -> { state with ShowHelp = state.ShowHelp <> true }
                 |> setGameState)
 
         let keyboardKey = keyboardChar state.UsedLetters onKeyClick
-        let stats = sprintf "Won: %d, Lost: %d" state.GamesWon state.GamesLost
+        let stats = $"Won: %d{state.GamesWon}, Lost: %d{state.GamesLost}"
 
         let message =
             match state.State with
             | NotStarted
-            | Started -> sprintf "Today's phonic hint is: %s" state.Hint
-            | Won -> sprintf "Congratulations! %s" stats
-            | Lost -> sprintf "It was %s. %s" state.Wordle stats
+            | Started -> $"Today's phonic hint is: %s{state.Hint}"
+            | Won -> $"Congratulations! %s{stats}"
+            | Lost -> $"It was %s{state.Wordle}. %s{stats}"
         // <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" viewBox="0 0 20 20" fill="currentColor"  >
         //     <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
         // </svg>

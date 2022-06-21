@@ -1,6 +1,7 @@
 ﻿module Wordles
 
 module Phoneme =
+    // vowels
     [<Literal>]
     let ``z-oo-m`` = "/z-oo-m/"
 
@@ -26,9 +27,6 @@ module Phoneme =
     let oe = "/oe/"
 
     [<Literal>]
-    let sh = "/sh/"
-
-    [<Literal>]
     let ar = "/ar/"
 
     [<Literal>]
@@ -39,6 +37,44 @@ module Phoneme =
 
     [<Literal>]
     let e = "/e/"
+
+    [<Literal>]
+    let a = "/a/"
+
+    [<Literal>]
+    let o = "/o/"
+
+    [<Literal>]
+    let ue = "/ue/"
+
+    [<Literal>]
+    let i = "/i/"
+
+    [<Literal>]
+    let u = "/u/"
+
+    [<Literal>]
+    let air = "/air/"
+
+    [<Literal>]
+    let ear = "/ear/"
+
+    // consonants
+    [<Literal>]
+    let sh = "/sh/"
+
+    [<Literal>]
+    let j = "/j"
+
+    [<Literal>]
+    let ch = "/ch/"
+
+    [<Literal>]
+    let g = "/g/"
+
+    [<Literal>]
+    let s = "/s/"
+
 
 
 // Curated list of words, these words should exist in the larger set.
@@ -71,34 +107,59 @@ let wordles =
       "CHIRP", Phoneme.er
       "CRAWL", Phoneme.``or``
       "GROWL", Phoneme.ow
-      "THREW", "/ue/"
-      "TODAY", "/ai/"
-      "ARGUE", "/ue/"
+      "THREW", Phoneme.ue
+      "TODAY", Phoneme.ai
+      "ARGUE", Phoneme.ue
       "COULD", Phoneme.``b-oo-k``
-      "STRAY", "/ai/"
-      "MIGHT", "/ie/"
-      "BLUSH", "/sh/"
-      "RIVER", "/er/"
-      "POINT", "/oi/"
-      "SNAKE", "/ai/"
-      "STEEP", "/ee/"
-      "PRIZE", "/ie/"
-      "TEACH", "/ee/"
-      "GRAPE", "/ai/"
-      "RIGHT", "/ie/"
-      "PLANE", "/ai/"
-      "DAIRY", "/air/"
-      "CURED", "/ure/"
-      "VALUE", "/ue/"
-      "FAULT", "/or/"
-      "FLIRT", "/er/"
-      "DRIVE", "/ie/"
-      "SMOKE", "/oe/"
-      "THERE", "/ere/"
+      "STRAY", Phoneme.ai
+      "MIGHT", Phoneme.ie
+      "BLUSH", Phoneme.sh
+      "RIVER", Phoneme.er
+      "POINT", Phoneme.oi
+      "SNAKE", Phoneme.ai
+      "STEEP", Phoneme.ee
+      "PRIZE", Phoneme.ie
+      "TEACH", Phoneme.ee
+      "GRAPE", Phoneme.ai
+      "RIGHT", Phoneme.ie
+      "PLANE", Phoneme.ai
+      "DAIRY", Phoneme.air
+      "CURED", Phoneme.ue
+      "VALUE", Phoneme.ue
+      "FAULT", Phoneme.``or``
+      "DRIVE", Phoneme.ie
+      "SMOKE", Phoneme.oe
+      "THERE", Phoneme.air
       "TOOTH", Phoneme.``b-oo-k``
       "TWIRL", Phoneme.er
       "FORTY", Phoneme.``or``
       "VOICE", Phoneme.oi
+      "THEIR", Phoneme.air
+      "GREEN", Phoneme.ee
+      "FOUND", Phoneme.ow
+      "WHERE", Phoneme.air
+      "ABOUT", Phoneme.ow
+      "EVERY", Phoneme.ee
+      "MOUSE", Phoneme.ow
+      "WATER", Phoneme.``or``
+      "ROUND", Phoneme.ow
+      "PLANT", Phoneme.ar
+      "GREAT", Phoneme.ai
+      "SMALL", Phoneme.``or``
+      "GOING", Phoneme.oe
+      "QUEEN", Phoneme.ee
+      "LARGE", Phoneme.j
+      "PLACE", Phoneme.ai
+      "AGAIN", Phoneme.e
+      "RIGHT", Phoneme.ie
+      "WOULD", Phoneme.``b-oo-k``
+      "DRIED", Phoneme.ie
+      "SPRAY", Phoneme.ai
+      "HORSE", Phoneme.``or``
+      "JUDGE", Phoneme.j
+      "MATCH", Phoneme.ch
+      "GHOST", Phoneme.g
+
       //add more here as needed, try to even out the phonemes so they get a different one everyday
 
       ]
@@ -124,13 +185,13 @@ let phonemeGraphemeCorresspondances =
         "ir", "girl"
         "or", "world"
         "ear", "learn" ]
-      "/a/", [ "a", "cat" ]
-      "/o/",
+      Phoneme.a, [ "a", "cat" ]
+      Phoneme.o,
       [ "o", "not"
         "a", "was"
         "ou", "cough" ]
-      "/i/", [ "i", "in"; "y", "myth" ]
-      "/u/",
+      Phoneme.i, [ "i", "in"; "y", "myth" ]
+      Phoneme.u,
       [ "u", "tub"
         "ou", "touch"
         "o", "Monday" ]
@@ -141,8 +202,7 @@ let phonemeGraphemeCorresspondances =
         "ie", "chief"
         "ey", "key"
         "y", "funny"
-        "e-e", "eve"
-        ]
+        "e-e", "eve" ]
       Phoneme.ai,
       [ "a-e", "game"
         "a", "table"
@@ -168,12 +228,12 @@ let phonemeGraphemeCorresspondances =
         "ie", "pie"
         "y", "dry"
         "igh", "night" ]
-      "/ue/",
+      Phoneme.ue,
       [ "u-e", "tune"
         "u", "pupil"
         "ue", "cue"
         "ew", "few" ]
-      "/oi/", [ "oy", "boy"; "oi", "coin" ]
+      Phoneme.oi, [ "oy", "boy"; "oi", "coin" ]
       Phoneme.ar,
       [ "ar", "jar"
         "al", "calm"
@@ -192,11 +252,31 @@ let phonemeGraphemeCorresspondances =
       Phoneme.ow,
       [ "ow", "cow"
         "ou", "out"
-        "ough", "drought"]
+        "ough", "drought" ]
+      //consonants
       Phoneme.sh,
       [ "sh", "shop"
         "ch", "machine"
-        "s", "sugar" ] ]
+        "s", "sugar" ]
+      Phoneme.ch, [ "ch", "chip"; "tch", "match" ]
+      Phoneme.j,
+      [ "j", "jet"
+        "g", "gentle"
+        "ge", "large"
+        "dge", "judge" ]
+      Phoneme.g,
+      [ "g", "got"
+        "gg", "juggle"
+        "gh", "ghost" ]
+      Phoneme.s,
+      [ "s", "sip"
+        "ss", "grass"
+        "se", "house"
+        "c", "cent"
+        "ce", "voice"
+        "st", "castle"]
+
+      ]
     |> Map.ofList
 
 // These are the acceptable five letter words that you can type into the guess boxes.
