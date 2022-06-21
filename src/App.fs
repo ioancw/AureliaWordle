@@ -81,10 +81,9 @@ let letters = 5
 let validLetterPosition n = n >= 0 && n < letters
 
 let validRound state =
-    if state.State = Lost || state.State = Won then
-        false
-    else
-        (state.Round >= 0 && state.Round < rounds)
+    if state.State = Lost || state.State = Won
+    then false
+    else (state.Round >= 0 && state.Round < rounds)
 
 let emptyGuesses =
     let emptyGuess =
@@ -213,12 +212,9 @@ let getUsedLetters letterGuesses (state: Map<string, Status>) =
             let l = Letter.letterToString gl
             let s = gl.Status
 
-            if s = Green
-               || (s = Grey && not <| state.ContainsKey l)
-               || (s = Yellow && not <| state.ContainsKey l) then
-                state.Add(l, s)
-            else
-                state)
+            if s = Green || (s = Grey && not <| state.ContainsKey l) || (s = Yellow && not <| state.ContainsKey l)
+            then state.Add(l, s)
+            else state)
 
 
 let startNewGame =
@@ -249,10 +245,9 @@ let startNewGame =
                     |> Array.toList
                     |> List.map (fun (guessLetter, guessStatus) ->
                         let letterOption =
-                            if guessLetter = "" then
-                                None
-                            else
-                                Some guessLetter
+                            if guessLetter = ""
+                            then None
+                            else Some guessLetter
 
                         { Letter = letterOption
                           Status = StateHelpers.statusFromString guessStatus }) })
@@ -285,10 +280,9 @@ let startNewGame =
                 State = NotStarted
                 UsedLetters = Map.empty }
 
-        if fst todaysWordle <> stored.Solution then
-            newGameWithStats
-        else
-            loadedGame
+        if fst todaysWordle <> stored.Solution
+        then newGameWithStats
+        else loadedGame
     | _ ->
         //the case where we haven't played before and there is no local storage
         { Wordle = fst todaysWordle
@@ -328,8 +322,7 @@ let getAnswerMask actual guess =
     let folder ((count, mask): Map<'a, int> * Status list) (a, g) =
         if a = g then
             count, Green :: mask
-        elif Seq.contains g actual
-             && Counter.countOf count g > 0 then
+        elif Seq.contains g actual && Counter.countOf count g > 0 then
             Counter.updateCount count g, Yellow :: mask
         else
             count, Grey :: mask
@@ -405,20 +398,11 @@ let submitEnter state =
                 UsedLetters = updatedUsedLetters
                 State = updatedState
                 Round =
-                    if updatedState = Won || updatedState = Lost then
-                        state.Round
-                    else
-                        state.Round + 1
-                GamesWon =
-                    if updatedState = Won then
-                        state.GamesWon + 1
-                    else
-                        state.GamesWon
-                GamesLost =
-                    if updatedState = Lost then
-                        state.GamesLost + 1
-                    else
-                        state.GamesLost
+                    if updatedState = Won || updatedState = Lost
+                    then state.Round
+                    else state.Round + 1
+                GamesWon = if updatedState = Won then state.GamesWon + 1 else state.GamesWon
+                GamesLost = if updatedState = Lost then state.GamesLost + 1 else state.GamesLost
                 WinDistribution =
                     if updatedState = Won then
                         listSet state.WinDistribution (winDistribution + 1) state.Round
@@ -575,20 +559,19 @@ let helpText hint =
                   Seq.concat [ grapheme |> Seq.map (fun g -> g, Green)
                                Seq.init (pad + 1) (fun _ -> ' ', Invalid) ]
 
-              let ls =
+              let letters =
                   exampleWord
                   |> Seq.map (fun l ->
                       l,
-                      if (Seq.contains l grapheme) then
-                          Green
-                      else
-                          Yellow)
+                      if (Seq.contains l grapheme)
+                      then Green
+                      else Yellow)
 
               html
                   $"""
                 <div class="flex justify-left mb-1">
                     {padded |> Seq.map littleBoxedChar}
-                    {ls |> Seq.map littleBoxedChar}
+                    {letters |> Seq.map littleBoxedChar}
                 </div>
             """ ]
 
