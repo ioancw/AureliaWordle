@@ -216,7 +216,6 @@ let getUsedLetters letterGuesses (state: Map<string, Status>) =
             then state.Add(l, s)
             else state)
 
-
 let startNewGame =
     Console.WriteLine("Starting a new game")
     let loadedStorage = loadGameStateLocalStorage ()
@@ -301,10 +300,10 @@ let startNewGame =
 module Counter =
     let createCounter items =
         items
-        |> List.filter (fun (a, g) -> a <> g)
-        |> List.map fst
-        |> List.countBy id
-        |> Map.ofList
+        |> Seq.filter (fun (a, g) -> a <> g)
+        |> Seq.map fst
+        |> Seq.countBy id
+        |> Map.ofSeq
 
     let countOf counter item =
         match Map.tryFind item counter with
@@ -316,22 +315,34 @@ module Counter =
         | Some c -> Map.add item (c - 1) counter
         | None -> counter
 
-let getAnswerMask actual guess =
-    let letters = Seq.zip actual guess |> Seq.toList
+let getAnswerMask actualWord guessWord =
+    let letters = Seq.zip actualWord guessWord
 
-    let folder ((count, mask): Map<'a, int> * Status list) (a, g) =
-        if a = g then
+    let folder ((count, mask): Map<'a, int> * Status list) (actualLetter, guessLetter) =
+        if actualLetter = guessLetter then
             count, Green :: mask
-        elif Seq.contains g actual && Counter.countOf count g > 0 then
-            Counter.updateCount count g, Yellow :: mask
+        elif Seq.contains guessLetter actualWord && Counter.countOf count guessLetter > 0 then
+            Counter.updateCount count guessLetter, Yellow :: mask
         else
             count, Grey :: mask
 
+    letters
+    |> Seq.fold folder (Counter.createCounter letters, [])
+    |> snd
+    |> Seq.rev
+    // { Letters =
+    //     letters
+    //     |> Seq.fold folder (Counter.createCounter letters, [])
+    //     |> snd
+    //     |> Seq.rev
+    //     |> Seq.zip guessWord
+    //     |> Seq.toList
+    //     |> List.map (fun (a, m) -> { Letter = Some(string a); Status = m }) }
+
+let applyAnswerMaskToGuess actualWord guessWord =
     { Letters =
-        Seq.fold folder (Counter.createCounter letters, []) letters
-        |> snd
-        |> Seq.rev
-        |> Seq.zip guess
+        getAnswerMask actualWord guessWord
+        |> Seq.zip guessWord
         |> Seq.toList
         |> List.map (fun (a, m) -> { Letter = Some(string a); Status = m }) }
 
@@ -370,7 +381,7 @@ let submitDelete state =
 let submitEnter state =
     let updateRoundStatus ((position, guess): Position * Guess) =
         let guessWord = guess.AsWord()
-        let guessMask = guessWord |> getAnswerMask state.Wordle
+        let guessMask = guessWord |> applyAnswerMaskToGuess state.Wordle
 
         let updatedUsedLetters = getUsedLetters guessMask.Letters state.UsedLetters
 
