@@ -64,6 +64,6 @@ type TestType () =
 
     [<Theory>]
     [<MemberData("TestProperty")>]
-    member t.TestMethod (actual: string) (guess: string) (expectedMask: Status list) =
-        let actual = getAnswerMask actual guess
+    member t.TestMethod (wordle: string) (guess: string) (expectedMask: Status list) =
+        let actual = getAnswerMask wordle guess
         Assert.Equal(expectedMask, actual)
