@@ -10,7 +10,11 @@ module Letter =
     let unpack guessLetter =
         toString guessLetter |> toUpper, guessLetter.Status
 
-    let toOption letter = if letter = "" then None else Some letter
+    let toOption letter =
+        if letter = "" then
+            None
+        else
+            Some letter
 
 module Guess =
     let guessToWord guess =
@@ -18,8 +22,7 @@ module Guess =
         |> List.map (Letter.toString >> Letter.toUpper)
         |> Seq.fold (+) ""
 
-    let getLetter (_, guess) =
-        guess.Letters |> List.map Letter.unpack
+    let getLetter (_, guess) = guess.Letters |> List.map Letter.unpack
 
 module List =
     let set list value pos =
@@ -43,3 +46,36 @@ module Counter =
         match Map.tryFind item counter with
         | Some c -> Map.add item (c - 1) counter
         | None -> counter
+
+let keyBoard =
+    { Top =
+        [ "q"
+          "w"
+          "e"
+          "r"
+          "t"
+          "y"
+          "u"
+          "i"
+          "o"
+          "p" ]
+      Middle =
+        [ "a"
+          "s"
+          "d"
+          "f"
+          "g"
+          "h"
+          "j"
+          "k"
+          "l" ]
+      Bottom =
+        [ "Ent"
+          "z"
+          "x"
+          "c"
+          "v"
+          "b"
+          "n"
+          "m"
+          "Del" ] }

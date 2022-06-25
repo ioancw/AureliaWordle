@@ -93,7 +93,7 @@ let ``Keyboard status when letters have been used`` ()=
         ]
         |> Map.ofList
 
-    getUsedLetters guesses keyboardStatus |> should equal expectedKeyboardStatus
+    updateKeyboardState guesses keyboardStatus |> should equal expectedKeyboardStatus
 
 [<Fact>]
 let ``Keyboard status new Yellow status `` ()=
@@ -128,7 +128,7 @@ let ``Keyboard status new Yellow status `` ()=
         ]
         |> Map.ofList
 
-    getUsedLetters guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
+    updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
 
 [<Fact>]
 let ``Keyboard status old Yellow is now Green `` ()=
@@ -167,7 +167,7 @@ let ``Keyboard status old Yellow is now Green `` ()=
         ]
         |> Map.ofList
 
-    getUsedLetters guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
+    updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
 
 [<Fact>]
 let ``Keyboard status old Green is still Green when mask letter is Yellow `` ()=
@@ -206,7 +206,7 @@ let ``Keyboard status old Green is still Green when mask letter is Yellow `` ()=
         ]
         |> Map.ofList
 
-    getUsedLetters guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
+    updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
 
 [<Fact>]
 let ``Keyboard status existing greens in same position `` ()=
@@ -245,7 +245,7 @@ let ``Keyboard status existing greens in same position `` ()=
         ]
         |> Map.ofList
 
-    getUsedLetters guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
+    updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
 
 [<Fact>]
 let ``Keyboard status existing greens new yellows`` ()=
@@ -287,7 +287,7 @@ let ``Keyboard status existing greens new yellows`` ()=
         ]
         |> Map.ofList
 
-    getUsedLetters guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
+    updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
 
 [<Fact>]
 let ``All yellows go green`` ()=
@@ -332,4 +332,4 @@ let ``All yellows go green`` ()=
         ]
         |> Map.ofList
 
-    getUsedLetters guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
+    updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
