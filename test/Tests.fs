@@ -8,7 +8,7 @@ open Lit.Wordle
 
 [<Fact>]
 let ``Test masker`` () =
-    let actual = applyAnswerMaskToGuess "FAVOR" "AROSE"
+    let actual = scoreTheGuessedWord "FAVOR" "AROSE"
     let expected =
         { Letters =
             [
@@ -23,7 +23,7 @@ let ``Test masker`` () =
 
 [<Fact>]
 let ``Test masker double letter no green`` () =
-    let actual = applyAnswerMaskToGuess "AROSE" "SPEED"
+    let actual = scoreTheGuessedWord "AROSE" "SPEED"
     let expected =
         { Letters =
             [
@@ -38,7 +38,7 @@ let ``Test masker double letter no green`` () =
 
 [<Fact>]
 let ``Test masker double letter with one green`` () =
-    let actual = applyAnswerMaskToGuess "TREAT" "SPEED"
+    let actual = scoreTheGuessedWord "TREAT" "SPEED"
     let expected =
         { Letters =
             [
