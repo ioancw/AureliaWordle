@@ -42,19 +42,19 @@ type Guess =
     { Letters: GuessLetter list }
 
 module Letter =
-    let letterToString guessLetter = defaultArg guessLetter.Letter ""
+    let toString guessLetter = defaultArg guessLetter.Letter ""
 
     let toUpper (letter: string) = letter.ToUpper()
 
-    let unpackLetter guessLetter =
-        letterToString guessLetter |> toUpper, guessLetter.Status
+    let unpack guessLetter =
+        toString guessLetter |> toUpper, guessLetter.Status
 
-    let letterToOption letter = if letter = "" then None else Some letter
+    let toOption letter = if letter = "" then None else Some letter
 
 module Guess =
     let guessToWord guess =
         guess.Letters
-        |> List.map (Letter.letterToString >> Letter.toUpper)
+        |> List.map (Letter.toString >> Letter.toUpper)
         |> Seq.fold (+) ""
 
 type Position = int
@@ -183,7 +183,7 @@ let saveGameStateLocalStorage (state: State) =
         |> List.map (fun (position, guess) ->
             position,
             guess.Letters
-            |> List.map (fun gl -> Letter.letterToString gl, StateHelpers.statusToString gl.Status)
+            |> List.map (fun gl -> Letter.toString gl, StateHelpers.statusToString gl.Status)
             |> List.toArray)
         |> List.toArray
 
@@ -212,7 +212,7 @@ let getUsedLetters letterGuesses (state: Map<string, Status>) =
     (state, letterGuesses)
     ||> List.fold
         (fun (state: Map<string, Status>) gl ->
-            let l = Letter.letterToString gl
+            let l = Letter.toString gl
             let s = gl.Status
 
             if s = Green || (s = Grey && not <| state.ContainsKey l) || (s = Yellow && not <| state.ContainsKey l)
@@ -246,7 +246,7 @@ let startNewGame =
                     letters
                     |> Array.toList
                     |> List.map (fun (guessLetter, guessStatus) ->
-                        { Letter = Letter.letterToOption guessLetter
+                        { Letter = Letter.toOption guessLetter
                           Status = StateHelpers.statusFromString guessStatus }) })
             |> Array.toList
 
@@ -329,7 +329,7 @@ let getAnswerMask actualWord guessWord =
     |> snd
     |> Seq.rev
 
-let applyAnswerMaskToGuess actualWord guessWord =
+let scoreTheGuessedWord actualWord guessWord =
     { Letters =
         getAnswerMask actualWord guessWord
         |> Seq.zip guessWord
@@ -374,11 +374,11 @@ let submitDelete state =
 let submitEnter state =
     let submitGuess ((position, guess): Position * Guess) =
         let guessWord = Guess.guessToWord guess
-        let guessMask = guessWord |> applyAnswerMaskToGuess state.Wordle
+        let scoredGuess = guessWord |> scoreTheGuessedWord state.Wordle
 
-        let updatedUsedLetters = getUsedLetters guessMask.Letters state.UsedLetters
+        let updatedUsedLetters = getUsedLetters scoredGuess.Letters state.UsedLetters
 
-        let updatedGuess = (position, guessMask)
+        let updatedGuess = (position, scoredGuess)
 
         let updatedState =
             if guessWord = state.Wordle then
@@ -392,37 +392,39 @@ let submitEnter state =
 
     if validRound state then
         if allValidLetters state.Round state.Guesses then
-            let updatedGuess, updatedState, updatedUsedLetters =
+            let scoredGuess, updatedGameState, updatedUsedLetters =
                 submitGuess (List.item state.Round state.Guesses)
 
             let winDistribution = List.item state.Round state.WinDistribution
 
             // update the game state based on the results of submitting the guess
             { state with
-                Guesses = listSet state.Guesses updatedGuess state.Round
+                Guesses = listSet state.Guesses scoredGuess state.Round
                 UsedLetters = updatedUsedLetters
-                State = updatedState
+                State = updatedGameState
                 Round =
-                    if updatedState = Won || updatedState = Lost
+                    if updatedGameState = Won || updatedGameState = Lost
                     then state.Round
                     else state.Round + 1
-                GamesWon = if updatedState = Won then state.GamesWon + 1 else state.GamesWon
-                GamesLost = if updatedState = Lost then state.GamesLost + 1 else state.GamesLost
+                GamesWon = if updatedGameState = Won then state.GamesWon + 1 else state.GamesWon
+                GamesLost = if updatedGameState = Lost then state.GamesLost + 1 else state.GamesLost
                 WinDistribution =
-                    if updatedState = Won then
+                    if updatedGameState = Won then
                         listSet state.WinDistribution (winDistribution + 1) state.Round
                     else
                         state.WinDistribution }
         else
-            let position, letters = state.Guesses |> List.item state.Round
+            let invalidGuess = state.Guesses |> List.item state.Round |> snd
 
+            // set all letters are invalid word.
+            // this required the user to delete them from final position
             let updated =
-                { letters with
+                { invalidGuess with
                     Letters =
-                        letters.Letters
+                        invalidGuess.Letters
                         |> List.map (fun ls -> { ls with Status = Invalid }) }
 
-            { state with Guesses = listSet state.Guesses (position, updated) state.Round }
+            { state with Guesses = listSet state.Guesses (letters, updated) state.Round }
     else
         state
 
@@ -604,7 +606,7 @@ let MatchComponent () =
 
         let letterToDisplayBox =
             let getLetter (_, word) =
-                word.Letters |> List.map Letter.unpackLetter
+                word.Letters |> List.map Letter.unpack
 
             getLetter >> List.map boxedChar
 
