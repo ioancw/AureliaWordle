@@ -3,111 +3,45 @@ module Lit.Wordle
 open System
 open Lit
 open Wordles
+open Domain
+open Common
+open Persistence
 open Fable.Import
 open Fable.Core
 
 JsInterop.importSideEffects "./index.css"
 
-type KeyBoard =
-    { Top: string list
-      Middle: string list
-      Bottom: string list }
-
-type Modal =
-    | Info
-    | Help
-    | Stats
-
-type Status =
-    | Green
-    | Yellow
-    | Grey
-    | Black
-    | Invalid
-
-type GuessLetter =
-    { Letter: string option
-      Status: Status }
-
-type LocalStorageGameState =
-    { Guesses: (int * (string * string) []) [] //guess contains a phonic hint.
-      Solution: string
-      Round: int
-      State: string
-      GamesWon: int
-      GamesLost: int
-      WinDistribution: int [] }
-
-type Guess =
-    { Letters: GuessLetter list }
-
-module Letter =
-    let toString guessLetter = defaultArg guessLetter.Letter ""
-
-    let toUpper (letter: string) = letter.ToUpper()
-
-    let unpack guessLetter =
-        toString guessLetter |> toUpper, guessLetter.Status
-
-    let toOption letter = if letter = "" then None else Some letter
-
-module Guess =
-    let guessToWord guess =
-        guess.Letters
-        |> List.map (Letter.toString >> Letter.toUpper)
-        |> Seq.fold (+) ""
-
-type Position = int
-
-type GameState =
-    | NotStarted
-    | Won
-    | Lost
-    | Started
-
-type State =
-    { Wordle: string
-      Hint: string
-      Guesses: (Position * Guess) list
-      ShowInfo: bool
-      ShowStats: bool
-      ShowHelp: bool
-      UsedLetters: Map<string, Status>
-      State: GameState
-      Round: int
-      GamesWon: int
-      GamesLost: int
-      WinDistribution: int list }
-
 let rounds = 5
 
 let letters = 5
 
-let validLetterPosition n = n >= 0 && n < letters
+module Validate =
 
-let validRound state =
-    if state.State = Lost || state.State = Won
-    then false
-    else (state.Round >= 0 && state.Round < rounds)
+    let letterPosition n = n >= 0 && n < letters
+
+    let round state =
+        if state.State = Lost || state.State = Won
+        then false
+        else (state.Round >= 0 && state.Round < rounds)
+
+    let allLetters n (guesses: (Position * Guess) list) =
+        let _, guess = List.item n guesses
+
+        let fiveLetterWords =
+            words
+            |> Seq.filter (fun (l: string) -> l.Length = 5)
+            |> Seq.map Letter.toUpper
+            |> Seq.toList
+
+        guess.Letters
+        |> List.forall (fun gl -> gl.Letter <> None)
+        && List.contains (Guess.guessToWord guess) fiveLetterWords
 
 let emptyGuesses =
     let emptyGuess =
         0, { Letters = List.init letters (fun _ -> { Letter = None; Status = Black }) }
 
     List.init rounds (fun _ -> emptyGuess)
-
-let allValidLetters n (guesses: (Position * Guess) list) =
-    let _, guess = List.item n guesses
-
-    let fiveLetterWords =
-        words
-        |> Seq.filter (fun (l: string) -> l.Length = 5)
-        |> Seq.map Letter.toUpper
-        |> Seq.toList
-
-    guess.Letters
-    |> List.forall (fun gl -> gl.Letter <> None)
-    && List.contains (Guess.guessToWord guess) fiveLetterWords
 
 let keyBoard =
     { Top =
@@ -141,71 +75,6 @@ let keyBoard =
           "n"
           "m"
           "Del" ] }
-
-// persisted game state stuff.
-let gameStateKey = "gameStateAureliav2"
-
-module StateHelpers =
-    let statusToString status =
-        match status with
-        | Yellow -> "Yellow"
-        | Grey -> "Grey"
-        | Black -> "Black"
-        | Green -> "Green"
-        | Invalid -> "Invalid"
-
-    let stateToString state =
-        match state with
-        | NotStarted -> "Not Started"
-        | Won -> "Won"
-        | Lost -> "Lost"
-        | Started -> "Started"
-
-    let stateFromString (stored: LocalStorageGameState) =
-        match stored.State with
-        | "Not Started" -> NotStarted
-        | "Won" -> Won
-        | "Lost" -> Lost
-        | "Started" -> Started
-        | _ -> NotStarted
-
-    let statusFromString guessStatus =
-        match guessStatus with
-        | "Yellow" -> Yellow
-        | "Grey" -> Grey
-        | "Black" -> Black
-        | "Green" -> Green
-        | _ -> Invalid
-
-let saveGameStateLocalStorage (state: State) =
-    let guessedWords =
-        state.Guesses
-        |> List.map (fun (position, guess) ->
-            position,
-            guess.Letters
-            |> List.map (fun gl -> Letter.toString gl, StateHelpers.statusToString gl.Status)
-            |> List.toArray)
-        |> List.toArray
-
-    // create a local state which doesn't use record types as they don't round trip.
-    Browser.WebStorage.localStorage.setItem (
-        gameStateKey,
-        JS.JSON.stringify
-            { Guesses = guessedWords
-              Solution = state.Wordle
-              Round = state.Round
-              State = StateHelpers.stateToString state.State
-              GamesWon = state.GamesWon
-              GamesLost = state.GamesLost
-              WinDistribution = state.WinDistribution |> List.toArray }
-    )
-
-let loadGameStateLocalStorage () =
-    let localState = Browser.WebStorage.localStorage.getItem gameStateKey
-
-    match localState with
-    | null -> None
-    | _ -> Some(localState |> JS.JSON.parse :?> LocalStorageGameState)
 
 // fold over each letter in the guess to determine keyboard colours
 let getUsedLetters letterGuesses (state: Map<string, Status>) =
@@ -295,24 +164,6 @@ let startNewGame =
           GamesWon = 0
           WinDistribution = List.init rounds (fun _ -> 0) }
 
-module Counter =
-    let createCounter items =
-        items
-        |> Seq.filter (fun (a, g) -> a <> g)
-        |> Seq.map fst
-        |> Seq.countBy id
-        |> Map.ofSeq
-
-    let countOf counter item =
-        match Map.tryFind item counter with
-        | Some c -> c
-        | None -> 0
-
-    let updateCount counter item =
-        match Map.tryFind item counter with
-        | Some c -> Map.add item (c - 1) counter
-        | None -> counter
-
 let getAnswerMask actualWord guessWord =
     let letters = Seq.zip actualWord guessWord
 
@@ -329,44 +180,40 @@ let getAnswerMask actualWord guessWord =
     |> snd
     |> Seq.rev
 
-let scoreTheGuessedWord actualWord guessWord =
+let scoreGuess actualWord guessWord =
     { Letters =
         getAnswerMask actualWord guessWord
         |> Seq.zip guessWord
         |> Seq.toList
         |> List.map (fun (a, m) -> { Letter = Some(string a); Status = m }) }
 
-let listSet list value pos =
-    list
-    |> List.mapi (fun i v -> if i = pos then value else v)
-
-let updateGuess updateFunction state =
-    if validRound state then
+let updateGuess state updateFunction =
+    if Validate.round state then
         let word = List.item state.Round state.Guesses
         let updatedWord = updateFunction word
-        { state with Guesses = listSet state.Guesses updatedWord state.Round }
+        { state with Guesses = List.set state.Guesses updatedWord state.Round }
     else
         state
 
 let submitLetter letter state =
-    let addNewLetter (position, guessLetters) =
-        if validLetterPosition position then
-            position + 1, { Letters = listSet guessLetters.Letters { Letter = Some letter; Status = Black } position }
+    let addLetter letter (position, guessLetters) =
+        if Validate.letterPosition position then
+            position + 1, { Letters = List.set guessLetters.Letters { Letter = Some letter; Status = Black } position }
         else
             position, { Letters = guessLetters.Letters }
 
-    updateGuess addNewLetter state
+    letter |> addLetter |> updateGuess state
 
 let submitDelete state =
     let deleteLetter (position, guessLetters) =
         let deletePosition = position - 1
 
-        if validLetterPosition deletePosition then
-            deletePosition, { Letters = listSet guessLetters.Letters { Letter = None; Status = Black } deletePosition }
+        if Validate.letterPosition deletePosition then
+            deletePosition, { Letters = List.set guessLetters.Letters { Letter = None; Status = Black } deletePosition }
         else
             position, { Letters = guessLetters.Letters }
 
-    updateGuess deleteLetter state
+    deleteLetter |> updateGuess state
 
 // This function is called when enter on the keyboard is clicked.
 // If the round is valid and all letters are valid (i.e. the word formed by the letters exists in the dictionary)
@@ -374,7 +221,7 @@ let submitDelete state =
 let submitEnter state =
     let submitGuess ((position, guess): Position * Guess) =
         let guessWord = Guess.guessToWord guess
-        let scoredGuess = guessWord |> scoreTheGuessedWord state.Wordle
+        let scoredGuess = guessWord |> scoreGuess state.Wordle
 
         let updatedUsedLetters = getUsedLetters scoredGuess.Letters state.UsedLetters
 
@@ -390,8 +237,8 @@ let submitEnter state =
 
         updatedGuess, updatedState, updatedUsedLetters
 
-    if validRound state then
-        if allValidLetters state.Round state.Guesses then
+    if Validate.round state then
+        if Validate.allLetters state.Round state.Guesses then
             let scoredGuess, updatedGameState, updatedUsedLetters =
                 submitGuess (List.item state.Round state.Guesses)
 
@@ -399,7 +246,7 @@ let submitEnter state =
 
             // update the game state based on the results of submitting the guess
             { state with
-                Guesses = listSet state.Guesses scoredGuess state.Round
+                Guesses = List.set state.Guesses scoredGuess state.Round
                 UsedLetters = updatedUsedLetters
                 State = updatedGameState
                 Round =
@@ -410,7 +257,7 @@ let submitEnter state =
                 GamesLost = if updatedGameState = Lost then state.GamesLost + 1 else state.GamesLost
                 WinDistribution =
                     if updatedGameState = Won then
-                        listSet state.WinDistribution (winDistribution + 1) state.Round
+                        List.set state.WinDistribution (winDistribution + 1) state.Round
                     else
                         state.WinDistribution }
         else
@@ -424,7 +271,7 @@ let submitEnter state =
                         invalidGuess.Letters
                         |> List.map (fun ls -> { ls with Status = Invalid }) }
 
-            { state with Guesses = listSet state.Guesses (letters, updated) state.Round }
+            { state with Guesses = List.set state.Guesses (letters, updated) state.Round }
     else
         state
 
@@ -605,10 +452,7 @@ let MatchComponent () =
         saveGameStateLocalStorage state
 
         let letterToDisplayBox =
-            let getLetter (_, word) =
-                word.Letters |> List.map Letter.unpack
-
-            getLetter >> List.map boxedChar
+            Guess.getLetter >> List.map boxedChar
 
         let onKeyClick (c: string) =
             Ev (fun ev ->
@@ -625,7 +469,6 @@ let MatchComponent () =
         let onModalClick modalType =
             Ev (fun ev ->
                 ev.preventDefault ()
-                Console.WriteLine("Info Clicked")
 
                 match modalType with
                 | Info -> { state with ShowInfo = state.ShowInfo <> true }

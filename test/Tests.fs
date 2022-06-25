@@ -4,11 +4,14 @@ open System
 open Xunit
 open FsUnit.Xunit
 open Lit.Wordle
+open Wordles
+open Domain
+open Common
 
 
 [<Fact>]
 let ``Test masker`` () =
-    let actual = scoreTheGuessedWord "FAVOR" "AROSE"
+    let actual = scoreGuess "FAVOR" "AROSE"
     let expected =
         { Letters =
             [
@@ -23,7 +26,7 @@ let ``Test masker`` () =
 
 [<Fact>]
 let ``Test masker double letter no green`` () =
-    let actual = scoreTheGuessedWord "AROSE" "SPEED"
+    let actual = scoreGuess "AROSE" "SPEED"
     let expected =
         { Letters =
             [
@@ -38,7 +41,7 @@ let ``Test masker double letter no green`` () =
 
 [<Fact>]
 let ``Test masker double letter with one green`` () =
-    let actual = scoreTheGuessedWord "TREAT" "SPEED"
+    let actual = scoreGuess "TREAT" "SPEED"
     let expected =
         { Letters =
             [
