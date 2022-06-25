@@ -340,25 +340,25 @@ let listSet list value pos =
     list
     |> List.mapi (fun i v -> if i = pos then value else v)
 
-let applyLetterUpdate updateFunction state =
+let updateGuess updateFunction state =
     if validRound state then
-        let item = List.item state.Round state.Guesses
-        let updated = updateFunction item
-        { state with Guesses = listSet state.Guesses updated state.Round }
+        let word = List.item state.Round state.Guesses
+        let updatedWord = updateFunction word
+        { state with Guesses = listSet state.Guesses updatedWord state.Round }
     else
         state
 
-let submitLetter input state =
-    let getNewWordStateAdd (position, guessLetters) =
+let submitLetter letter state =
+    let addNewLetter (position, guessLetters) =
         if validLetterPosition position then
-            position + 1, { Letters = listSet guessLetters.Letters { Letter = Some input; Status = Black } position }
+            position + 1, { Letters = listSet guessLetters.Letters { Letter = Some letter; Status = Black } position }
         else
             position, { Letters = guessLetters.Letters }
 
-    applyLetterUpdate getNewWordStateAdd state
+    updateGuess addNewLetter state
 
 let submitDelete state =
-    let getNewWordStateDelete (position, guessLetters) =
+    let deleteLetter (position, guessLetters) =
         let deletePosition = position - 1
 
         if validLetterPosition deletePosition then
@@ -366,10 +366,13 @@ let submitDelete state =
         else
             position, { Letters = guessLetters.Letters }
 
-    applyLetterUpdate getNewWordStateDelete state
+    updateGuess deleteLetter state
 
+// This function is called when enter on the keyboard is clicked.
+// If the round is valid and all letters are valid (i.e. the word formed by the letters exists in the dictionary)
+// If these conditions are met, then the word for that row is submitted as a guess.
 let submitEnter state =
-    let updateRoundStatus ((position, guess): Position * Guess) =
+    let submitGuess ((position, guess): Position * Guess) =
         let guessWord = Guess.guessToWord guess
         let guessMask = guessWord |> applyAnswerMaskToGuess state.Wordle
 
@@ -390,10 +393,11 @@ let submitEnter state =
     if validRound state then
         if allValidLetters state.Round state.Guesses then
             let updatedGuess, updatedState, updatedUsedLetters =
-                updateRoundStatus (List.item state.Round state.Guesses)
+                submitGuess (List.item state.Round state.Guesses)
 
             let winDistribution = List.item state.Round state.WinDistribution
 
+            // update the game state based on the results of submitting the guess
             { state with
                 Guesses = listSet state.Guesses updatedGuess state.Round
                 UsedLetters = updatedUsedLetters
@@ -524,15 +528,16 @@ let modal customHead bodyText modalDisplayState handler =
 let infoText =
     html
         $"""
-        <div class="modal-body relative p-2 text-slate-800">
+        <div class="modal-body p-2 text-slate-800">
             <p>This is a wordle type game to help children with their phonics.</p>
             </br>
             <p>For each wordle, a phonic hint is given as a phoneme (i.e. the sound).</p>
             </br>
-            <p>For example, if the word to be guessed is <span class="text-green-700 font-bold">SHACK</span>, then the phoneme hint given is <span class="text-red-800 font-bold">/sh/</span>.
-            Not all phonemes in the word are provided, rather the more complex phoneme is given in the hint.</p>
+            <p>For example, if the word to be guessed is <span class="text-green-700 font-bold">SHACK</span>, then the phoneme hint given is <span class="text-red-800 font-bold">/sh/</span>.</p>
+            <p>Not all phonemes in the word are provided, instead one of the phonemes is given in the hint.</p>
             </br>
-            <p>Children can use their grapheme-phoneme correspondence knowledge in order to determine the appropriate grapheme (spelling) for the phoneme in question.</p>
+            <p>Children can use their grapheme-phoneme correspondence knowledge in order to determine the appropriate</p>
+            <p>grapheme (spelling) for the phoneme in question.</p>
             </br>
             <p>GPC examples for the phoneme hint can be seen by clicking the ? button.</p>
             </br>
