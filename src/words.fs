@@ -75,7 +75,53 @@ module Phoneme =
     [<Literal>]
     let s = "/s/"
 
+    [<Literal>]
+    let p = "/p/"
 
+    [<Literal>]
+    let v = "/v/"
+
+    [<Literal>]
+    let b = "/b/"
+
+    [<Literal>]
+    let w = "/wig/"
+
+    [<Literal>]
+    let d = "/d/"
+
+    [<Literal>]
+    let y = "/y/"
+
+    [<Literal>]
+    let f = "/f/"
+
+    [<Literal>]
+    let k = "/k/"
+
+    [<Literal>]
+    let m = "/m/"
+
+    [<Literal>]
+    let ng = "/ng/"
+
+    [<Literal>]
+    let l = "/l/"
+
+    [<Literal>]
+    let r = "/r/"
+
+    [<Literal>]
+    let zh = "/zh/"
+
+    [<Literal>]
+    let n = "/n/"
+
+    [<Literal>]
+    let z = "/z/"
+
+    [<Literal>]
+    let qu = "/qu/"
 
 // Curated list of words, these words should exist in the larger set.
 let wordles =

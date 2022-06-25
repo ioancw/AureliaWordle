@@ -38,19 +38,24 @@ type LocalStorageGameState =
       GamesLost: int
       WinDistribution: int [] }
 
-module Letter =
-    let letterToString guessLetter = defaultArg guessLetter.Letter ""
-
 type Guess =
     { Letters: GuessLetter list }
 
-    member t.AsWord() =
-        let guess =
-            t.Letters
-            |> List.map Letter.letterToString
-            |> Seq.fold (+) ""
+module Letter =
+    let letterToString guessLetter = defaultArg guessLetter.Letter ""
 
-        guess.ToUpper()
+    let toUpper (letter: string) = letter.ToUpper()
+
+    let unpackLetter guessLetter =
+        letterToString guessLetter |> toUpper, guessLetter.Status
+
+    let letterToOption letter = if letter = "" then None else Some letter
+
+module Guess =
+    let guessToWord guess =
+        guess.Letters
+        |> List.map (Letter.letterToString >> Letter.toUpper)
+        |> Seq.fold (+) ""
 
 type Position = int
 
@@ -97,14 +102,12 @@ let allValidLetters n (guesses: (Position * Guess) list) =
     let fiveLetterWords =
         words
         |> Seq.filter (fun (l: string) -> l.Length = 5)
-        |> Seq.map (fun s -> s.ToUpper())
+        |> Seq.map Letter.toUpper
         |> Seq.toList
-
-    let guessWord: string = guess.AsWord()
 
     guess.Letters
     |> List.forall (fun gl -> gl.Letter <> None)
-    && List.contains guessWord fiveLetterWords
+    && List.contains (Guess.guessToWord guess) fiveLetterWords
 
 let keyBoard =
     { Top =
@@ -231,7 +234,7 @@ let startNewGame =
         let index = differenceDays % wordles.Length
         wordles.[index]
 
-    let todaysWordle = wordle ()
+    let wordle, hint = wordle ()
 
     match loadedStorage with
     | Some stored ->
@@ -243,12 +246,7 @@ let startNewGame =
                     letters
                     |> Array.toList
                     |> List.map (fun (guessLetter, guessStatus) ->
-                        let letterOption =
-                            if guessLetter = ""
-                            then None
-                            else Some guessLetter
-
-                        { Letter = letterOption
+                        { Letter = Letter.letterToOption guessLetter
                           Status = StateHelpers.statusFromString guessStatus }) })
             |> Array.toList
 
@@ -259,8 +257,8 @@ let startNewGame =
             |> List.fold (fun state guess -> getUsedLetters guess.Letters state) Map.empty
 
         let loadedGame =
-            { Wordle = fst todaysWordle
-              Hint = snd todaysWordle
+            { Wordle = wordle
+              Hint = hint
               ShowInfo = false
               ShowStats = false
               ShowHelp = false
@@ -279,13 +277,13 @@ let startNewGame =
                 State = NotStarted
                 UsedLetters = Map.empty }
 
-        if fst todaysWordle <> stored.Solution
+        if wordle <> stored.Solution
         then newGameWithStats
         else loadedGame
     | _ ->
         //the case where we haven't played before and there is no local storage
-        { Wordle = fst todaysWordle
-          Hint = snd todaysWordle
+        { Wordle = wordle
+          Hint = hint
           ShowInfo = false
           ShowStats = false
           ShowHelp = false
@@ -330,14 +328,6 @@ let getAnswerMask actualWord guessWord =
     |> Seq.fold folder (Counter.createCounter letters, [])
     |> snd
     |> Seq.rev
-    // { Letters =
-    //     letters
-    //     |> Seq.fold folder (Counter.createCounter letters, [])
-    //     |> snd
-    //     |> Seq.rev
-    //     |> Seq.zip guessWord
-    //     |> Seq.toList
-    //     |> List.map (fun (a, m) -> { Letter = Some(string a); Status = m }) }
 
 let applyAnswerMaskToGuess actualWord guessWord =
     { Letters =
@@ -380,7 +370,7 @@ let submitDelete state =
 
 let submitEnter state =
     let updateRoundStatus ((position, guess): Position * Guess) =
-        let guessWord = guess.AsWord()
+        let guessWord = Guess.guessToWord guess
         let guessMask = guessWord |> applyAnswerMaskToGuess state.Wordle
 
         let updatedUsedLetters = getUsedLetters guessMask.Letters state.UsedLetters
@@ -552,47 +542,45 @@ let infoText =
 
 let helpText hint =
     //go get the graphemes from the phonemes.
-    let hintedGraphemes =
-        match Map.tryFind hint phonemeGraphemeCorresspondances with
-        | Some g -> g
-        | None -> []
+    let hintedGraphemes = defaultArg (Map.tryFind hint phonemeGraphemeCorresspondances) []
 
     let graphemes =
         let maxLenGrapheme =
             hintedGraphemes
-            |> List.map (fun (g, _) -> String.length g)
+            |> List.map (snd >> String.length)
             |> List.max
 
-        [ for grapheme, exampleWord in hintedGraphemes do
-              let pad = maxLenGrapheme - (String.length grapheme)
+        [
+            for grapheme, exampleWord in hintedGraphemes do
+                let pad = maxLenGrapheme - (String.length grapheme)
 
-              let padded =
-                  Seq.concat [ grapheme |> Seq.map (fun g -> g, Green)
-                               Seq.init (pad + 1) (fun _ -> ' ', Invalid) ]
+                let padded =
+                    Seq.concat [ grapheme |> Seq.map (fun g -> g, Green)
+                                 Seq.init (pad + 1) (fun _ -> ' ', Invalid) ]
 
-              let letters =
-                  exampleWord
-                  |> Seq.map (fun l ->
-                      l,
-                      if (Seq.contains l grapheme)
-                      then Green
-                      else Yellow)
+                let letters =
+                    exampleWord
+                    |> Seq.map (fun l ->
+                        l,
+                        if (Seq.contains l grapheme)
+                        then Green
+                        else Yellow)
 
-              html
-                  $"""
-                <div class="flex justify-left mb-1">
-                    {padded |> Seq.map littleBoxedChar}
-                    {letters |> Seq.map littleBoxedChar}
-                </div>
-            """ ]
+                html
+                    $"""
+                    <div class="flex justify-left mb-1">
+                        {padded |> Seq.map littleBoxedChar}
+                        {letters |> Seq.map littleBoxedChar}
+                    </div>
+                """
+        ]
 
     html
         $"""
         <div class="modal-body p-2 text-slate-800 text-center">
             <p>Graphemes corresponding to today's phoneme.
                 <div class="flex justify-center mb-1">
-                    {hint
-                     |> Seq.map (fun l -> (l, Grey) |> littleBoxedChar)}
+                    {hint |> Seq.map (fun l -> (l, Grey) |> littleBoxedChar)}
                 </div>
             </p>
             </br>
@@ -611,11 +599,7 @@ let MatchComponent () =
 
         let letterToDisplayBox =
             let getLetter (_, word) =
-                let letter l =
-                    let letterString = defaultArg l.Letter ""
-                    letterString.ToUpper(), l.Status
-
-                word.Letters |> List.map letter
+                word.Letters |> List.map Letter.unpackLetter
 
             getLetter >> List.map boxedChar
 
