@@ -73,13 +73,13 @@ import{y as dr,n as hr}from"./vendor.299b0ab0.js";const fr=function(){const s=do
     <p>${t}</p>
     </div>
     `)}function wa(e){let s;const t=(r,n)=>K($`
-    <div className="items-center justify-center">
+    <div className="items-center">
     <div className="text-3xl font-bold">${n}</div>
     <div className="text-xs">${r}</div>
     </div>
     `);return K($`
     <div class="modal-body p-2 text-slate-800">
-    <div class="flex justify-center my-2">
+    <div class="justify-center">
     ${t("Games Won",e.GamesWon)}
     ${t("Success Rate",(s=~~(e.GamesWon/(e.GamesLost+e.GamesWon))*100|0,kt(xn("%A%%"))(s)))}
     </div>
@@ -92,7 +92,7 @@ import{y as dr,n as hr}from"./vendor.299b0ab0.js";const fr=function(){const s=do
         <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <p class="ml-2.5 justify-center font-mono text-3xl text-white">Aurelia-dle</p>
-        <div class="flex p-2">
+        <div class="flex">
         <div>
         <svg @click=${i(new Se(2))} xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" viewBox="0 0 20 20" fill="currentColor"  >
         <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
