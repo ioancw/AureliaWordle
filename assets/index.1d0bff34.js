@@ -57,7 +57,7 @@ import{y as dr,n as hr}from"./vendor.299b0ab0.js";const fr=function(){const s=do
 </br>
 <p>This application was developed using the <a href="https://fsharp.org" class="text-blue-600">F#</a> language using <a href="https://fable.io/Fable.Lit/" class="text-blue-600">Fable.Lit</a></p>
 </div>
-`);function ba(e){const s=Ct(ms(e,Wo),js());let t;const r=Vn(M(n=>n[1].length,s),{Compare:(n,o)=>_r(n,o)})|0;return t=Os(pe(()=>po(n=>{const o=n[0],a=r-o.length|0,i=Ds([x(u=>[u,new w(0)],o.split("")),co(a+1,u=>[" ",new w(4)])]),l=x(u=>[u,Gt(u,o.split(""),{Equals:(d,h)=>d===h,GetHashCode:d=>ks(d)})?new w(0):new w(1)],n[1].split(""));return ao(K($`
+`);function ba(e){const s=Ct(ms(e,Wo),js());let t;const r=Vn(M(n=>n[0].length,s),{Compare:(n,o)=>_r(n,o)})|0;return t=Os(pe(()=>po(n=>{const o=n[0],a=r-o.length|0,i=Ds([x(u=>[u,new w(0)],o.split("")),co(a+1,u=>[" ",new w(4)])]),l=x(u=>[u,Gt(u,o.split(""),{Equals:(d,h)=>d===h,GetHashCode:d=>ks(d)})?new w(0):new w(1)],n[1].split(""));return ao(K($`
         <div class="flex justify-left mb-1">
         ${x(u=>Bs(u[0],u[1]),i)}
         ${x(u=>Bs(u[0],u[1]),l)}
