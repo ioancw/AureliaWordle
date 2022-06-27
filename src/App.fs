@@ -257,6 +257,7 @@ let submitEnter state =
 
 let boxedChar (c, status) =
     // https://tailwindcss.com/docs/border-style
+
     let colour, border =
         match status with
         | Black -> "bg-stone-900", "border-neutral-500"
@@ -268,7 +269,7 @@ let boxedChar (c, status) =
     html
         $"""
         <div class="border-solid border-transparent flex border-2 items-center rounded">
-            <button class="w-14 h-14 {colour} text-center leading-none text-3xl font-bold text-white border-2 {border}">{c}</button>
+            <button class="transition duration-500 w-14 h-14 {colour} text-center leading-none text-3xl font-bold text-white border-2 {border}">{c}</button>
         </div>
     """
 
@@ -313,7 +314,7 @@ let keyboardChar usedLetters handler (c: string) =
         $"""
         <button
             @click={handler c}
-                class="flex items-center justify-center rounded mx-0.5 {width} h-14 {colour} uppercase text-white"
+                class="transition duration-500 flex items-center justify-center rounded mx-0.5 {width} h-14 {colour} uppercase text-white"
         >{c}</button>
     """
 
