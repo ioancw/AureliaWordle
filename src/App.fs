@@ -186,7 +186,7 @@ let submitDelete state =
 
     deleteLetter |> updateState state
 
-// This function is called when enter on the keyboard is clicked.
+// This function is called when 'enter' on the keyboard is clicked.
 // If the round is valid and all letters are valid (i.e. the word formed by the letters exists in the dictionary)
 // If these conditions are met, then the word for that row is submitted as a guess.
 let submitEnter state =
@@ -243,8 +243,8 @@ let submitEnter state =
         else
             let invalidGuess = state.Guesses |> List.item state.Round |> snd
 
-            // set all letters are invalid word.
-            // this required the user to delete them from final position
+            // set all letters to invalid word.
+            // this requires the user to delete them from final position
             let updated =
                 { invalidGuess with
                     Letters =
@@ -382,7 +382,7 @@ let helpText hint =
     let graphemes =
         let maxLenGrapheme =
             hintedGraphemes
-            |> List.map (snd >> String.length)
+            |> List.map (fst >> String.length)
             |> List.max
 
         [ for grapheme, exampleWord in hintedGraphemes do
@@ -402,24 +402,91 @@ let helpText hint =
                           Yellow)
 
               html
-                  $"""
-                    <div class="flex justify-left mb-1">
-                        {padded |> Seq.map littleBoxedChar}
-                        {letters |> Seq.map littleBoxedChar}
-                    </div>
-                """ ]
+                $"""
+                <div class="flex justify-left mb-1">
+                    {padded |> Seq.map littleBoxedChar}
+                    {letters |> Seq.map littleBoxedChar}
+                </div>
+              """ ]
 
     html
         $"""
         <div class="modal-body p-2 text-slate-800 text-center">
             <p>Graphemes corresponding to today's phoneme.
                 <div class="flex justify-center mb-1">
-                    {hint
-                     |> Seq.map (fun l -> (l, Grey) |> littleBoxedChar)}
+                    {hint |> Seq.map (fun l -> (l, Grey) |> littleBoxedChar)}
                 </div>
             </p>
             </br>
             <p>{graphemes}</p>
+        </div>
+    """
+
+let statsText state =
+    let statRow label value =
+        html
+            $"""
+            <div class="items-center justify-center">
+                <div class="text-3xl font-bold mr-2">{value}</div>
+                <div class="text-xs mr-2">{label}</div>
+            </div>
+        """
+
+    let progress round (size, label) =
+        let width =
+            match (int size) with
+            | n when n <= 10 -> "w-1/12"
+            | n when n > 10 && n <= 20 -> "w-2/12"
+            | n when n > 20 && n <= 30 -> "w-3/12"
+            | n when n > 30 && n <= 40 -> "w-4/12"
+            | n when n > 40 && n <= 50 -> "w-5/12"
+            | n when n > 50 && n <= 60 -> "w-1/2"
+            | n when n > 60 && n <= 70 -> "w-7/12"
+            | n when n > 70 && n <= 80 -> "w-8/12"
+            | n when n > 80 && n <= 90 -> "w-9/12"
+            | n when n > 90 && n <= 100 -> "w-10/12"
+            | n when n > 100 && n <= 110 -> "w-11/12"
+            | n when n > 110 && n <= 120 -> "w-full"
+            | _ -> "w-1/12"
+
+        html
+            $"""
+            <div class="flex justify-left m-1">
+                <div class="items-center justify-center w-2">{round}</div>
+                    <div class="w-full ml-2">
+                        <div class="text-xs font-medium text-blue-100 text-center p-0.5 {width} bg-green-700">
+                            {label}
+                        </div>
+                </div>
+            </div>
+        """
+
+    let histogramRow=
+        let maxValue = state.WinDistribution |> List.max
+        let toSize value = 120. * (double value / double maxValue), value
+        html
+            $"""
+            <div class="columns-1 justify-left m-2 text-sm dark:text-white">
+                {List.item 0 state.WinDistribution |> toSize |> progress 1}
+                {List.item 1 state.WinDistribution |> toSize |> progress 2}
+                {List.item 2 state.WinDistribution |> toSize |> progress 3}
+                {List.item 3 state.WinDistribution |> toSize |> progress 4}
+                {List.item 4 state.WinDistribution |> toSize |> progress 5}
+            </div>
+        """
+
+    html
+        $"""
+        <div class="modal-body p-2">
+            <div class="flex items-center justify-center my-2 m-4">
+                {statRow "Games Won" state.GamesWon}
+                {statRow "Games Lost" state.GamesLost}
+                {statRow "Success Rate" (sprintf "%A%%" (( double state.GamesWon / (double state.GamesLost + double state.GamesWon)) * 100.0 ))}
+            </div>
+            <h4 class="flex text-lg justify-center items-center font-medium">
+                Guess Distribution
+            </h4>
+            {histogramRow}
         </div>
     """
 
@@ -457,17 +524,13 @@ let MatchComponent () =
                 |> setGameState)
 
         let keyboardKey = keyboardChar state.UsedLetters onKeyClick
-        let stats = $"Won: %d{state.GamesWon}, Lost: %d{state.GamesLost}"
 
         let message =
             match state.State with
             | NotStarted
             | Started -> $"Today's phonic hint is: %s{state.Hint}"
-            | Won -> $"Congratulations! %s{stats}"
-            | Lost -> $"It was %s{state.Wordle}. %s{stats}"
-        // <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" viewBox="0 0 20 20" fill="currentColor"  >
-        //     <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
-        // </svg>
+            | Won -> $"Congratulations!"
+            | Lost -> $"Unlucky the word is %s{state.Wordle}"
 
         html
             $"""
@@ -479,16 +542,25 @@ let MatchComponent () =
                         </svg>
                         <p class="ml-2.5 justify-center font-mono text-3xl text-white">Aurelia-dle</p>
                         <div class="flex">
-                            <svg @click={onModalClick Help} xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                            <div class="mr-2">
+                                <svg @click={onModalClick Stats} xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" viewBox="0 0 20 20" fill="currentColor"  >
+                                    <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <svg @click={onModalClick Help} xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
                         </div>
                     </div>
                     <hr></hr>
                 </div>
 
                 {modal "About" infoText state.ShowInfo (onModalClick Info)}
+                {modal "Games Statistics" (statsText state) state.ShowStats (onModalClick Stats)}
                 {modal "Grapheme Phoneme Correspondence" (helpText state.Hint) state.ShowHelp (onModalClick Help)}
+
 
                 <div class="flex justify-center text-lg font-mono text-white">
                     {message}
