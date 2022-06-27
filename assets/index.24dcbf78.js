@@ -73,16 +73,18 @@ import{y as dr,n as hr}from"./vendor.299b0ab0.js";const fr=function(){const s=do
     <p>${t}</p>
     </div>
     `)}function wa(e){let s;const t=(r,n)=>K($`
-    <div className="items-center">
-    <div className="text-3xl font-bold">${n}</div>
-    <div className="text-xs">${r}</div>
+    <div class="items-center justify-center">
+    <div class="text-3xl font-bold mr-2">${n}</div>
+    <div class="text-xs mr-2">${r}</div>
     </div>
     `);return K($`
-    <div class="modal-body p-2 text-slate-800">
-    <div class="justify-center">
-    ${t("Games Won",e.GamesWon)}
+    <div class="modal-body p-2">
+    <p>
+    <div class="flex justify-center my-2 m-4">
+    ${t("Games Won ",e.GamesWon)}
     ${t("Success Rate",(s=~~(e.GamesWon/(e.GamesLost+e.GamesWon))*100|0,kt(xn("%A%%"))(s)))}
     </div>
+    </p>
     </div>
     `)}new aa("wordle-app").Decorate(function(){this.init(o=>(o.useShadowDom=!1,Promise.resolve(void 0)));const e=Qo(this).useState(()=>ua),s=e[1],t=e[0],r=o=>{Yo(o);const a=c=>{let f;return M(k=>pa(k[0],k[1]),(f=c,qo(f[0],f[1])))},i=c=>f=>{f.preventDefault(),s(c.tag===2?new X(o.Wordle,o.Hint,o.Guesses,o.ShowInfo,o.ShowStats!==!0,o.ShowHelp,o.UsedLetters,o.State,o.Round,o.GamesWon,o.GamesLost,o.WinDistribution):c.tag===1?new X(o.Wordle,o.Hint,o.Guesses,o.ShowInfo,o.ShowStats,o.ShowHelp!==!0,o.UsedLetters,o.State,o.Round,o.GamesWon,o.GamesLost,o.WinDistribution):new X(o.Wordle,o.Hint,o.Guesses,o.ShowInfo!==!0,o.ShowStats,o.ShowHelp,o.UsedLetters,o.State,o.Round,o.GamesWon,o.GamesLost,o.WinDistribution))},l=c=>ga(o.UsedLetters,f=>k=>{k.preventDefault(),s((f==="Ent"?b=>ma(b):f==="Del"?b=>fa(b):b=>ha(f,b))(o))},c),u=kt(Sn("Won: %d%P(), Lost: %d%P()",[o.GamesWon,o.GamesLost]));let d;switch(o.State.tag){case 3:{d=`Today's phonic hint is: ${o.Hint}`;break}case 1:{d=`Congratulations! ${u}`;break}case 2:{d=`It was ${o.Wordle}. ${u}`;break}default:d=`Today's phonic hint is: ${o.Hint}`}return K($`
         <div class="min-h-screen space-y-3 bg-stone-900">
@@ -93,7 +95,7 @@ import{y as dr,n as hr}from"./vendor.299b0ab0.js";const fr=function(){const s=do
         </svg>
         <p class="ml-2.5 justify-center font-mono text-3xl text-white">Aurelia-dle</p>
         <div class="flex">
-        <div>
+        <div class="mr-2">
         <svg @click=${i(new Se(2))} xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" viewBox="0 0 20 20" fill="currentColor"  >
         <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
         </svg>
