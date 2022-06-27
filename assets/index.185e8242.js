@@ -82,7 +82,7 @@ import{y as dr,n as hr}from"./vendor.299b0ab0.js";const fr=function(){const s=do
     <p>
     <div class="flex justify-center my-2 m-4">
     ${t("Games Won ",e.GamesWon)}
-    ${t("Success Rate",(s=~~(e.GamesWon/(e.GamesLost+e.GamesWon))*100|0,kt(xn("%A%%"))(s)))}
+    ${t("Success Rate",(s=e.GamesWon/(e.GamesLost+e.GamesWon)*100,kt(xn("%A%%"))(s)))}
     </div>
     </p>
     </div>
