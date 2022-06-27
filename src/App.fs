@@ -47,14 +47,14 @@ let emptyGuesses =
 // fold over each letter in the guess to determine keyboard colours
 let updateKeyboardState guesses (keyBoardState: Map<string, Status>) =
     (keyBoardState, guesses)
-    ||> List.fold (fun (state: Map<string, Status>) gl ->
-        let l = Letter.toString gl
-        let s = gl.Status
+    ||> List.fold (fun state guessLetter ->
+        let letter = Letter.toString guessLetter
+        let status = guessLetter.Status
 
-        if s = Green
-           || (s = Grey && not <| state.ContainsKey l)
-           || (s = Yellow && not <| state.ContainsKey l) then
-            state.Add(l, s)
+        if status = Green
+           || (status = Grey && not <| state.ContainsKey letter)
+           || (status = Yellow && not <| state.ContainsKey letter) then
+            state.Add(letter, status)
         else
             state)
 
@@ -532,8 +532,8 @@ let MatchComponent () =
             match state.State with
             | NotStarted
             | Started -> $"Today's phonic hint is: %s{state.Hint}"
-            | Won -> $"Congratulations!"
-            | Lost -> $"Unlucky the word is %s{state.Wordle}"
+            | Won -> "Congratulations!"
+            | Lost -> $"Unlucky, the word is %s{state.Wordle}"
 
         html
             $"""
@@ -545,7 +545,7 @@ let MatchComponent () =
                         </svg>
                         <p class="ml-2.5 justify-center font-mono text-3xl text-white">Aurelia-dle</p>
                         <div class="flex">
-                            <div class="mr-2">
+                            <div class="mr-3">
                                 <svg @click={onModalClick Stats} xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" viewBox="0 0 20 20" fill="currentColor"  >
                                     <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
                                 </svg>
@@ -563,7 +563,6 @@ let MatchComponent () =
                 {modal "About" infoText state.ShowInfo (onModalClick Info)}
                 {modal "Game Statistics" (statsText state) state.ShowStats (onModalClick Stats)}
                 {modal "Grapheme Phoneme Correspondence" (helpText state.Hint) state.ShowHelp (onModalClick Help)}
-
 
                 <div class="flex justify-center text-lg font-mono text-white">
                     {message}
