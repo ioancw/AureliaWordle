@@ -137,7 +137,7 @@ let startNewGame =
 let getAnswerMask actualWord guessWord =
     let letters = Seq.zip actualWord guessWord
 
-    let folder ((count, mask): Map<'a, int> * Status list) (actualLetter, guessLetter) =
+    let folder (count, mask) (actualLetter, guessLetter) =
         if actualLetter = guessLetter then
             count, Green :: mask
         elif Seq.contains guessLetter actualWord
@@ -146,8 +146,8 @@ let getAnswerMask actualWord guessWord =
         else
             count, Grey :: mask
 
-    letters
-    |> Seq.fold folder (Counter.createCounter letters, [])
+    ((Counter.createCounter letters, []), letters)
+    ||> Seq.fold folder
     |> snd
     |> Seq.rev
 
@@ -426,12 +426,13 @@ let statsText state =
     let statRow label value =
         html
             $"""
-            <div class="items-center justify-center">
+            <div class="items-center justify-center text-center">
                 <div class="text-3xl font-bold mr-2">{value}</div>
                 <div class="text-xs mr-2">{label}</div>
             </div>
         """
 
+    // maybe there is a better way to do this.
     let progress round (size, label) =
         let width =
             match (int size) with
@@ -452,9 +453,9 @@ let statsText state =
         html
             $"""
             <div class="flex justify-left m-1">
-                <div class="items-center justify-center w-2">{round}</div>
+                <div class="items-center justify-center w-2">{round + 1}</div>
                     <div class="w-full ml-2">
-                        <div class="text-xs font-medium text-blue-100 text-center p-0.5 {width} bg-green-700">
+                        <div class="text-xs text-right font-medium p-0.5 pr-2 {width} bg-pink-600">
                             {label}
                         </div>
                 </div>
@@ -466,22 +467,24 @@ let statsText state =
         let toSize value = 120. * (double value / double maxValue), value
         html
             $"""
-            <div class="columns-1 justify-left m-2 text-sm dark:text-white">
-                {List.item 0 state.WinDistribution |> toSize |> progress 1}
-                {List.item 1 state.WinDistribution |> toSize |> progress 2}
-                {List.item 2 state.WinDistribution |> toSize |> progress 3}
-                {List.item 3 state.WinDistribution |> toSize |> progress 4}
-                {List.item 4 state.WinDistribution |> toSize |> progress 5}
+            <div class="columns-1 justify-left m-2 text-sm text-white">
+                {[ for i in [0..4] -> List.item i state.WinDistribution |> toSize |> progress i ]}
             </div>
         """
+    let totalGames = double state.GamesLost + double state.GamesWon
+
+    let successRate =
+        if totalGames = 0. then 0.
+        else (double state.GamesWon / totalGames) * 100.0
 
     html
         $"""
         <div class="modal-body p-2">
             <div class="flex items-center justify-center my-2 m-4">
+                {statRow "Games Played" totalGames}
                 {statRow "Games Won" state.GamesWon}
                 {statRow "Games Lost" state.GamesLost}
-                {statRow "Success Rate" (sprintf "%A%%" (( double state.GamesWon / (double state.GamesLost + double state.GamesWon)) * 100.0 ))}
+                {statRow "Success Rate" (sprintf "%A%%" successRate)}
             </div>
             <h4 class="flex text-lg justify-center items-center font-medium">
                 Guess Distribution
@@ -558,7 +561,7 @@ let MatchComponent () =
                 </div>
 
                 {modal "About" infoText state.ShowInfo (onModalClick Info)}
-                {modal "Games Statistics" (statsText state) state.ShowStats (onModalClick Stats)}
+                {modal "Game Statistics" (statsText state) state.ShowStats (onModalClick Stats)}
                 {modal "Grapheme Phoneme Correspondence" (helpText state.Hint) state.ShowHelp (onModalClick Help)}
 
 
