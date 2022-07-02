@@ -4,7 +4,8 @@
 :root {
     --animation-speed: 1500ms;
     --animation-speed-fast: 450ms;
-    --green: #6aaa64;
+    --green: #538d4e;
+    --darkendYellow: #b59f3b;
     --default-cell-bg-color: theme('colors.stone.900');
     --default-cell-border-color: theme('colors.stone.900');
     --default-cell-text-color: theme('colors.stone.900');
@@ -74,6 +75,16 @@
     100% {
         transform: rotateX(180deg);
     }
+}
+
+.cell-green {
+    background-color: var(--green);
+    border-color: var(--green);
+}
+
+.cell-yellow {
+    background-color: var(--darkendYellow);
+    border-color: var(--darkendYellow);
 }
 
 .cell-fill-animation {
