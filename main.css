@@ -4,6 +4,7 @@
 :root {
     --animation-speed: 1500ms;
     --animation-speed-fast: 450ms;
+    --green: #6aaa64;
     --default-cell-bg-color: theme('colors.stone.900');
     --default-cell-border-color: theme('colors.stone.900');
     --default-cell-text-color: theme('colors.stone.900');
