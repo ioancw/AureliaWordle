@@ -82,6 +82,11 @@
     border-color: var(--green);
 }
 
+.tile-size {
+    width: 3.75rem;
+    height: 3.75rem;
+}
+
 .cell-yellow {
     background-color: var(--darkendYellow);
     border-color: var(--darkendYellow);
