@@ -6,13 +6,20 @@
     --animation-speed-fast: 450ms;
     --green: #538d4e;
     --darkendYellow: #b59f3b;
+    --red: theme('colors.red.500');
+    --grey: theme('colors.neutral.700');
+    --black-key: theme('colors.neutral.500');
+    --grey4: theme('colors.gray.400');
+    --grey: theme('colors.neutral.700');
     --default-cell-bg-color: theme('colors.stone.900');
-    --default-cell-border-color: theme('colors.stone.900');
+    --default-cell-border-color: theme('colors.neutral.500');
     --default-cell-text-color: theme('colors.stone.900');
-    --absent-cell-bg-color: theme('colors.slate.400');
-    --correct-cell-bg-color: theme('colors.green.400');
-    --present-cell-bg-color: theme('colors.yellow.400');
+    --absent-cell-bg-color: theme('colors.neutral.700');
+    --correct-cell-bg-color: --green;
+    --present-cell-bg-color: --yellow;
 }
+
+:root {}
 
 @keyframes revealAbsentCharCell {
     0% {
@@ -82,9 +89,50 @@
     border-color: var(--green);
 }
 
-.tile-size {
+.cell-red {
+    background-color: var(--red);
+    border-color: var(--red);
+}
+
+.cell-grey {
+    background-color: var(--grey);
+    border-color: var(--grey);
+}
+
+.cell-black {
+    background-color: var(--default-cell-bg-color);
+    border-color: var(--default-cell-border-color);
+}
+
+.tile {
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    border-style: solid;
+    border-width: 2px;
+    font-weight: bold;
+    font-size: 2.25rem;
+    color: rgb(255 255 255);
+    margin-left: 0.125rem;
+    margin-right: 0.125rem;
     width: 62px;
     height: 62px;
+}
+
+.little-tile {
+    width: 23px;
+    height: 31px;
+    display: flex;
+    border-style: solid;
+    border-color: transparent;
+    border-width: 0px;
+    align-items: center;
+    font-weight: bold;
+    justify-content: center;
+    text-align: center;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: rgb(255 255 255);
 }
 
 .key-size {
@@ -95,6 +143,19 @@
 .key-other-size {
     width: 54px;
     height: 58px;
+}
+
+.keyboard {
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    border-radius: 0.25rem;
+    color: rgb(255 255 255);
+    margin-left: 0.125rem;
+    margin-right: 0.125rem;
+    text-transform: uppercase;
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+    transition-duration: 2000ms;
 }
 
 .cell-yellow {
@@ -172,22 +233,27 @@ svg.cursor-pointer:hover {
 
 .cell-slow-1 {
     transition-delay: 200ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
 }
 
 .cell-slow-2 {
     transition-delay: 400ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
 }
 
 .cell-slow-3 {
     transition-delay: 600ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
 }
 
 .cell-slow-4 {
     transition-delay: 800ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
 }
 
 .cell-slow-5 {
     transition-delay: 1000ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
 }
 
 @keyframes onTypeCell {
@@ -200,10 +266,6 @@ svg.cursor-pointer:hover {
     100% {
         transform: scale(1);
     }
-}
-
-.shadowed {
-    text-shadow: 1px 1px 1px #000000;
 }
 
 @keyframes jiggle {
