@@ -83,8 +83,18 @@
 }
 
 .tile-size {
-    width: 3.75rem;
-    height: 3.75rem;
+    width: 62px;
+    height: 62.5px;
+}
+
+.key-size {
+    width: 36px;
+    height: 58px;
+}
+
+.key-other-size {
+    width: 56px;
+    height: 58px;
 }
 
 .cell-yellow {
@@ -213,3 +223,9 @@ svg.cursor-pointer:hover {
         transform: translate(0, 0);
     }
 }
+
+
+/*  */
+
+
+/*  */
