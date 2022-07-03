@@ -3,7 +3,7 @@
 @tailwind utilities;
 :root {
     --animation-speed: 1500ms;
-    --animation-speed-fast: 450ms;
+    --animation-speed-fast: 250ms;
     --green: #538d4e;
     --darkendYellow: #b59f3b;
     --red: theme('colors.red.500');
@@ -199,6 +199,11 @@ svg.cursor-pointer:hover {
     animation-duration: var(--animation-speed-fast);
 }
 
+.slide-down {
+    animation: slideDown linear;
+    animation-duration: var(--animation-speed-fast);
+}
+
 .navbar {
     margin-bottom: 2%;
 }
@@ -291,3 +296,87 @@ svg.cursor-pointer:hover {
 
 
 /*  */
+
+@keyframes slideDown {
+    0% {
+        transform: translateY(0%)
+    }
+    90% {
+        transform: translateY(0%)
+    }
+    100% {
+        transform: translateY(100%)
+    }
+}
+
+@keyframes flyIn {
+    0% {
+        opacity: 0
+    }
+    100% {
+        opacity: 1
+    }
+}
+
+@keyframes flyOut {
+    0% {
+        opacity: 1
+    }
+    100% {
+        opacity: 0
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0
+    }
+    15% {
+        opacity: 0
+    }
+    100% {
+        opacity: 1
+    }
+}
+
+@keyframes slideDown {
+    0% {
+        transform: translateY(0%)
+    }
+    90% {
+        transform: translateY(0%)
+    }
+    100% {
+        transform: translateY(100%)
+    }
+}
+
+@keyframes flyIn {
+    0% {
+        opacity: 0
+    }
+    100% {
+        opacity: 1
+    }
+}
+
+@keyframes flyOut {
+    0% {
+        opacity: 1
+    }
+    100% {
+        opacity: 0
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0
+    }
+    15% {
+        opacity: 0
+    }
+    100% {
+        opacity: 1
+    }
+}
