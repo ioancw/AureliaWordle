@@ -11,7 +11,7 @@ open Fable.Core
 
 JsInterop.importSideEffects "./index.css"
 
-let rounds = 5
+let rounds = 6
 
 let letters = 5
 
@@ -38,10 +38,9 @@ module Validate =
         |> List.forall (fun gl -> gl.Letter <> None)
         && List.contains (Guess.guessToWord guess) fiveLetterWords
 
-let emptyGuesses =
-    let emptyGuess =
-        0, { Letters = List.init letters (fun _ -> { Letter = None; Status = Black }) }
+let emptyGuess = 0, { Letters = List.init letters (fun _ -> { Letter = None; Status = Black }) }
 
+let emptyGuesses =
     List.init rounds (fun _ -> emptyGuess)
 
 // fold over each letter in the guess to determine keyboard colours
@@ -88,11 +87,23 @@ let startNewGame =
                           Status = StateHelpers.statusFromString guessStatus }) })
             |> Array.toList
 
+        //to cater for additional rows
+        let localGuessesPlus =
+            localGuesses
+            |> List.mapi (fun i g -> g, i)
+            |> List.fold (fun s (g, i) -> List.set s g i) (List.init rounds (fun _ -> emptyGuess))
+
         //fold local guesses in order to colour the keyboard.
         let storageUsedLetters =
-            localGuesses
+            localGuessesPlus
             |> List.map snd
             |> List.fold (fun state guess -> updateKeyboardState guess.Letters state) Map.empty
+
+        let loadedDistro =
+            stored.WinDistribution
+            |> List.ofArray
+            |> List.mapi (fun i d -> d, i)
+            |> List.fold (fun s (d, i) -> List.set s d i) (List.init rounds (fun _ -> 0))
 
         let loadedGame =
             { Wordle = wordle
@@ -100,13 +111,13 @@ let startNewGame =
               ShowInfo = false
               ShowStats = false
               ShowHelp = false
-              Guesses = localGuesses
+              Guesses = localGuessesPlus
               Round = stored.Round
               State = StateHelpers.stateFromString stored
               UsedLetters = storageUsedLetters
               GamesLost = stored.GamesLost
               GamesWon = stored.GamesWon
-              WinDistribution = stored.WinDistribution |> List.ofArray }
+              WinDistribution = loadedDistro }
 
         let newGameWithStats =
             { loadedGame with
@@ -255,21 +266,31 @@ let submitEnter state =
     else
         state
 
-let boxedChar (c, status) =
+let boxedChar position (c, status) =
     // https://tailwindcss.com/docs/border-style
-
-    let colour, border =
-        match status with
-        | Black -> "bg-stone-900", "border-neutral-500"
-        | Grey -> "bg-neutral-700", "border-neutral-700"
-        | Green -> "bg-green-700", "border-green-700"
-        | Yellow -> "bg-yellow-500", "border-yellow-500"
-        | Invalid -> "bg-red-500", "border-red-500"
+    let classes =
+        Lit.classes
+            [
+                //"w-14 h-14 text-center leading-none text-3xl font-bold text-white border-2 {border}", true
+                "tile-size border-solid border-2 flex items-center justify-center mx-0.5 text-4xl font-bold text-white", true
+                "bg-stone-900 border-neutral-500", status = Black
+                "bg-neutral-700 border-neutral-700", status = Grey
+                "cell-green cell-green", status = Green
+                "cell-yellow cell-yellow", status = Yellow
+                "bg-red-500 border-red-500", status = Invalid
+                "cell-slow-1", position = 0
+                "cell-slow-2", position = 1
+                "cell-slow-3", position = 2
+                "cell-slow-4", position = 3
+                "cell-slow-5", position = 4
+            ]
 
     html
         $"""
-        <div class="border-solid border-transparent flex border-2 items-center rounded">
-            <button class="transition duration-500 w-14 h-14 {colour} text-center leading-none text-3xl font-bold text-white border-2 {border}">{c}</button>
+        <div class="{classes}">
+            <div">
+                {c}
+            </div>
         </div>
     """
 
@@ -299,22 +320,22 @@ let keyboardChar usedLetters handler (c: string) =
 
         match letterStatus with
         | Black -> "bg-neutral-500"
-        | Yellow -> "bg-yellow-500"
+        | Yellow -> "cell-yellow"
         | Grey -> "bg-neutral-700"
-        | Green -> "bg-green-700"
+        | Green -> "cell-green"
         | Invalid -> "bg-gray-400"
 
     let width =
         match c with
         | "Del"
-        | "Ent" -> "w-12"
-        | _ -> "w-9"
+        | "Ent" -> "key-other-size"
+        | _ -> "key-size"
 
     html
         $"""
         <button
             @click={handler c}
-                class="transition duration-500 flex items-center justify-center rounded mx-0.5 {width} h-14 {colour} uppercase text-white"
+                class="transition duration-1000 flex items-center justify-center rounded mx-0.5 {width} {colour} uppercase text-white"
         >{c}</button>
     """
 
@@ -469,7 +490,7 @@ let statsText state =
         html
             $"""
             <div class="columns-1 justify-left m-2 text-sm text-white">
-                {[ for i in [0..4] -> List.item i state.WinDistribution |> toSize |> progress i ]}
+                {[ for i in [0..5] -> List.item i state.WinDistribution |> toSize |> progress i ]}
             </div>
         """
     let totalGames = double state.GamesLost + double state.GamesWon
@@ -477,6 +498,7 @@ let statsText state =
     let successRate =
         if totalGames = 0. then 0.
         else (double state.GamesWon / totalGames) * 100.0
+        |> round
 
     html
         $"""
@@ -503,7 +525,7 @@ let MatchComponent () =
     let writeState state =
         saveGameStateLocalStorage state
 
-        let letterToDisplayBox = Guess.getLetter >> List.map boxedChar
+        let letterToDisplayBox letters = letters |> Guess.getLetter |> List.mapi (fun i gl -> boxedChar i gl)
 
         let onKeyClick (c: string) =
             Ev (fun ev ->
@@ -565,9 +587,9 @@ let MatchComponent () =
                 {modal "Game Statistics" (statsText state) state.ShowStats (onModalClick Stats)}
                 {modal "Grapheme Phoneme Correspondence" (helpText state.Hint) state.ShowHelp (onModalClick Help)}
 
-                <div class="flex justify-center text-lg font-mono text-white">
+                <!-- <div class="flex justify-center text-lg font-mono text-white">
                     {message}
-                </div>
+                </div> -->
                 <div>
                     <div class="flex justify-center mb-1">
                         {List.item 0 state.Guesses |> letterToDisplayBox}
@@ -584,15 +606,21 @@ let MatchComponent () =
                     <div class="flex justify-center mb-1">
                         {List.item 4 state.Guesses |> letterToDisplayBox}
                     </div>
+                    <div class="flex justify-center mb-1">
+                        {List.item 5 state.Guesses |> letterToDisplayBox}
+                    </div>
                 </div>
-                <div class="flex justify-center mb-1">
-                    {keyBoard.Top |> List.map keyboardKey}
-                </div>
-                <div class="flex justify-center mb-1">
-                    {keyBoard.Middle |> List.map keyboardKey}
-                </div>
-                <div class="flex justify-center ">
-                    {keyBoard.Bottom |> List.map keyboardKey}
+                <!-- class="absolute inset-x-0 bottom-0" -->
+                <div >
+                    <div class="flex justify-center mb-1.5">
+                        {keyBoard.Top |> List.map keyboardKey}
+                    </div>
+                    <div class="flex justify-center mb-1.5">
+                        {keyBoard.Middle |> List.map keyboardKey}
+                    </div>
+                    <div class="flex justify-center mb-1.5">
+                        {keyBoard.Bottom |> List.map keyboardKey}
+                    </div>
                 </div>
             </div>
         """

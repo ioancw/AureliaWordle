@@ -9,7 +9,7 @@ module Phoneme =
     let ``b-oo-k`` = "/b-oo-k/"
 
     [<Literal>]
-    let ie = "/ie"
+    let ie = "/ie/"
 
     [<Literal>]
     let ai = "/ai/"
@@ -253,7 +253,7 @@ let phonemeGraphemeCorresspondances =
       [ "a-e", "game"
         "a", "table"
         "ai", "rain"
-        "ay", "they"
+        "ay", "today"
         "ea", "great"
         "ei", "vein"
         "ey", "they"
