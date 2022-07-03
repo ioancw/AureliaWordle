@@ -68,7 +68,7 @@ import{y as on,n as an}from"./vendor.299b0ab0.js";const ln=function(){const s=do
     ${E(n=>{const o=[n,new w(2)];return Mt(o[0],o[1])},e.split(""))}
     </div>
     </p>
-    <p>The graphemes corresponding to this phoneme are:</p>
+    <p>The graphemes corresponding to this phoneme:</p>
     </br>
     <p>${t}</p>
     </div>
