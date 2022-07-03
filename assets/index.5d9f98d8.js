@@ -151,7 +151,7 @@ import{y as nn,n as on}from"./vendor.299b0ab0.js";const an=function(){const s=do
         ${a(K(4,o.Guesses))}
         </div>
         </div>
-        <div>
+        <div class="absolute inset-x-0 bottom-0">
         <div class="flex justify-center mb-1.5">
         ${$(l,wt.Top)}
         </div>
