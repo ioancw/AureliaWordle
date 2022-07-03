@@ -266,28 +266,25 @@ let submitEnter state =
     else
         state
 
-let boxedChar position (c, status) =
-    // https://tailwindcss.com/docs/border-style
+let gameTile position (c, status) =
     let classes =
         Lit.classes
             [
-                //"w-14 h-14 text-center leading-none text-3xl font-bold text-white border-2 {border}", true
-                "tile-size border-solid border-2 flex items-center justify-center mx-0.5 text-4xl font-bold text-white", true
-                "bg-stone-900 border-neutral-500", status = Black
-                "bg-neutral-700 border-neutral-700", status = Grey
-                "cell-green cell-green", status = Green
-                "cell-yellow cell-yellow", status = Yellow
-                "bg-red-500 border-red-500", status = Invalid
-                "cell-slow-1", position = 0
-                "cell-slow-2", position = 1
-                "cell-slow-3", position = 2
-                "cell-slow-4", position = 3
-                "cell-slow-5", position = 4
+                "cell-black", status = Black
+                "cell-reveal.absent cell-grey", status = Grey
+                "cell-green", status = Green
+                "cell-yellow", status = Yellow
+                "jiggle cell-black", status = Invalid
+                "cell-slow-1", position = 0 && not <| (status = Invalid)
+                "cell-slow-2", position = 1 && not <| (status = Invalid)
+                "cell-slow-3", position = 2 && not <| (status = Invalid)
+                "cell-slow-4", position = 3 && not <| (status = Invalid)
+                "cell-slow-5", position = 4 && not <| (status = Invalid)
             ]
 
     html
         $"""
-        <div class="{classes}">
+        <div class="tile {classes}">
             <div">
                 {c}
             </div>
@@ -296,19 +293,17 @@ let boxedChar position (c, status) =
 
 let littleBoxedChar (c, status) =
     // https://tailwindcss.com/docs/border-style
-    let colour, border =
+    let colourBorder =
         match status with
-        | Black -> "bg-stone-900", "border-neutral-500"
-        | Grey -> "bg-red-800", "border-red-800"
-        | Green -> "bg-green-700", "border-green-700"
-        | Yellow -> "bg-yellow-600", "border-yellow-600"
-        | Invalid -> "bg-neutral-400", "border-neutral-400"
+        | Black -> "cell-black"
+        | Grey -> "bg-red-800 border-red-800"
+        | Green -> "bg-green-700 border-green-700"
+        | Yellow -> "bg-yellow-600 border-yellow-600"
+        | Invalid -> "bg-neutral-400 border-neutral-400"
 
     html
         $"""
-        <div class="border-solid border-transparent flex border-0 items-center rounded">
-            <button class="w-6 h-8 {colour} text-center leading-none text-2xl font-bold font-sans text-white border-0 {border}">{c}</button>
-        </div>
+        <div class="little-tile font-sans {colourBorder}">{c}</button>
     """
 
 let keyboardChar usedLetters handler (c: string) =
@@ -321,7 +316,7 @@ let keyboardChar usedLetters handler (c: string) =
         match letterStatus with
         | Black -> "bg-neutral-500"
         | Yellow -> "cell-yellow"
-        | Grey -> "bg-neutral-700"
+        | Grey -> "cell-grey"
         | Green -> "cell-green"
         | Invalid -> "bg-gray-400"
 
@@ -333,10 +328,9 @@ let keyboardChar usedLetters handler (c: string) =
 
     html
         $"""
-        <button
-            @click={handler c}
-                class="transition duration-1000 flex items-center justify-center rounded mx-0.5 {width} {colour} uppercase text-white"
-        >{c}</button>
+        <button @click={handler c} class="keyboard {width} {colour}">
+            {c}
+        </button>
     """
 
 let modal customHead bodyText modalDisplayState handler =
@@ -363,10 +357,7 @@ let modal customHead bodyText modalDisplayState handler =
                             leading-tight
                             uppercase
                             rounded
-                            shadow-md
-                            transition
-                            duration-150
-                            ease-in-out" data-bs-dismiss="modal">
+                            shadow-md" data-bs-dismiss="modal">
                             X
                         </button>
                     </div>
@@ -434,11 +425,12 @@ let helpText hint =
     html
         $"""
         <div class="modal-body p-2 text-slate-800 text-center">
-            <p>Graphemes corresponding to today's phoneme.
+            <p>Today's phonic hint is:
                 <div class="flex justify-center mb-1">
                     {hint |> Seq.map (fun l -> (l, Grey) |> littleBoxedChar)}
                 </div>
             </p>
+            <p>The graphemes corresponding to this phoneme:</p>
             </br>
             <p>{graphemes}</p>
         </div>
@@ -525,7 +517,10 @@ let MatchComponent () =
     let writeState state =
         saveGameStateLocalStorage state
 
-        let letterToDisplayBox letters = letters |> Guess.getLetter |> List.mapi (fun i gl -> boxedChar i gl)
+        let letterToDisplayBox letters =
+            letters
+            |> Guess.getLetter
+            |> List.mapi (fun i gl -> gameTile i gl)
 
         let onKeyClick (c: string) =
             Ev (fun ev ->
@@ -551,20 +546,13 @@ let MatchComponent () =
 
         let keyboardKey = keyboardChar state.UsedLetters onKeyClick
 
-        let message =
-            match state.State with
-            | NotStarted
-            | Started -> $"Today's phonic hint is: %s{state.Hint}"
-            | Won -> "Congratulations!"
-            | Lost -> $"Unlucky, the word is %s{state.Wordle}"
-
         html
             $"""
             <div class="min-h-screen space-y-3 bg-stone-900">
                 <div class="mb-2">
                     <div class="flex items-center justify-between h-12 px-5">
                         <svg @click={onModalClick Info} xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <p class="ml-2.5 justify-center font-mono text-3xl text-white">Aurelia-dle</p>
                         <div class="flex">
@@ -587,9 +575,6 @@ let MatchComponent () =
                 {modal "Game Statistics" (statsText state) state.ShowStats (onModalClick Stats)}
                 {modal "Grapheme Phoneme Correspondence" (helpText state.Hint) state.ShowHelp (onModalClick Help)}
 
-                <!-- <div class="flex justify-center text-lg font-mono text-white">
-                    {message}
-                </div> -->
                 <div>
                     <div class="flex justify-center mb-1">
                         {List.item 0 state.Guesses |> letterToDisplayBox}
