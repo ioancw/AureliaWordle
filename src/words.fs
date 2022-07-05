@@ -295,6 +295,10 @@ let phonemeGraphemeCorresspondances =
         "u", "super"
         "oe", "shoe"
         "ough", "through" ]
+      Phoneme.``b-oo-k``,
+      [ "oo", "cook"
+        "oul", "could"
+        "u", "put" ]
       Phoneme.ow,
       [ "ow", "cow"
         "ou", "out"
