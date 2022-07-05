@@ -3,7 +3,7 @@
 @tailwind utilities;
 :root {
     --animation-speed: 1500ms;
-    --animation-speed-fast: 250ms;
+    --animation-speed-fast: 150ms;
     --green: #538d4e;
     --darkendYellow: #b59f3b;
     --red: theme('colors.red.500');
