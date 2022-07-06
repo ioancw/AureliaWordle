@@ -1,6 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* @layer base {
+    @font-face {
+        font-family: Proxima Nova;
+        font-weight: 400;
+        src: url(/fonts/proxima-nova/400-regular.woff) format("woff");
+    }
+} */
+
 :root {
     --animation-speed: 1500ms;
     --animation-speed-fast: 150ms;
@@ -119,6 +128,21 @@
     margin-bottom: 0.75px;
     width: 61px;
     height: 61px;
+}
+
+.aurelia-header {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-weight: 700;
+    font-size: 37px;
+    line-height: 100%;
+    letter-spacing: 0.01em;
+    /* text-align: center; */
+    justify-content: center;
+    margin-left: 40px;
+    right: 0;
+    pointer-events: none;
+    position: relative;
+    color: rgb(255 255 255);
 }
 
 .little-tile {

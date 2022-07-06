@@ -107,7 +107,8 @@ import{y as on,n as an}from"./vendor.299b0ab0.js";const ln=function(){const s=do
         <svg @click=${i(new Je(0))} xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <p class="ml-2.5 justify-center font-mono text-3xl text-white">Aurelia-dle</p>
+        <!-- ml-2.5 justify-center font-mono text-3xl text-white -->
+        <div class="aurelia-header">Aureliadle</div>
         <div class="flex">
         <div class="mr-3">
         <svg @click=${i(new Je(2))} xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" viewBox="0 0 20 20" fill="currentColor"  >
