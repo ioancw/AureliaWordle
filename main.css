@@ -113,8 +113,10 @@
     font-weight: bold;
     font-size: 2.25rem;
     color: rgb(255 255 255);
-    margin-left: 0.125rem;
-    margin-right: 0.125rem;
+    margin-left: 2.5px;
+    margin-right: 2.5px;
+    margin-top: 0.75px;
+    margin-bottom: 0.75px;
     width: 62px;
     height: 62px;
 }
