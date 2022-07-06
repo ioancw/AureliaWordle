@@ -138,12 +138,12 @@
 }
 
 .key-size {
-    width: 34px;
+    width: 32px;
     height: 58px;
 }
 
 .key-other-size {
-    width: 54px;
+    width: 52px;
     height: 58px;
 }
 
@@ -153,8 +153,8 @@
     align-items: center;
     border-radius: 0.25rem;
     color: rgb(255 255 255);
-    margin-left: 0.125rem;
-    margin-right: 0.125rem;
+    margin-left: 2.5px;
+    margin-right: 2.5px;
     text-transform: uppercase;
     transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
     transition-duration: 2000ms;
