@@ -169,7 +169,6 @@ let wordles =
       "GRAPE", Phoneme.ai
       "RIGHT", Phoneme.ie
       "PLANE", Phoneme.ai
-      "DAIRY", Phoneme.air
       "CURED", Phoneme.ue
       "VALUE", Phoneme.ue
       "FAULT", Phoneme.``or``

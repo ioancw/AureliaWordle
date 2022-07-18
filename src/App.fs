@@ -267,6 +267,7 @@ let submitEnter state =
         state
 
 let gameTile position (c, status) =
+    let isValid = not <| (status = Invalid)
     let classes =
         Lit.classes
             [
@@ -275,11 +276,11 @@ let gameTile position (c, status) =
                 "cell-green", status = Green
                 "cell-yellow", status = Yellow
                 "jiggle cell-black", status = Invalid
-                "cell-slow-1", position = 0 && not <| (status = Invalid)
-                "cell-slow-2", position = 1 && not <| (status = Invalid)
-                "cell-slow-3", position = 2 && not <| (status = Invalid)
-                "cell-slow-4", position = 3 && not <| (status = Invalid)
-                "cell-slow-5", position = 4 && not <| (status = Invalid)
+                "cell-slow-1", position = 0 && isValid
+                "cell-slow-2", position = 1 && isValid
+                "cell-slow-3", position = 2 && isValid
+                "cell-slow-4", position = 3 && isValid
+                "cell-slow-5", position = 4 && isValid
             ]
 
     html
@@ -338,7 +339,7 @@ let modal customHead bodyText modalDisplayState handler =
         match modalDisplayState with
         | true -> ""
         | false -> "hidden"
-
+    //TO DO - move all this to css.
     html
         $"""
         <div class="modal fade fixed inset-0 flex justify-center {hidden} outline-none overflow-x-hidden overflow-y-auto" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -387,8 +388,10 @@ let infoText =
         </div>
     """
 
-let helpText hint =
+let helpText state =
     //go get the graphemes from the phonemes.
+    let hint = state.Hint
+    let wordle = state.Wordle
     let hintedGraphemes =
         defaultArg (Map.tryFind hint phonemeGraphemeCorresspondances) []
 
@@ -433,6 +436,12 @@ let helpText hint =
             <p>The graphemes corresponding to this phoneme:</p>
             </br>
             <p>{graphemes}</p>
+            <p>
+                <p>Congratulations. You found today's worlde.</p>
+                <div class="flex justify-center mb-1">
+                    {wordle |> Seq.map (fun l -> (l, if Seq.contains l (hint.ToUpper()) then Grey else Green) |> littleBoxedChar)}
+                </div>
+            </p>
         </div>
     """
 
@@ -574,7 +583,7 @@ let MatchComponent () =
 
                 {modal "About" infoText state.ShowInfo (onModalClick Info)}
                 {modal "Game Statistics" (statsText state) state.ShowStats (onModalClick Stats)}
-                {modal "Grapheme Phoneme Correspondence" (helpText state.Hint) state.ShowHelp (onModalClick Help)}
+                {modal "Grapheme Phoneme Correspondence" (helpText state) state.ShowHelp (onModalClick Help)}
 
                 <div>
                     <div class="flex justify-center mb-1">
