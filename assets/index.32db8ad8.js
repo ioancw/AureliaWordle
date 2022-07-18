@@ -68,12 +68,12 @@ import{y as on,n as an}from"./vendor.299b0ab0.js";const ln=function(){const s=do
     <p>The graphemes corresponding to this phoneme:</p>
     </br>
     <p>${r}</p>
-    <p>
+    <!-- <p>
     <p>Congratulations. You found today's worlde.</p>
     <div class="flex justify-center mb-1">
     ${E(o=>{const a=[o,mt(o,s.toLocaleUpperCase().split(""),{Equals:(i,l)=>i===l,GetHashCode:i=>Is(i)})?new b(2):new b(0)];return Qs(a[0],a[1])},e.Wordle.split(""))}
     </div>
-    </p>
+    </p> -->
     </div>
     `)}function Wi(e){const s=(a,i)=>Z($`
     <div class="items-center justify-center text-center">
