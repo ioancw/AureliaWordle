@@ -436,12 +436,12 @@ let helpText state =
             <p>The graphemes corresponding to this phoneme:</p>
             </br>
             <p>{graphemes}</p>
-            <p>
+            <!-- <p>
                 <p>Congratulations. You found today's worlde.</p>
                 <div class="flex justify-center mb-1">
                     {wordle |> Seq.map (fun l -> (l, if Seq.contains l (hint.ToUpper()) then Grey else Green) |> littleBoxedChar)}
                 </div>
-            </p>
+            </p> -->
         </div>
     """
 

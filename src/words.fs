@@ -204,6 +204,14 @@ let wordles =
       "JUDGE", Phoneme.j
       "MATCH", Phoneme.ch
       "GHOST", Phoneme.g
+      "TEACH", Phoneme.ee
+      "GRAPE", Phoneme.ai
+      "RIGHT", Phoneme.ie
+      "PLANE", Phoneme.ai
+      "CURED", Phoneme.ue
+      "VALUE", Phoneme.ue
+      "FAULT", Phoneme.``or``
+      "DRIVE", Phoneme.ie
 
       //add more here as needed, try to even out the phonemes so they get a different one everyday
 
@@ -298,10 +306,20 @@ let phonemeGraphemeCorresspondances =
       [ "oo", "cook"
         "oul", "could"
         "u", "put" ]
+      Phoneme.air,
+      [ "air", "chair"
+        "are", "dare"
+        "ear", "bear"
+        "eir", "their"
+        "ere", "where"]
       Phoneme.ow,
       [ "ow", "cow"
         "ou", "out"
         "ough", "drought" ]
+      Phoneme.ear,
+      [ "ear", "near"
+        "eer", "deer"
+        "ere", "here"]
       //consonants
       Phoneme.sh,
       [ "sh", "shop"
@@ -324,7 +342,6 @@ let phonemeGraphemeCorresspondances =
         "c", "cent"
         "ce", "voice"
         "st", "castle"]
-
       ]
     |> Map.ofList
 
