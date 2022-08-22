@@ -10,14 +10,13 @@ hint for SPRAY and.
 
 TODO
 * Properly structure the code into modules etc.
-* Add tests (especially around the masking function)
-* Implement game statistics
 * Sharing the results.
+* Use a JSON streamer capable or writing and reading F# types.
 
 Further ideas
-* hint button which provides all the graphemes (the most common ones) for the phonic sound hint.
 * phonic keyboard, i.e. the button represents the phonic, which also allows you to choose the corresponding grapheme
     e.g. if the button is /ai/ then it would show AI, AY etc
+* Automated parsing of words into phonemes.
 
 [Fable.Lit](https://github.com/fable-compiler/Fable.Lit) app. To start a development server run:
 

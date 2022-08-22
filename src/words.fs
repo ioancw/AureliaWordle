@@ -3,10 +3,10 @@
 module Phoneme =
     // vowels
     [<Literal>]
-    let ``z-oo-m`` = "/z-oo-m/"
+    let ``z-oo-m`` = "z-/oo/-m"
 
     [<Literal>]
-    let ``b-oo-k`` = "/b-oo-k/"
+    let ``b-oo-k`` = "b-/oo/-k"
 
     [<Literal>]
     let ie = "/ie/"
@@ -212,6 +212,46 @@ let wordles =
       "VALUE", Phoneme.ue
       "FAULT", Phoneme.``or``
       "DRIVE", Phoneme.ie
+      "STRAY", Phoneme.ai
+      "MIGHT", Phoneme.ie
+      "BLUSH", Phoneme.sh
+      "RIVER", Phoneme.er
+      "POINT", Phoneme.oi
+      "SNAKE", Phoneme.ai
+      "STEEP", Phoneme.ee
+      "PRIZE", Phoneme.ie
+      "TEACH", Phoneme.ee
+      "GRAPE", Phoneme.ai
+      "RIGHT", Phoneme.ie
+      "PLANE", Phoneme.ai
+      "CURED", Phoneme.ue
+      "VALUE", Phoneme.ue
+      "FAULT", Phoneme.``or``
+      "DRIVE", Phoneme.ie
+      "SMOKE", Phoneme.oe
+      "THERE", Phoneme.air
+      "TOOTH", Phoneme.``b-oo-k``
+      "TWIRL", Phoneme.er
+      "FORTY", Phoneme.``or``
+      "VOICE", Phoneme.oi
+      "THEIR", Phoneme.air
+      "GREEN", Phoneme.ee
+      "FOUND", Phoneme.ow
+      "WHERE", Phoneme.air
+      "ABOUT", Phoneme.ow
+      "EVERY", Phoneme.ee
+      "MOUSE", Phoneme.ow
+      "WATER", Phoneme.``or``
+      "ROUND", Phoneme.ow
+      "PLANT", Phoneme.ar
+      "GREAT", Phoneme.ai
+      "SMALL", Phoneme.``or``
+      "GOING", Phoneme.oe
+      "QUEEN", Phoneme.ee
+      "LARGE", Phoneme.j
+      "PLACE", Phoneme.ai
+      "AGAIN", Phoneme.e
+      "RIGHT", Phoneme.ie
 
       //add more here as needed, try to even out the phonemes so they get a different one everyday
 
