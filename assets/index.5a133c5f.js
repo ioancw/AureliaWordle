@@ -123,9 +123,9 @@ const Wn=function(){const e=document.createElement("link").relList;if(e&&e.suppo
     ${t}
     </div>
     `)}new Al("wordle-app").Decorate(function(){this.init(o=>(o.useShadowDom=!1,Promise.resolve(void 0)));const s=_l(this).useState(()=>jl),e=s[1],t=s[0],r=o=>{Ai(o);const a=c=>{let u;return Xs((h,d)=>Ol(h,d[0],d[1]),(u=c,wi(u[0],u[1])))},l=c=>u=>{u.preventDefault(),e(c.tag===2?new ge(o.Wordle,o.Hint,o.Guesses,o.ShowInfo,o.ShowStats!==!0,o.ShowHelp,o.UsedLetters,o.State,o.Round,o.GamesWon,o.GamesLost,o.WinDistribution):c.tag===1?new ge(o.Wordle,o.Hint,o.Guesses,o.ShowInfo,o.ShowStats,o.ShowHelp!==!0,o.UsedLetters,o.State,o.Round,o.GamesWon,o.GamesLost,o.WinDistribution):new ge(o.Wordle,o.Hint,o.Guesses,o.ShowInfo!==!0,o.ShowStats,o.ShowHelp,o.UsedLetters,o.State,o.Round,o.GamesWon,o.GamesLost,o.WinDistribution))},i=c=>Ll(o.UsedLetters,u=>h=>{h.preventDefault(),e((u==="Ent"?f=>Dl(f):u==="Del"?f=>Gl(f):f=>Fl(u,f))(o))},c);return Y(V`
-        <div class="min-h-screen space-y-3 bg-stone-900">
-        <div class="mb-2">
-        <div class="flex items-center justify-between h-12 px-5">
+        <div class="min-h-screen space-y-2 bg-stone-900">
+        <div class="mb-1">
+        <div class="flex items-center justify-between h-10 px-5">
         <svg @click=${l(new Ke(0))} xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
