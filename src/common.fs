@@ -2,6 +2,34 @@ module Common
 
 open Domain
 
+module Display =
+    let parseWordGrapheme grapheme word =
+
+        let word = word |> Seq.toList
+        let wordLength = word |> List.length
+
+        let greens =
+            let graphemeList = grapheme |> Seq.toList
+            let graphemeLength = List.length graphemeList
+            let foundIndex =
+                List.windowed graphemeLength word
+                |> List.tryFindIndex (fun w ->
+                    match (w, graphemeList) with
+                    | t, g when t = g -> true
+                    | h :: m :: t, h1 :: m1 :: t1 when m1 = '-' && h = h1 && t = t1 -> true 
+                    | _ -> false)
+            match foundIndex with
+            | Some index -> List.init graphemeLength (fun i -> i + index)
+            | None -> []
+        
+        //assume all yellows, then populate the greens if any
+        List.init wordLength (fun _ -> Yellow)
+        |> List.mapi (fun i v ->
+            if List.contains i greens
+            then Green
+            else v)
+        |> List.zip word 
+
 module Letter =
     let toString guessLetter = defaultArg guessLetter.Letter ""
 

@@ -64,7 +64,7 @@ module Phoneme =
     let sh = "/sh/"
 
     [<Literal>]
-    let j = "/j"
+    let j = "/j/"
 
     [<Literal>]
     let ch = "/ch/"
@@ -252,7 +252,16 @@ let wordles =
       "PLACE", Phoneme.ai
       "AGAIN", Phoneme.e
       "RIGHT", Phoneme.ie
-
+      "TIGER", Phoneme.i
+      "HAPPY", Phoneme.ee
+      "MONEY", Phoneme.ee
+      "LIGHT", Phoneme.i
+      "APPLE", Phoneme.p
+      "TRAIN", Phoneme.ai
+      "TRUCK", Phoneme.u
+      "BEACH", Phoneme.ee
+      "TODAY", Phoneme.ai
+      "ZEBRA", Phoneme.e
       //add more here as needed, try to even out the phonemes so they get a different one everyday
 
       ]

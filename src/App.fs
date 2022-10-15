@@ -408,6 +408,10 @@ let helpText state =
                   Seq.concat [ grapheme |> Seq.map (fun g -> g, Green)
                                Seq.init (pad + 1) (fun _ -> ' ', Invalid) ]
 
+              // convert the example word to a sequence of character and colour status
+              // so that the grapheme is highlighted in a different colour
+              // this is a basic implementation, and will incorrectly highlight out of sequence letters.async
+              // if the grapheme is IE, then we want the IE in TRIED highlighted but not the first I in IRIED
               let letters =
                   exampleWord
                   |> Seq.map (fun l ->
