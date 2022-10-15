@@ -12,6 +12,7 @@ TODO
 * Properly structure the code into modules etc.
 * Sharing the results.
 * Use a JSON streamer capable or writing and reading F# types.
+* Upgrade to dotnet6 (so that it works with VSCode)
 
 Further ideas
 * phonic keyboard, i.e. the button represents the phonic, which also allows you to choose the corresponding grapheme
