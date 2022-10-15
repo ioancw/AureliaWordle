@@ -12,7 +12,7 @@ module Phoneme =
     let ie = "/ie/"
 
     [<Literal>]
-    let ai = "/ai/"
+    let ai = "/ae/"
 
     [<Literal>]
     let ``or`` = "/or/"
@@ -255,13 +255,43 @@ let wordles =
       "TIGER", Phoneme.i
       "HAPPY", Phoneme.ee
       "MONEY", Phoneme.ee
-      "LIGHT", Phoneme.i
+      "LIGHT", Phoneme.ie
       "APPLE", Phoneme.p
       "TRAIN", Phoneme.ai
-      "TRUCK", Phoneme.u
+      "TRUCK", Phoneme.u //as of Oct 15
       "BEACH", Phoneme.ee
-      "TODAY", Phoneme.ai
-      "ZEBRA", Phoneme.e
+      "QUAKE", Phoneme.ai       
+      "BLEAK", Phoneme.ee
+      "SPRAY", Phoneme.ai 
+      "SNEAK", Phoneme.ee
+      "GLEAM", Phoneme.ee
+      "BEAST", Phoneme.ee 
+      "CREEK", Phoneme.ee       
+      "GREAT", Phoneme.ai
+      "BEGIN", Phoneme.ee 
+      "STEAK", Phoneme.ai 
+      "CHEAP", Phoneme.ee 
+      "BREAK", Phoneme.ai
+      "JEANS", Phoneme.ee 
+      "BATHE", Phoneme.ai 
+      "GREEK", Phoneme.ee 
+      "WHALE", Phoneme.ai 
+      "LUCKY", Phoneme.ee 
+      "FLAME", Phoneme.ai 
+      "THREE", Phoneme.ee 
+      "BREAK", Phoneme.ai 
+      "CREAK", Phoneme.ee 
+      "DRAIN", Phoneme.ai 
+      "FUNNY", Phoneme.ee 
+      "FAINT", Phoneme.ai 
+      "ANGRY", Phoneme.ee 
+      "TRAIN", Phoneme.ai 
+      "THIRD", Phoneme.er
+      "ANNOY", Phoneme.oi
+      "SPEAK", Phoneme.ee
+      "TRIED", Phoneme.ie
+      "SPRAY", Phoneme.ai
+      "SPOIL", Phoneme.oi      
       //add more here as needed, try to even out the phonemes so they get a different one everyday
 
       ]

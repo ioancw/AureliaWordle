@@ -368,6 +368,28 @@ let modal customHead bodyText modalDisplayState handler =
         </div>
     """
 
+let lostModal customHead bodyText modalDisplayState =
+    let hidden =
+        match modalDisplayState with
+        | true -> ""
+        | false -> "hidden"
+    //TO DO - move all this to css.
+    html
+        $"""
+        <div class="modal fade fixed inset-0 flex justify-center {hidden} outline-none overflow-x-hidden overflow-y-auto" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog pointer-events-none">
+                <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-neutral-400 bg-clip-padding rounded-md outline-none text-current">
+                    <div class="modal-header flex flex-shrink-0 items-center justify-between p-2 border-b border-stone-600 rounded-t-md">
+                        <h5 class="text-lg flex justify-center font-medium leading-normal text-stone-800" id="exampleModalLabel">
+                            {customHead}
+                        </h5>
+                    </div>
+                    {bodyText}
+                </div>
+            </div>
+        </div>
+    """    
+
 let infoText =
     html
         $"""
@@ -440,14 +462,23 @@ let helpText state =
             <p>The graphemes corresponding to this phoneme:</p>
             </br>
             <p>{graphemes}</p>
-            <!-- <p>
-                <p>Congratulations. You found today's worlde.</p>
+        </div>
+    """
+
+let lostText state =
+    let hint = state.Hint
+    let wordle = state.Wordle
+
+    html
+        $"""
+        <div class="modal-body p-2 text-slate-800 text-center">
+            <p>Oh well, never mind.
                 <div class="flex justify-center mb-1">
                     {wordle |> Seq.map (fun l -> (l, if Seq.contains l (hint.ToUpper()) then Grey else Green) |> littleBoxedChar)}
                 </div>
-            </p> -->
+            </p>
         </div>
-    """
+    """    
 
 let statsText state =
     let statRow label value =
@@ -562,12 +593,11 @@ let MatchComponent () =
         html
             $"""
             <div class="min-h-screen space-y-3 bg-stone-900">
-                <div class="mb-2">
-                    <div class="flex items-center justify-between h-12 px-5">
+                <div class="mb-1">
+                    <div class="flex items-center justify-between h-10 px-5">
                         <svg @click={onModalClick Info} xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <!-- ml-2.5 justify-center font-mono text-3xl text-white -->
                         <div class="aurelia-header">Aureliadle</div>
                         <div class="flex">
                             <div class="mr-3">
@@ -588,6 +618,7 @@ let MatchComponent () =
                 {modal "About" infoText state.ShowInfo (onModalClick Info)}
                 {modal "Game Statistics" (statsText state) state.ShowStats (onModalClick Stats)}
                 {modal "Grapheme Phoneme Correspondence" (helpText state) state.ShowHelp (onModalClick Help)}
+                {lostModal "Today's wordle!" (lostText state) (state.State = Lost)}
 
                 <div>
                     <div class="flex justify-center mb-1">
