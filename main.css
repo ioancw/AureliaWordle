@@ -21,7 +21,7 @@
     --grey4: theme('colors.gray.400');
     --grey: theme('colors.neutral.700');
     --default-cell-bg-color: theme('colors.stone.900');
-    --default-cell-border-color: theme('colors.neutral.500');
+    --default-cell-border-color: theme('colors.neutral.700');
     --default-cell-text-color: theme('colors.stone.900');
     --absent-cell-bg-color: theme('colors.neutral.700');
     --correct-cell-bg-color: --green;
