@@ -16,6 +16,9 @@ type Status =
     | Grey
     | Black
     | Invalid
+    | DarkRed
+    | DarkGreen
+    | DarkYellow
 
 type GuessLetter =
     { Letter: string option

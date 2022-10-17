@@ -297,8 +297,8 @@ let littleBoxedChar (c, status) =
     let colourBorder =
         match status with
         | Black -> "cell-black"
-        | Grey -> "bg-red-800 border-red-800"
-        | Green -> "bg-green-700 border-green-700"
+        | DarkRed -> "bg-red-800 border-red-800"
+        | DarkGreen -> "bg-green-700 border-green-700"
         | Yellow -> "bg-yellow-600 border-yellow-600"
         | Invalid -> "bg-neutral-400 border-neutral-400"
 
@@ -427,7 +427,7 @@ let helpText state =
               let pad = maxLenGrapheme - (String.length grapheme)
 
               let padded =
-                  Seq.concat [ grapheme |> Seq.map (fun g -> g, Green)
+                  Seq.concat [ grapheme |> Seq.map (fun g -> g, DarkGreen)
                                Seq.init (pad + 1) (fun _ -> ' ', Invalid) ]
 
               // convert the example word to a sequence of character and colour status
@@ -439,7 +439,7 @@ let helpText state =
                   |> Seq.map (fun l ->
                       l,
                       if (Seq.contains l grapheme) then
-                          Green
+                          DarkGreen
                       else
                           Yellow)
 
@@ -456,7 +456,7 @@ let helpText state =
         <div class="modal-body p-2 text-slate-800 text-center">
             <p>Today's phonic hint is:
                 <div class="flex justify-center mb-1">
-                    {hint |> Seq.map (fun l -> (l, Grey) |> littleBoxedChar)}
+                    {hint |> Seq.map (fun l -> (l, DarkRed) |> littleBoxedChar)}
                 </div>
             </p>
             <p>The graphemes corresponding to this phoneme:</p>
@@ -552,6 +552,65 @@ let statsText state =
         </div>
     """
 
+[<HookComponent>]
+let NameInput(state) =
+    let value, setValue = Hook.useState true
+    setValue (state.State = Lost && value)
+    let onModalClick =
+        Ev (fun ev ->
+            ev.preventDefault ()
+            setValue false)
+
+    let hint = state.Hint.ToUpper()
+    let wordle = state.Wordle
+
+    let bodyText = 
+        html
+            $"""
+            <div class="modal-body p-2 text-slate-800 text-center">
+                <p>
+                    Oh well, never mind.
+                    <div class="flex justify-center mb-1">
+                        {wordle |> Seq.map (fun l -> (l, if Seq.contains l hint then DarkRed else DarkGreen) |> littleBoxedChar)}
+                    </div>
+                    Better luck next time.
+                </p>
+            </div>
+        """    
+    let customHead = "Today's Answer"
+    let hidden =
+        match value with
+        | true -> ""
+        | false -> "hidden"
+    // this is rubbish, fix it, and create a modal component
+    html
+        $"""
+        <div class="modal fade fixed inset-0 flex justify-center {hidden} outline-none overflow-x-hidden overflow-y-auto" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog pointer-events-none">
+                <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-neutral-400 bg-clip-padding rounded-md outline-none text-current">
+                    <div class="modal-header flex flex-shrink-0 items-center justify-between p-1 border-b border-stone-600 rounded-t-md">
+                        <h5 class="text-lg flex justify-center font-medium leading-normal text-stone-800" id="exampleModalLabel">
+                            {customHead}
+                        </h5>
+                        <button type="button" @click={onModalClick} class="px-2
+                            py-1
+                            bg-stone-800
+                            text-white
+                            font-bold
+                            text-xs
+                            leading-tight
+                            uppercase
+                            rounded
+                            shadow-md" data-bs-dismiss="modal">
+                            X
+                        </button>
+                    </div>
+                    {bodyText}
+                </div>
+            </div>
+        </div>
+    """    
+
 [<LitElement("wordle-app")>]
 let MatchComponent () =
     let _ = LitElement.init (fun cfg -> cfg.useShadowDom <- false)
@@ -618,7 +677,7 @@ let MatchComponent () =
                 {modal "About" infoText state.ShowInfo (onModalClick Info)}
                 {modal "Game Statistics" (statsText state) state.ShowStats (onModalClick Stats)}
                 {modal "Grapheme Phoneme Correspondence" (helpText state) state.ShowHelp (onModalClick Help)}
-                {lostModal "Today's wordle!" (lostText state) (state.State = Lost)}
+                {NameInput(state)}
 
                 <div>
                     <div class="flex justify-center mb-1">
