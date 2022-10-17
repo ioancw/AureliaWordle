@@ -15,7 +15,7 @@
     --animation-speed-fast: 150ms;
     --green: #538d4e;
     --darkendYellow: #b59f3b;
-    --red: theme('colors.red.500');
+    --red: theme('colors.red.700');
     --grey: theme('colors.neutral.700');
     --black-key: theme('colors.neutral.500');
     --grey4: theme('colors.gray.400');
