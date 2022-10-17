@@ -8,7 +8,7 @@ module Display =
         let word = word |> Seq.toList
         let wordLength = word |> List.length
 
-        let greens =
+        let graphemes =
             let graphemeList = grapheme |> Seq.toList
             let graphemeLength = List.length graphemeList
             let foundIndex =
@@ -23,10 +23,10 @@ module Display =
             | None -> []
         
         //assume all yellows, then populate the greens if any
-        List.init wordLength (fun _ -> Yellow)
+        List.init wordLength (fun _ -> DarkGreen)
         |> List.mapi (fun i v ->
-            if List.contains i greens
-            then Green
+            if List.contains i graphemes
+            then DarkRed
             else v)
         |> List.zip word 
 

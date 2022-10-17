@@ -340,11 +340,11 @@ let ``Find phoneme in string`` () =
     let word = "fried"
     let expected =
         [
-            ('f', Yellow)
-            ('r', Yellow)
-            ('i', Green)
-            ('e', Green)
-            ('d', Yellow)
+            ('f', DarkGreen)
+            ('r', DarkGreen)
+            ('i', DarkRed)
+            ('e', DarkRed)
+            ('d', DarkGreen)
         ]
     
     let test = Display.parseWordGrapheme grapheme word
@@ -354,14 +354,14 @@ type TestTypeGrapheme () =
     static member TestProperty
         with get() : obj[] list =
         [
-            [| "treat"; "ea"; [Yellow;Yellow; Green; Green; Yellow] |]
-            [| "bread"; "ea"; [Yellow; Yellow; Green; Green; Yellow] |]
-            [| "turn"; "ur"; [Yellow; Green; Green; Yellow] |]
-            [| "touch"; "ch"; [Yellow; Yellow; Yellow; Green; Green] |]
-            [| "straight"; "aigh"; [Yellow; Yellow; Yellow; Green; Green; Green; Green; Yellow] |]
-            [| "note"; "bla"; [Yellow; Yellow; Yellow; Yellow] |] // grapheme not found, list all yellows
-            [| "note"; "o-e"; [Yellow; Green; Green; Green] |]
-            [| "note"; "a-e"; [Yellow; Yellow; Yellow; Yellow] |]
+            [| "treat"; "ea"; [DarkGreen;DarkGreen; DarkRed; DarkRed; DarkGreen] |]
+            [| "bread"; "ea"; [DarkGreen; DarkGreen; DarkRed; DarkRed; DarkGreen] |]
+            [| "turn"; "ur"; [DarkGreen; DarkRed; DarkRed; DarkGreen] |]
+            [| "touch"; "ch"; [DarkGreen; DarkGreen; DarkGreen; DarkRed; DarkRed] |]
+            [| "straight"; "aigh"; [DarkGreen; DarkGreen; DarkGreen; DarkRed; DarkRed; DarkRed; DarkRed; DarkGreen] |]
+            [| "note"; "bla"; [DarkGreen; DarkGreen; DarkGreen; DarkGreen] |] // grapheme not found, list all DarkGreens
+            [| "note"; "o-e"; [DarkGreen; DarkRed; DarkRed; DarkRed] |]
+            [| "note"; "a-e"; [DarkGreen; DarkGreen; DarkGreen; DarkGreen] |]
         ]
 
     [<Theory>]

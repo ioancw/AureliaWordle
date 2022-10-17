@@ -40,8 +40,7 @@ module Validate =
 
 let emptyGuess = 0, { Letters = List.init letters (fun _ -> { Letter = None; Status = Black }) }
 
-let emptyGuesses =
-    List.init rounds (fun _ -> emptyGuess)
+let emptyGuesses = List.init rounds (fun _ -> emptyGuess)
 
 // fold over each letter in the guess to determine keyboard colours
 let updateKeyboardState guesses (keyBoardState: Map<string, Status>) =
@@ -61,7 +60,7 @@ let startNewGame =
     let loadedStorage = loadGameStateLocalStorage ()
     let guesses = emptyGuesses
 
-    let wordle () : string * string =
+    let wordle () : string * string * string =
         let today = DateTime.Now
         let startDate = DateTime(2022, 6, 4)
         let todayDate = DateTime(today.Year, today.Month, today.Day)
@@ -71,7 +70,7 @@ let startNewGame =
         let index = differenceDays % wordles.Length
         wordles.[index]
 
-    let wordle, hint = wordle ()
+    let wordle, hint, grapheme = wordle ()
 
     match loadedStorage with
     | Some stored ->
@@ -108,6 +107,7 @@ let startNewGame =
         let loadedGame =
             { Wordle = wordle
               Hint = hint
+              Grapheme = grapheme
               ShowInfo = false
               ShowStats = false
               ShowHelp = false
@@ -134,6 +134,7 @@ let startNewGame =
         //the case where we haven't played before and there is no local storage
         { Wordle = wordle
           Hint = hint
+          Grapheme = grapheme
           ShowInfo = false
           ShowStats = false
           ShowHelp = false
@@ -293,14 +294,13 @@ let gameTile position (c, status) =
     """
 
 let littleBoxedChar (c, status) =
-    // https://tailwindcss.com/docs/border-style
     let colourBorder =
         match status with
         | Black -> "cell-black"
         | DarkRed -> "bg-red-800 border-red-800"
         | DarkGreen -> "bg-green-700 border-green-700"
         | Yellow -> "bg-yellow-600 border-yellow-600"
-        | Invalid -> "bg-neutral-400 border-neutral-400"
+        | _ -> "bg-neutral-400 border-neutral-400"
 
     html
         $"""
@@ -319,7 +319,7 @@ let keyboardChar usedLetters handler (c: string) =
         | Yellow -> "cell-yellow"
         | Grey -> "cell-grey"
         | Green -> "cell-green"
-        | Invalid -> "bg-gray-400"
+        | _ -> "bg-gray-400"
 
     let width =
         match c with
@@ -345,7 +345,7 @@ let modal customHead bodyText modalDisplayState handler =
         <div class="modal fade fixed inset-0 flex justify-center {hidden} outline-none overflow-x-hidden overflow-y-auto" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog pointer-events-none">
                 <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-neutral-400 bg-clip-padding rounded-md outline-none text-current">
-                    <div class="modal-header flex flex-shrink-0 items-center justify-between p-2 border-b border-stone-600 rounded-t-md">
+                    <div class="modal-header flex flex-shrink-0 items-center justify-between p-1 border-b border-stone-600 rounded-t-md">
                         <h5 class="text-lg text-left font-medium leading-normal text-stone-800" id="exampleModalLabel">
                             {customHead}
                         </h5>
@@ -367,28 +367,6 @@ let modal customHead bodyText modalDisplayState handler =
             </div>
         </div>
     """
-
-let lostModal customHead bodyText modalDisplayState =
-    let hidden =
-        match modalDisplayState with
-        | true -> ""
-        | false -> "hidden"
-    //TO DO - move all this to css.
-    html
-        $"""
-        <div class="modal fade fixed inset-0 flex justify-center {hidden} outline-none overflow-x-hidden overflow-y-auto" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog pointer-events-none">
-                <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-neutral-400 bg-clip-padding rounded-md outline-none text-current">
-                    <div class="modal-header flex flex-shrink-0 items-center justify-between p-2 border-b border-stone-600 rounded-t-md">
-                        <h5 class="text-lg flex justify-center font-medium leading-normal text-stone-800" id="exampleModalLabel">
-                            {customHead}
-                        </h5>
-                    </div>
-                    {bodyText}
-                </div>
-            </div>
-        </div>
-    """    
 
 let infoText =
     html
@@ -413,7 +391,6 @@ let infoText =
 let helpText state =
     //go get the graphemes from the phonemes.
     let hint = state.Hint
-    let wordle = state.Wordle
     let hintedGraphemes =
         defaultArg (Map.tryFind hint phonemeGraphemeCorresspondances) []
 
@@ -427,27 +404,14 @@ let helpText state =
               let pad = maxLenGrapheme - (String.length grapheme)
 
               let padded =
-                  Seq.concat [ grapheme |> Seq.map (fun g -> g, DarkGreen)
+                  Seq.concat [ grapheme |> Seq.map (fun g -> g, DarkRed)
                                Seq.init (pad + 1) (fun _ -> ' ', Invalid) ]
-
-              // convert the example word to a sequence of character and colour status
-              // so that the grapheme is highlighted in a different colour
-              // this is a basic implementation, and will incorrectly highlight out of sequence letters.async
-              // if the grapheme is IE, then we want the IE in TRIED highlighted but not the first I in IRIED
-              let letters =
-                  exampleWord
-                  |> Seq.map (fun l ->
-                      l,
-                      if (Seq.contains l grapheme) then
-                          DarkGreen
-                      else
-                          Yellow)
 
               html
                 $"""
                 <div class="flex justify-left mb-1">
                     {padded |> Seq.map littleBoxedChar}
-                    {letters |> Seq.map littleBoxedChar}
+                    {exampleWord |> Display.parseWordGrapheme grapheme |> Seq.map littleBoxedChar}
                 </div>
               """ ]
 
@@ -456,7 +420,7 @@ let helpText state =
         <div class="modal-body p-2 text-slate-800 text-center">
             <p>Today's phonic hint is:
                 <div class="flex justify-center mb-1">
-                    {hint |> Seq.map (fun l -> (l, DarkRed) |> littleBoxedChar)}
+                    {hint |> Seq.map (fun l -> (l, Yellow) |> littleBoxedChar)}
                 </div>
             </p>
             <p>The graphemes corresponding to this phoneme:</p>
@@ -464,21 +428,6 @@ let helpText state =
             <p>{graphemes}</p>
         </div>
     """
-
-let lostText state =
-    let hint = state.Hint
-    let wordle = state.Wordle
-
-    html
-        $"""
-        <div class="modal-body p-2 text-slate-800 text-center">
-            <p>Oh well, never mind.
-                <div class="flex justify-center mb-1">
-                    {wordle |> Seq.map (fun l -> (l, if Seq.contains l (hint.ToUpper()) then Grey else Green) |> littleBoxedChar)}
-                </div>
-            </p>
-        </div>
-    """    
 
 let statsText state =
     let statRow label value =
@@ -553,15 +502,16 @@ let statsText state =
     """
 
 [<HookComponent>]
-let NameInput(state) =
-    let value, setValue = Hook.useState true
-    setValue (state.State = Lost && value)
+let LostModal(state) =
+    let modalDismissed, setModalDismissed = Hook.useState false
+
     let onModalClick =
         Ev (fun ev ->
             ev.preventDefault ()
-            setValue false)
+            setModalDismissed true)
 
-    let hint = state.Hint.ToUpper()
+    let displayModal = ((state.State = Lost) && not modalDismissed)
+    let grapheme = state.Grapheme.ToUpper()
     let wordle = state.Wordle
 
     let bodyText = 
@@ -571,46 +521,18 @@ let NameInput(state) =
                 <p>
                     Oh well, never mind.
                     <div class="flex justify-center mb-1">
-                        {wordle |> Seq.map (fun l -> (l, if Seq.contains l hint then DarkRed else DarkGreen) |> littleBoxedChar)}
+                        {wordle |> Display.parseWordGrapheme grapheme |> Seq.map littleBoxedChar}
                     </div>
                     Better luck next time.
                 </p>
             </div>
         """    
-    let customHead = "Today's Answer"
-    let hidden =
-        match value with
-        | true -> ""
-        | false -> "hidden"
-    // this is rubbish, fix it, and create a modal component
+
     html
         $"""
-        <div class="modal fade fixed inset-0 flex justify-center {hidden} outline-none overflow-x-hidden overflow-y-auto" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog pointer-events-none">
-                <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-neutral-400 bg-clip-padding rounded-md outline-none text-current">
-                    <div class="modal-header flex flex-shrink-0 items-center justify-between p-1 border-b border-stone-600 rounded-t-md">
-                        <h5 class="text-lg flex justify-center font-medium leading-normal text-stone-800" id="exampleModalLabel">
-                            {customHead}
-                        </h5>
-                        <button type="button" @click={onModalClick} class="px-2
-                            py-1
-                            bg-stone-800
-                            text-white
-                            font-bold
-                            text-xs
-                            leading-tight
-                            uppercase
-                            rounded
-                            shadow-md" data-bs-dismiss="modal">
-                            X
-                        </button>
-                    </div>
-                    {bodyText}
-                </div>
-            </div>
-        </div>
-    """    
-
+        {modal "Today's Answer" bodyText displayModal onModalClick}
+    """
+ 
 [<LitElement("wordle-app")>]
 let MatchComponent () =
     let _ = LitElement.init (fun cfg -> cfg.useShadowDom <- false)
@@ -677,7 +599,7 @@ let MatchComponent () =
                 {modal "About" infoText state.ShowInfo (onModalClick Info)}
                 {modal "Game Statistics" (statsText state) state.ShowStats (onModalClick Stats)}
                 {modal "Grapheme Phoneme Correspondence" (helpText state) state.ShowHelp (onModalClick Help)}
-                {NameInput(state)}
+                {LostModal(state)}
 
                 <div>
                     <div class="flex justify-center mb-1">
@@ -699,7 +621,6 @@ let MatchComponent () =
                         {List.item 5 state.Guesses |> letterToDisplayBox}
                     </div>
                 </div>
-                <!-- class="absolute inset-x-0 bottom-0" -->
                 <div >
                     <div class="flex justify-center mb-1.5">
                         {keyBoard.Top |> List.map keyboardKey}

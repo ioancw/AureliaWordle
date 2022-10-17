@@ -123,187 +123,198 @@ module Phoneme =
     [<Literal>]
     let qu = "/qu/"
 
+//List of letters that correspond to sounds
+//there are probably lots of these
+module Grapheme = 
+    let e = "e"
+    let ea = "ea"
+    let ai = "ai"
+    let ie = "ie"
+    let ``or`` = "or"
+
+
 // Curated list of words, these words should exist in the larger set.
 let wordles =
-    [ "WOULD", Phoneme.``b-oo-k``
-      "DRIED", Phoneme.ie
-      "SPRAY", Phoneme.ai
-      "HORSE", Phoneme.``or``
-      "ENJOY", Phoneme.oi
-      "FIRST", Phoneme.er
-      "THROW", Phoneme.oe
-      "SHACK", Phoneme.sh
-      "THIRD", Phoneme.er
-      "ANNOY", Phoneme.oi
-      "SPEAK", Phoneme.ee
-      "TRIED", Phoneme.ie
-      "SPRAY", Phoneme.ai
-      "SPOIL", Phoneme.oi
-      "DRIED", Phoneme.ie
-      "HORSE", Phoneme.``or``
-      "COUNT", Phoneme.ow
-      "SLOPE", Phoneme.oe
-      "FLESH", Phoneme.sh
-      "VOICE", Phoneme.oi
-      "BEACH", Phoneme.ee
-      "NOISE", Phoneme.oi
-      "BROWN", Phoneme.ow
-      "BRAIN", Phoneme.ai
-      "LIGHT", Phoneme.ie
-      "CHIRP", Phoneme.er
-      "CRAWL", Phoneme.``or``
-      "GROWL", Phoneme.ow
-      "THREW", Phoneme.ue
-      "TODAY", Phoneme.ai
-      "ARGUE", Phoneme.ue
-      "COULD", Phoneme.``b-oo-k``
-      "STRAY", Phoneme.ai
-      "MIGHT", Phoneme.ie
-      "BLUSH", Phoneme.sh
-      "RIVER", Phoneme.er
-      "POINT", Phoneme.oi
-      "SNAKE", Phoneme.ai
-      "STEEP", Phoneme.ee
-      "PRIZE", Phoneme.ie
-      "TEACH", Phoneme.ee
-      "GRAPE", Phoneme.ai
-      "RIGHT", Phoneme.ie
-      "PLANE", Phoneme.ai
-      "CURED", Phoneme.ue
-      "VALUE", Phoneme.ue
-      "FAULT", Phoneme.``or``
-      "DRIVE", Phoneme.ie
-      "SMOKE", Phoneme.oe
-      "THERE", Phoneme.air
-      "TOOTH", Phoneme.``b-oo-k``
-      "TWIRL", Phoneme.er
-      "FORTY", Phoneme.``or``
-      "VOICE", Phoneme.oi
-      "THEIR", Phoneme.air
-      "GREEN", Phoneme.ee
-      "FOUND", Phoneme.ow
-      "WHERE", Phoneme.air
-      "ABOUT", Phoneme.ow
-      "EVERY", Phoneme.ee
-      "MOUSE", Phoneme.ow
-      "WATER", Phoneme.``or``
-      "ROUND", Phoneme.ow
-      "PLANT", Phoneme.ar
-      "GREAT", Phoneme.ai
-      "SMALL", Phoneme.``or``
-      "GOING", Phoneme.oe
-      "QUEEN", Phoneme.ee
-      "LARGE", Phoneme.j
-      "PLACE", Phoneme.ai
-      "AGAIN", Phoneme.e
-      "RIGHT", Phoneme.ie
-      "WOULD", Phoneme.``b-oo-k``
-      "DRIED", Phoneme.ie
-      "SPRAY", Phoneme.ai
-      "HORSE", Phoneme.``or``
-      "JUDGE", Phoneme.j
-      "MATCH", Phoneme.ch
-      "GHOST", Phoneme.g
-      "TEACH", Phoneme.ee
-      "GRAPE", Phoneme.ai
-      "RIGHT", Phoneme.ie
-      "PLANE", Phoneme.ai
-      "CURED", Phoneme.ue
-      "VALUE", Phoneme.ue
-      "FAULT", Phoneme.``or``
-      "DRIVE", Phoneme.ie
-      "STRAY", Phoneme.ai
-      "MIGHT", Phoneme.ie
-      "BLUSH", Phoneme.sh
-      "RIVER", Phoneme.er
-      "POINT", Phoneme.oi
-      "SNAKE", Phoneme.ai
-      "STEEP", Phoneme.ee
-      "PRIZE", Phoneme.ie
-      "TEACH", Phoneme.ee
-      "GRAPE", Phoneme.ai
-      "RIGHT", Phoneme.ie
-      "PLANE", Phoneme.ai
-      "CURED", Phoneme.ue
-      "VALUE", Phoneme.ue
-      "FAULT", Phoneme.``or``
-      "DRIVE", Phoneme.ie
-      "SMOKE", Phoneme.oe
-      "THERE", Phoneme.air
-      "TOOTH", Phoneme.``b-oo-k``
-      "TWIRL", Phoneme.er
-      "FORTY", Phoneme.``or``
-      "VOICE", Phoneme.oi
-      "THEIR", Phoneme.air
-      "GREEN", Phoneme.ee
-      "FOUND", Phoneme.ow
-      "WHERE", Phoneme.air
-      "ABOUT", Phoneme.ow
-      "EVERY", Phoneme.ee
-      "MOUSE", Phoneme.ow
-      "WATER", Phoneme.``or``
-      "ROUND", Phoneme.ow
-      "PLANT", Phoneme.ar
-      "GREAT", Phoneme.ai
-      "SMALL", Phoneme.``or``
-      "GOING", Phoneme.oe
-      "QUEEN", Phoneme.ee
-      "LARGE", Phoneme.j
-      "PLACE", Phoneme.ai
-      "AGAIN", Phoneme.e
-      "RIGHT", Phoneme.ie
-      "TIGER", Phoneme.i
-      "HAPPY", Phoneme.ee
-      "MONEY", Phoneme.ee
-      "LIGHT", Phoneme.ie
-      "APPLE", Phoneme.p
-      "TRAIN", Phoneme.ai
-      "TRUCK", Phoneme.u //as of Oct 15
-      "BEACH", Phoneme.ee
-      "QUAKE", Phoneme.ai       
-      "BLEAK", Phoneme.ee
-      "SPRAY", Phoneme.ai 
-      "SNEAK", Phoneme.ee
-      "GLEAM", Phoneme.ee
-      "BEAST", Phoneme.ee 
-      "CREEK", Phoneme.ee       
-      "GREAT", Phoneme.ai
-      "BEGIN", Phoneme.ee 
-      "STEAK", Phoneme.ai 
-      "CHEAP", Phoneme.ee 
-      "BREAK", Phoneme.ai
-      "JEANS", Phoneme.ee 
-      "BATHE", Phoneme.ai 
-      "GREEK", Phoneme.ee 
-      "WHALE", Phoneme.ai 
-      "LUCKY", Phoneme.ee 
-      "FLAME", Phoneme.ai 
-      "THREE", Phoneme.ee 
-      "BREAK", Phoneme.ai 
-      "CREAK", Phoneme.ee 
-      "DRAIN", Phoneme.ai 
-      "FUNNY", Phoneme.ee 
-      "FAINT", Phoneme.ai 
-      "ANGRY", Phoneme.ee 
-      "TRAIN", Phoneme.ai 
-      "THIRD", Phoneme.er
-      "ANNOY", Phoneme.oi
-      "SPEAK", Phoneme.ee
-      "TRIED", Phoneme.ie
-      "SPRAY", Phoneme.ai
-      "SPOIL", Phoneme.oi      
+    [ "WOULD", Phoneme.``b-oo-k``, "ou"
+      "DRIED", Phoneme.ie, "ie"
+      "SPRAY", Phoneme.ai, "y"
+      "HORSE", Phoneme.``or``, "or"
+      "ENJOY", Phoneme.oi, "oy"
+      "FIRST", Phoneme.er, "ir"
+      "THROW", Phoneme.oe, "ow"
+      "SHACK", Phoneme.sh, "sh"
+      "THIRD", Phoneme.er, "ir"
+      "ANNOY", Phoneme.oi, "oy"
+      "SPEAK", Phoneme.ee, "ea"
+      "TRIED", Phoneme.ie, "ie"
+      "SPRAY", Phoneme.ai, "ay"
+      "SPOIL", Phoneme.oi, "oi"
+      "DRIED", Phoneme.ie, "ie"
+      "HORSE", Phoneme.``or``, "or"
+      "COUNT", Phoneme.ow, "ou"
+      "SLOPE", Phoneme.oe, "ope"
+      "FLESH", Phoneme.sh, "sh"
+      "VOICE", Phoneme.oi, "oi"
+      "BEACH", Phoneme.ee, "ea"
+      "NOISE", Phoneme.oi, "oi"
+      "BROWN", Phoneme.ow, "ow"
+      "BRAIN", Phoneme.ai, "ai"
+      "LIGHT", Phoneme.ie, "igh"
+      "CHIRP", Phoneme.er, "ir"
+      "CRAWL", Phoneme.``or``, "aw"
+      "GROWL", Phoneme.ow, "ow"
+      "THREW", Phoneme.ue, "ew"
+      "TODAY", Phoneme.ai, "ay"
+      "ARGUE", Phoneme.ue, "ue"
+      "COULD", Phoneme.``b-oo-k``, "oul"
+      "STRAY", Phoneme.ai, "ay"
+      "MIGHT", Phoneme.ie, "ie" 
+      "BLUSH", Phoneme.sh, "sh"
+      "RIVER", Phoneme.er, "er"
+      "POINT", Phoneme.oi, "oi"
+      "SNAKE", Phoneme.ai, "ake"
+      "STEEP", Phoneme.ee, "ee"
+      "PRIZE", Phoneme.ie, "ize"
+      "TEACH", Phoneme.ee, "ea"
+      "GRAPE", Phoneme.ai, "ape"
+      "RIGHT", Phoneme.ie, "igh"
+      "PLANE", Phoneme.ai, "ane"
+      "CURED", Phoneme.ue, "u"
+      "VALUE", Phoneme.ue, "ue"
+      "FAULT", Phoneme.``or``, "au"
+      "DRIVE", Phoneme.ie, "ive"
+      "SMOKE", Phoneme.oe, "oke"
+      "THERE", Phoneme.air, "ere"
+      "TOOTH", Phoneme.``b-oo-k``, "oo"
+      "TWIRL", Phoneme.er, "ir"
+      "FORTY", Phoneme.``or``, "or"
+      "VOICE", Phoneme.oi, "oi"
+      "THEIR", Phoneme.air, "eir"
+      "GREEN", Phoneme.ee, "ee"
+      "FOUND", Phoneme.ow, "ou"
+      "WHERE", Phoneme.air, "ere"
+      "ABOUT", Phoneme.ow, "ou"
+      "EVERY", Phoneme.ee, "y"
+      "MOUSE", Phoneme.ow, "ou"
+      "WATER", Phoneme.``or``, "a"
+      "ROUND", Phoneme.ow, "ou"
+      "PLANT", Phoneme.ar, "a"
+      "GREAT", Phoneme.ai, "ea"
+      "SMALL", Phoneme.``or``, "a"
+      "GOING", Phoneme.oe, "oi"
+      "QUEEN", Phoneme.ee, "ee"
+      "LARGE", Phoneme.j, "ge"
+      "PLACE", Phoneme.ai, "ace"
+      "AGAIN", Phoneme.e, "e"
+      "RIGHT", Phoneme.ie, "igh"
+      "WOULD", Phoneme.``b-oo-k``, "oul"
+      "DRIED", Phoneme.ie, "ie"
+      "SPRAY", Phoneme.ai, "ay"
+      "HORSE", Phoneme.``or``, "or"
+      "JUDGE", Phoneme.j, "ge"
+      "MATCH", Phoneme.ch, "tch"
+      "GHOST", Phoneme.g, "g"
+      "TEACH", Phoneme.ee, "ea"
+      "GRAPE", Phoneme.ai, "ape"
+      "RIGHT", Phoneme.ie, "igh"
+      "PLANE", Phoneme.ai, "ane"
+      "CURED", Phoneme.ue, "ure"
+      "VALUE", Phoneme.ue, "ue"
+      "FAULT", Phoneme.``or``, "au"
+      "DRIVE", Phoneme.ie, "ive"
+      "STRAY", Phoneme.ai, "ay"
+      "MIGHT", Phoneme.ie, "igh"
+      "BLUSH", Phoneme.sh, "sh"
+      "RIVER", Phoneme.er, "er"
+      "POINT", Phoneme.oi, "oi"
+      "SNAKE", Phoneme.ai, "ake"
+      "STEEP", Phoneme.ee, "ee"
+      "PRIZE", Phoneme.ie, "ize"
+      "TEACH", Phoneme.ee, "ea"
+      "GRAPE", Phoneme.ai, "ape"
+      "RIGHT", Phoneme.ie, "igh"
+      "PLANE", Phoneme.ai, "ane"
+      "CURED", Phoneme.ue, "ure"
+      "VALUE", Phoneme.ue, "ue"
+      "FAULT", Phoneme.``or``, "au"
+      "DRIVE", Phoneme.ie, "ive"
+      "SMOKE", Phoneme.oe, "oke"
+      "THERE", Phoneme.air, "ere"
+      "TOOTH", Phoneme.``b-oo-k``, "oo"
+      "TWIRL", Phoneme.er, "ir"
+      "FORTY", Phoneme.``or``, "or"
+      "VOICE", Phoneme.oi, "oi"
+      "THEIR", Phoneme.air, "eir"
+      "GREEN", Phoneme.ee, "ee"
+      "FOUND", Phoneme.ow, "ou"
+      "WHERE", Phoneme.air, "ere"
+      "ABOUT", Phoneme.ow, "ou"
+      "EVERY", Phoneme.ee, "y"
+      "MOUSE", Phoneme.ow, "ou"
+      "WATER", Phoneme.``or``, "a"
+      "ROUND", Phoneme.ow, "ow"
+      "PLANT", Phoneme.ar, "a"
+      "GREAT", Phoneme.ai, "ea"
+      "SMALL", Phoneme.``or``, "a"
+      "GOING", Phoneme.oe, "oi"
+      "QUEEN", Phoneme.ee, "ee"
+      "LARGE", Phoneme.j, "g"
+      "PLACE", Phoneme.ai, "ai"
+      "AGAIN", Phoneme.e, "a"
+      "RIGHT", Phoneme.ie, "igh"
+      "TIGER", Phoneme.i, "i"
+      "HAPPY", Phoneme.ee, "y"
+      "MONEY", Phoneme.ee, "y"
+      "LIGHT", Phoneme.ie, "igh"
+      "APPLE", Phoneme.p, "p"
+      "TRAIN", Phoneme.ai, "ai"
+      "TRUCK", Phoneme.u, "u" //as of Oct 15
+      "BEACH", Phoneme.ee, "ea"
+      "QUAKE", Phoneme.ai, "ake"       
+      "BLEAK", Phoneme.ee, "ea"
+      "SPRAY", Phoneme.ai, "ay" 
+      "SNEAK", Phoneme.ee, "ea"
+      "GLEAM", Phoneme.ee, "ea"
+      "BEAST", Phoneme.ee, "ea" 
+      "CREEK", Phoneme.ee, "ee"       
+      "GREAT", Phoneme.ai, "ea"
+      "BEGIN", Phoneme.ee, "e" 
+      "STEAK", Phoneme.ai, "ea" 
+      "CHEAP", Phoneme.ee, "ea" 
+      "BREAK", Phoneme.ai, "ea"
+      "JEANS", Phoneme.ee, "ea" 
+      "BATHE", Phoneme.ai, "a" 
+      "GREEK", Phoneme.ee, "ee" 
+      "WHALE", Phoneme.ai , "ale"
+      "LUCKY", Phoneme.ee, "y" 
+      "FLAME", Phoneme.ai, "ame" 
+      "THREE", Phoneme.ee, "ee" 
+      "BREAK", Phoneme.ai, "ea" 
+      "CREAK", Phoneme.ee, "ea" 
+      "DRAIN", Phoneme.ai, "ai" 
+      "FUNNY", Phoneme.ee, "y"
+      "FAINT", Phoneme.ai, "ai"
+      "ANGRY", Phoneme.ee, "y" 
+      "TRAIN", Phoneme.ai, "ai" 
+      "THIRD", Phoneme.er, "ir"
+      "ANNOY", Phoneme.oi, "oy"
+      "SPEAK", Phoneme.ee, "ea"
+      "TRIED", Phoneme.ie, "ie"
+      "SPRAY", Phoneme.ai, "ay"
+      "SPOIL", Phoneme.oi, "oi"      
       //add more here as needed, try to even out the phonemes so they get a different one everyday
 
       ]
 
+// holds example phonemes to their corresponding graphemes
 let phonemeGraphemeCorresspondances =
     [ Phoneme.e,
-      [ "e", "bed"
-        "ea", "bread"
-        "ai", "said"
-        "ie", "friend" ]
+      [ Grapheme.e, "bed"
+        Grapheme.ea, "bread"
+        Grapheme.ai, "said"
+        Grapheme.ie, "friend" ]
       Phoneme.``or``,
-      [ "or", "for"
+      [ Grapheme.``or``, "for"
         "our", "your"
         "a", "ball"
         "al", "walk"

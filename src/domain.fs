@@ -47,6 +47,7 @@ type GameState =
 type State =
     { Wordle: string
       Hint: string
+      Grapheme: string
       Guesses: (Position * Guess) list
       ShowInfo: bool
       ShowStats: bool
