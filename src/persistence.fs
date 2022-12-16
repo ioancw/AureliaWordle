@@ -5,23 +5,23 @@ open Common
 open Fable.Import
 open Fable.Core
 
-let gameStateKey = "gameStateAureliav2"
+let gameStateKey = "gameStateAureliav3"
 
 module StateHelpers =
     let statusToString status =
         match status with
+        | Green -> "Green"
         | Yellow -> "Yellow"
         | Grey -> "Grey"
         | Black -> "Black"
-        | Green -> "Green"
         | Invalid -> "Invalid"
 
     let stateToString state =
         match state with
         | NotStarted -> "Not Started"
+        | Started -> "Started"
         | Won -> "Won"
         | Lost -> "Lost"
-        | Started -> "Started"
 
     let stateFromString (stored: LocalStorageGameState) =
         match stored.State with
@@ -33,10 +33,10 @@ module StateHelpers =
 
     let statusFromString guessStatus =
         match guessStatus with
+        | "Green" -> Green
         | "Yellow" -> Yellow
         | "Grey" -> Grey
         | "Black" -> Black
-        | "Green" -> Green
         | _ -> Invalid
 
 let saveGameStateLocalStorage (state: State) =
@@ -54,9 +54,9 @@ let saveGameStateLocalStorage (state: State) =
         gameStateKey,
         JS.JSON.stringify
             { Guesses = guessedWords
-              Solution = state.Wordle
-              Round = state.Round
+              Wordle = state.Wordle
               State = StateHelpers.stateToString state.State
+              Round = state.Round
               GamesWon = state.GamesWon
               GamesLost = state.GamesLost
               WinDistribution = state.WinDistribution |> List.toArray }

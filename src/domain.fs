@@ -16,42 +16,46 @@ type Status =
     | Grey
     | Black
     | Invalid
+
+type HelpTextColour =
+    | HintInvalid
+    | HintBlack
     | DarkRed
     | DarkGreen
     | DarkYellow
 
-type GuessLetter =
-    { Letter: string option
-      Status: Status }
+type Position = int
 
 type LocalStorageGameState =
-    { Guesses: (int * (string * string) []) [] //guess contains a phonic hint.
-      Solution: string
-      Round: int
+    { Wordle: string
+      Guesses: (Position * (string * string) []) []
       State: string
+      Round: int
       GamesWon: int
       GamesLost: int
       WinDistribution: int [] }
 
-type Position = int
+type GuessLetter =
+    { Letter: string option
+      Status: Status }
 
 type Guess =
     { Letters: GuessLetter list }
 
 type GameState =
     | NotStarted
+    | Started
     | Won
     | Lost
-    | Started
+    
+type Phonics =
+    { Hint: string
+      Grapheme: string }
 
 type State =
     { Wordle: string
-      Hint: string
-      Grapheme: string
+      Phonics: Phonics
       Guesses: (Position * Guess) list
-      ShowInfo: bool
-      ShowStats: bool
-      ShowHelp: bool
       UsedLetters: Map<string, Status>
       State: GameState
       Round: int

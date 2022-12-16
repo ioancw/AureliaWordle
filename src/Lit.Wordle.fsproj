@@ -4,15 +4,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="domain.fs" />
+    <Compile Include="words.fs" />
     <Compile Include="common.fs" />
     <Compile Include="persistence.fs" />
-    <Compile Include="words.fs" />
+    <Compile Include="displayelements.fs" />
+    <Compile Include="modals.fs" />
+    <Compile Include="game.fs" />
     <Compile Include="App.fs" />
     <Content Include="index.css" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Fable.Lit" Version="1.4.2" />
     <PackageReference Include="Fable.Lit.Elmish" Version="1.4.0" />
-    <PackageReference Include="Thoth.Json" Version="6.0.0" />
+    <PackageReference Include="Thoth.Json" Version="7.0.0" />
   </ItemGroup>
 </Project>

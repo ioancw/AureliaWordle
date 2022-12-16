@@ -11,7 +11,7 @@ open Common
 
 [<Fact>]
 let ``Test masker`` () =
-    let actual = scoreGuess "FAVOR" "AROSE"
+    let actual = Score.scoreGuess "FAVOR" "AROSE"
     let expected =
         { Letters =
             [
@@ -26,7 +26,7 @@ let ``Test masker`` () =
 
 [<Fact>]
 let ``Test masker double letter no green`` () =
-    let actual = scoreGuess "AROSE" "SPEED"
+    let actual = Score.scoreGuess "AROSE" "SPEED"
     let expected =
         { Letters =
             [
@@ -41,7 +41,7 @@ let ``Test masker double letter no green`` () =
 
 [<Fact>]
 let ``Test masker double letter with one green`` () =
-    let actual = scoreGuess "TREAT" "SPEED"
+    let actual = Score.scoreGuess "TREAT" "SPEED"
     let expected =
         { Letters =
             [
@@ -69,7 +69,7 @@ type TestType () =
     [<Theory>]
     [<MemberData("TestProperty")>]
     member t.TestMethod (wordle: string) (guess: string) (expectedMask: Status list) =
-        let actual = getAnswerMask wordle guess
+        let actual = Score.getAnswerMask wordle guess
         Assert.Equal(expectedMask, actual)
 
 [<Fact>]
@@ -93,7 +93,7 @@ let ``Keyboard status when letters have been used`` ()=
         ]
         |> Map.ofList
 
-    updateKeyboardState guesses keyboardStatus |> should equal expectedKeyboardStatus
+    State.updateKeyboardState guesses keyboardStatus |> should equal expectedKeyboardStatus
 
 [<Fact>]
 let ``Keyboard status new Yellow status `` ()=
@@ -128,7 +128,7 @@ let ``Keyboard status new Yellow status `` ()=
         ]
         |> Map.ofList
 
-    updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
+    State.updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
 
 [<Fact>]
 let ``Keyboard status old Yellow is now Green `` ()=
@@ -167,7 +167,7 @@ let ``Keyboard status old Yellow is now Green `` ()=
         ]
         |> Map.ofList
 
-    updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
+    State.updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
 
 [<Fact>]
 let ``Keyboard status old Green is still Green when mask letter is Yellow `` ()=
@@ -206,7 +206,7 @@ let ``Keyboard status old Green is still Green when mask letter is Yellow `` ()=
         ]
         |> Map.ofList
 
-    updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
+    State.updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
 
 [<Fact>]
 let ``Keyboard status existing greens in same position `` ()=
@@ -245,7 +245,7 @@ let ``Keyboard status existing greens in same position `` ()=
         ]
         |> Map.ofList
 
-    updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
+    State.updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
 
 [<Fact>]
 let ``Keyboard status existing greens new yellows`` ()=
@@ -287,7 +287,7 @@ let ``Keyboard status existing greens new yellows`` ()=
         ]
         |> Map.ofList
 
-    updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
+    State.updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
 
 [<Fact>]
 let ``All yellows go green`` ()=
@@ -332,7 +332,7 @@ let ``All yellows go green`` ()=
         ]
         |> Map.ofList
 
-    updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
+    State.updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
 
 [<Fact>]
 let ``Find phoneme in string`` () =
@@ -347,7 +347,7 @@ let ``Find phoneme in string`` () =
             ('d', DarkGreen)
         ]
     
-    let test = Display.parseWordGrapheme grapheme word
+    let test = DisplayUtils.parseWordGrapheme grapheme word
     test |> should equal expected
     
 type TestTypeGrapheme () =
@@ -366,7 +366,7 @@ type TestTypeGrapheme () =
 
     [<Theory>]
     [<MemberData("TestProperty")>]
-    member t.TestMethod (word: string) (grapheme: string) (expected: Status list) =
-        let actual = Display.parseWordGrapheme grapheme word
+    member t.TestMethod (word: string) (grapheme: string) (expected: HelpTextColour list) =
+        let actual = DisplayUtils.parseWordGrapheme grapheme word
         let expectedZip = List.zip (word |> Seq.toList) expected
         actual |> should equal expectedZip   
