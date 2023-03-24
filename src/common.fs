@@ -244,33 +244,8 @@ module State =
 
 let keyBoard =
     { Top =
-        [ "q"
-          "w"
-          "e"
-          "r"
-          "t"
-          "y"
-          "u"
-          "i"
-          "o"
-          "p" ]
+        [ "q"; "w"; "e"; "r"; "t"; "y"; "u"; "i"; "o"; "p" ]
       Middle =
-        [ "a"
-          "s"
-          "d"
-          "f"
-          "g"
-          "h"
-          "j"
-          "k"
-          "l" ]
+        [ "a"; "s"; "d"; "f"; "g"; "h"; "j"; "k"; "l" ]
       Bottom =
-        [ "Ent"
-          "z"
-          "x"
-          "c"
-          "v"
-          "b"
-          "n"
-          "m"
-          "Del" ] }
+        [ "Ent"; "z"; "x"; "c"; "v"; "b"; "n"; "m"; "Del" ] }

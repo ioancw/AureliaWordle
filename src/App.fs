@@ -116,7 +116,8 @@ let MatchComponent () =
                         {List.item 5 state.Guesses |> letterToDisplayBox}
                     </div>
                 </div>
-                <div >
+
+                <div class="absolute inset-x-0 bottom-0">
                     <div class="flex justify-center mb-1.5">
                         {keyBoard.Top |> List.map keyboardKey}
                     </div>

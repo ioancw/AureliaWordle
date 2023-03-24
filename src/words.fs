@@ -205,7 +205,7 @@ let wordles =
       "QUEEN", Phoneme.ee, "ee"
       "LARGE", Phoneme.j, "ge"
       "PLACE", Phoneme.ai, "ace"
-      "AGAIN", Phoneme.e, "e"
+      "AGAIN", Phoneme.e, "a"
       "RIGHT", Phoneme.ie, "igh"
       "WOULD", Phoneme.``b-oo-k``, "oul"
       "DRIED", Phoneme.ie, "ie"
@@ -268,7 +268,7 @@ let wordles =
       "LIGHT", Phoneme.ie, "igh"
       "APPLE", Phoneme.p, "p"
       "TRAIN", Phoneme.ai, "ai"
-      "TRUCK", Phoneme.u, "u" //as of Oct 15
+      "TRUCK", Phoneme.u, "u"
       "BEACH", Phoneme.ee, "ea"
       "QUAKE", Phoneme.ai, "ake"       
       "BLEAK", Phoneme.ee, "ea"

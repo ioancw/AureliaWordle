@@ -162,23 +162,24 @@
 }
 
 .key-size {
-    width: 32px;
-    height: 58px;
+    width: 34px;
+    height: 60px;
 }
 
 .key-other-size {
-    width: 52px;
-    height: 58px;
+    width: 54px;
+    height: 60px;
 }
 
 .keyboard {
     justify-content: center;
     display: flex;
     align-items: center;
-    border-radius: 0.25rem;
+    border-radius: 0.3rem;
     color: rgb(255 255 255);
     margin-left: 2.5px;
     margin-right: 2.5px;
+    font-weight: bold;
     text-transform: uppercase;
     transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
     transition-duration: 2000ms;
