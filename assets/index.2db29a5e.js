@@ -187,7 +187,7 @@ const so=function(){const e=document.createElement("link").relList;if(e&&e.suppo
             ${h(q(5,n.Guesses))}
             </div>
             </div>
-            <div class="absolute inset-x-0 bottom-0">
+            <div>
             <div class="flex justify-center mb-1.5">
             ${se(f,js.Top)}
             </div>
