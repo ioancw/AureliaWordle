@@ -54,6 +54,7 @@ module Guess =
     let getLetter (_, guess) = guess.Letters |> List.map Letter.unpack
 
 module List =
+    /// Sets a value in the list at the given position.
     let set list value pos =
         list
         |> List.mapi (fun i v -> if i = pos then value else v)
@@ -86,8 +87,13 @@ module Validate =
         else
             (state.Round >= 0 && state.Round < rounds)
 
-    let allLetters n (guesses: (Position * Guess) list) =
-        let _, guess = List.item n guesses
+    let allLetters state = 
+        let _, guess = List.item state.Round state.Guesses 
+        guess.Letters
+        |> List.forall (fun gl -> gl.Letter <> None)
+
+    let word state =
+        let _, guess = List.item state.Round state.Guesses
 
         let fiveLetterWords =
             words
@@ -95,9 +101,7 @@ module Validate =
             |> Seq.map Letter.toUpper
             |> Seq.toList
 
-        guess.Letters
-        |> List.forall (fun gl -> gl.Letter <> None)
-        && List.contains (Guess.guessToWord guess) fiveLetterWords
+        List.contains (Guess.guessToWord guess) fiveLetterWords
 
 module Score = 
     /// Calculated the answer mask for the guessed word, based on the current 'wordle'
@@ -177,7 +181,8 @@ module State =
     // If the round is valid and all letters are valid (i.e. the word formed by the letters exists in the dictionary)
     // then the word for that row is submitted as a guess.
     let submitEnter numberOfRounds numberOfLetters state =
-        let submitGuess ((position, guess): Position * Guess) =
+        let submitGuess state =
+            let position, guess = List.item state.Round state.Guesses
             let guessWord = Guess.guessToWord guess
             let scoredGuess = guessWord |> Score.scoreGuess state.Wordle
 
@@ -196,9 +201,14 @@ module State =
             updatedGuess, updatedState, updatedUsedLetters
 
         if Validate.round numberOfRounds state then
-            if Validate.allLetters state.Round state.Guesses then
+            //validate.allletters separately to valiedate.word as you want to
+            //handle invalid letters differently - i.e. do nothing
+            //can turn this into a active pattern and match
+            if not <| Validate.allLetters state then 
+                state
+            elif Validate.word state then
                 let scoredGuess, updatedGameState, updatedUsedLetters =
-                    submitGuess (List.item state.Round state.Guesses)
+                    submitGuess state
 
                 let winDistribution = List.item state.Round state.WinDistribution
 

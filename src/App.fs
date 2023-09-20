@@ -38,7 +38,7 @@ let MatchComponent () =
         
         saveGameStateLocalStorage state
 
-        let letterToDisplayBox letters =
+        let letterToDisplayBox (letters: (Position * Guess)) =
             letters
             |> Guess.getLetter
             |> List.mapi gameTile
