@@ -11,10 +11,10 @@ let gameTile position (c, status) =
         Lit.classes
             [
                 "cell-black", status = Black
-                "cell-reveal.absent cell-grey", status = Grey
-                "cell-green", status = Green
-                "cell-yellow", status = Yellow
-                "jiggle cell-black", status = Invalid
+                "flipin-wrong cell-black", status = Grey
+                "flipin-correct cell-black", status = Green
+                "flipin-present cell-black", status = Yellow
+                "cell-black", status = Invalid
                 "cell-slow-1", position = 0 && isValid
                 "cell-slow-2", position = 1 && isValid
                 "cell-slow-3", position = 2 && isValid
@@ -39,7 +39,7 @@ let keyboardChar usedLetters handler (c: string) =
             | None -> Black
 
         match letterStatus with
-        | Black -> "bg-neutral-500" // see css for these definitions 
+        | Black -> "keyboard-grey" // see css for these definitions 
         | Yellow -> "cell-yellow"
         | Grey -> "cell-grey"
         | Green -> "cell-green"

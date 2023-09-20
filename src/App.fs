@@ -117,7 +117,7 @@ let MatchComponent () =
                     </div>
                 </div>
 
-                <div class="absolute inset-x-0 bottom-0">
+                <div>
                     <div class="flex justify-center mb-1.5">
                         {keyBoard.Top |> List.map keyboardKey}
                     </div>

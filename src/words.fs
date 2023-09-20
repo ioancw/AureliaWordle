@@ -275,6 +275,7 @@ let wordles =
       "SPRAY", Phoneme.ai, "ay" 
       "SNEAK", Phoneme.ee, "ea"
       "GLEAM", Phoneme.ee, "ea"
+      "SMALL", Phoneme.or, "a"
       "BEAST", Phoneme.ee, "ea" 
       "CREEK", Phoneme.ee, "ee"       
       "GREAT", Phoneme.ai, "ea"
