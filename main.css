@@ -134,6 +134,7 @@
     margin-bottom: 0.75px;
     width: 68px;
     height: 68px;
+    z-index: auto;
 }
 
 .aurelia-header {
@@ -250,6 +251,7 @@ svg.cursor-pointer:hover {
     animation-name: FlipOutCorrect;
     animation-timing-function: ease-in;
     animation-fill-mode: forwards;
+    z-index: auto;
 }
 
 .flipin-present {
@@ -258,6 +260,7 @@ svg.cursor-pointer:hover {
     animation-name: FlipOutPresent;
     animation-timing-function: ease-in;
     animation-fill-mode: forwards;
+    z-index: auto;
 }
 
 .flipin-wrong {
@@ -266,6 +269,7 @@ svg.cursor-pointer:hover {
     animation-name: FlipOutWrong;
     animation-timing-function: ease-in;
     animation-fill-mode: forwards;
+    z-index: auto;
 }
 
 @keyframes FlipIn {
