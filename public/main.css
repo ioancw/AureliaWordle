@@ -132,15 +132,15 @@
     margin-right: 2.5px;
     margin-top: 0.75px;
     margin-bottom: 0.75px;
-    width: 68px;
-    height: 68px;
+    width: 63px;
+    height: 63px;
     z-index: auto;
 }
 
 .aurelia-header {
     font-family: Georgia, Times, 'Times New Roman', serif;
     font-weight: 700;
-    font-size: 28px;
+    font-size: 26px;
     line-height: 100%;
     letter-spacing: 0.01em;
     /* text-align: center; */
@@ -170,12 +170,12 @@
 
 .key-size {
     width: 34px;
-    height: 62px;
+    height: 60px;
 }
 
 .key-other-size {
     width: 54px;
-    height: 62px;
+    height: 60px;
 }
 
 .keyboard {
@@ -184,8 +184,8 @@
     align-items: center;
     border-radius: 0.3rem;
     color: rgb(255 255 255);
-    margin-left: 2.75px;
-    margin-right: 2.75px;
+    margin-left: 2.5px;
+    margin-right: 2.5px;
     font-weight: bold;
     text-transform: uppercase;
     transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
@@ -248,7 +248,7 @@ svg.cursor-pointer:hover {
 
 .flipin-correct {
     animation-name: FlipIn;
-    animation-duration: 350ms;
+    animation-duration: 250ms;
     animation-name: FlipOutCorrect;
     animation-timing-function: ease-in;
     animation-fill-mode: forwards;
@@ -257,7 +257,7 @@ svg.cursor-pointer:hover {
 
 .flipin-present {
     animation-name: FlipIn;
-    animation-duration: 350ms;
+    animation-duration: 250ms;
     animation-name: FlipOutPresent;
     animation-timing-function: ease-in;
     animation-fill-mode: forwards;
@@ -266,7 +266,7 @@ svg.cursor-pointer:hover {
 
 .flipin-wrong {
     animation-name: FlipIn;
-    animation-duration: 350ms;
+    animation-duration: 250ms;
     animation-name: FlipOutWrong;
     animation-timing-function: ease-in;
     animation-fill-mode: forwards;
@@ -387,25 +387,25 @@ svg.cursor-pointer:hover {
 
 .cell-slow-2 {
     /* transition-delay: 400ms; */
-    animation-delay: 300ms;
+    animation-delay: 200ms;
     /* transition-timing-function: cubic-bezier(0.4, 0, 1, 1); */
 }
 
 .cell-slow-3 {
     /* transition-delay: 600ms; */
-    animation-delay: 600ms;
+    animation-delay: 400ms;
     /* transition-timing-function: cubic-bezier(0.4, 0, 1, 1); */
 }
 
 .cell-slow-4 {
     /* transition-delay: 800ms; */
-    animation-delay: 900ms;
+    animation-delay: 600ms;
     /* transition-timing-function: cubic-bezier(0.4, 0, 1, 1); */
 }
 
 .cell-slow-5 {
     /* transition-delay: 1000ms; */
-    animation-delay: 1200ms;
+    animation-delay: 800ms;
     /* transition-timing-function: cubic-bezier(0.4, 0, 1, 1); */
 }
 
