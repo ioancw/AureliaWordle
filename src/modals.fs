@@ -15,9 +15,9 @@ let modal customHead bodyText modalDisplayState handler =
     //TO DO - move all this to css.
     html
         $"""
-        <div class="modal fixed inset-0 flex justify-center {hidden} outline-none overflow-x-hidden overflow-y-auto z-50">
-            <div class="modal-dialog pointer-events-none">
-                <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-neutral-400 bg-clip-padding rounded-md outline-none text-current">
+        <div class="modal fixed inset-0 flex items-start justify-center {hidden} outline-none overflow-x-hidden overflow-y-auto z-50 pt-10 px-3">
+            <div class="modal-dialog pointer-events-none w-full max-w-sm">
+                <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-neutral-400 bg-clip-padding rounded-md outline-none text-current max-h-screen-3/4 overflow-y-auto">
                     <div class="modal-header flex flex-shrink-0 items-center justify-between p-1 border-b border-stone-600 rounded-t-md">
                         <h5 class="text-lg text-left font-medium leading-normal text-stone-800">
                             {customHead}

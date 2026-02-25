@@ -68,24 +68,26 @@ let MatchComponent () =
 
         html
             $"""
-            <div class="min-h-screen space-y-3 bg-stone-900">
-                <div class="mb-1">
-                    <div class="flex items-center justify-between h-10 px-5">
-                        <svg @click={onModalClick Info} xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+            <div class="flex flex-col bg-stone-900" style="height:100vh;height:100dvh;">
+                <div class="flex-none mb-1">
+                    <div class="relative flex items-center justify-between h-12 px-2">
+                        <button @click={onModalClick Info} aria-label="About" class="p-2 text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </button>
                         <div class="aurelia-header">Aureliadle</div>
                         <div class="flex">
-                            <div class="mr-3">
-                                <svg @click={onModalClick Stats} xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" viewBox="0 0 20 20" fill="currentColor"  >
+                            <button @click={onModalClick Stats} aria-label="Statistics" class="p-2 text-white mr-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
                                     <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
                                 </svg>
-                            </div>
-                            <div>
-                                <svg @click={onModalClick Help} xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            </button>
+                            <button @click={onModalClick Help} aria-label="Help" class="p-2 text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                            </div>
+                            </button>
                         </div>
                     </div>
                     <hr></hr>
@@ -96,7 +98,7 @@ let MatchComponent () =
                 {modal "Grapheme Phoneme Correspondence" (helpText state) showHelpModal (onModalClick Help)}
                 {LostModal state}
 
-                <div>
+                <div class="flex-1 flex flex-col justify-center">
                     <div class="flex justify-center mb-1">
                         {List.item 0 state.Guesses |> letterToDisplayBox}
                     </div>
@@ -117,7 +119,7 @@ let MatchComponent () =
                     </div>
                 </div>
 
-                <div class="absolute inset-x-0 bottom-0">
+                <div class="flex-none keyboard-safe-area">
                     <div class="flex justify-center mb-1.5">
                         {keyBoard.Top |> List.map keyboardKey}
                     </div>
