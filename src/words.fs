@@ -319,7 +319,7 @@ let wordles =
       ]
 
 // holds example phonemes to their corresponding graphemes
-let phonemeGraphemeCorresspondances =
+let phonemeGraphemeCorrespondances =
     [ Phoneme.e,
       [ Grapheme.e, "bed"
         Grapheme.ea, "bread"

@@ -64,7 +64,7 @@ let MatchComponent () =
                 | Stats -> setShowStatsModal (showStatsModal <> true)
                 | Help -> setShowHelpModal (showHelpModal <> true))            
                         
-        let keyboardKey = keyboardChar state.UsedLetters onKeyClick
+        let renderKeyboardChar = keyboardChar state.UsedLetters onKeyClick
 
         html
             $"""
@@ -99,35 +99,18 @@ let MatchComponent () =
                 {LostModal state}
 
                 <div class="flex-1 flex flex-col justify-center">
-                    <div class="flex justify-center mb-1">
-                        {List.item 0 state.Guesses |> letterToDisplayBox}
-                    </div>
-                    <div class="flex justify-center mb-1">
-                        {List.item 1 state.Guesses |> letterToDisplayBox}
-                    </div>
-                    <div class="flex justify-center mb-1">
-                        {List.item 2 state.Guesses |> letterToDisplayBox}
-                    </div>
-                    <div class="flex justify-center mb-1">
-                        {List.item 3 state.Guesses |> letterToDisplayBox}
-                    </div>
-                    <div class="flex justify-center mb-1">
-                        {List.item 4 state.Guesses |> letterToDisplayBox}
-                    </div>
-                    <div class="flex justify-center mb-1">
-                        {List.item 5 state.Guesses |> letterToDisplayBox}
-                    </div>
+                    {state.Guesses |> List.map (fun g -> html $"""<div class="flex justify-center mb-1">{g |> letterToDisplayBox}</div>""")}
                 </div>
 
                 <div class="flex-none keyboard-safe-area">
                     <div class="flex justify-center mb-1.5">
-                        {keyBoard.Top |> List.map keyboardKey}
+                        {keyBoard.Top |> List.map renderKeyboardChar}
                     </div>
                     <div class="flex justify-center mb-1.5">
-                        {keyBoard.Middle |> List.map keyboardKey}
+                        {keyBoard.Middle |> List.map renderKeyboardChar}
                     </div>
                     <div class="flex justify-center mb-1.5">
-                        {keyBoard.Bottom |> List.map keyboardKey}
+                        {keyBoard.Bottom |> List.map renderKeyboardChar}
                     </div>
                 </div>
             </div>

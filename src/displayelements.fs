@@ -70,5 +70,5 @@ let littleBoxedChar (c, status) =
 
     html
         $"""
-        <div class="little-tile font-sans {colourBorder}">{c}</button>
+        <div class="little-tile font-sans {colourBorder}">{c}</div>
     """    

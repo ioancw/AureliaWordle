@@ -67,7 +67,7 @@ let helpText state =
     //go get the graphemes from the phonemes.
     let hint = state.Phonics.Hint
     let hintedGraphemes =
-        defaultArg (Map.tryFind hint phonemeGraphemeCorresspondances) []
+        defaultArg (Map.tryFind hint phonemeGraphemeCorrespondances) []
 
     let graphemes =
         let maxLenGrapheme =

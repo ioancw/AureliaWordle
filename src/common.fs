@@ -23,7 +23,7 @@ module DisplayUtils =
             | Some index -> List.init graphemeLength (fun i -> i + index)
             | None -> []
         
-        //assume all yellows, then populate the greens if any
+        //assume all default (green), then highlight grapheme positions in red
         List.init wordLength (fun _ -> DarkGreen)
         |> List.mapi (fun i v ->
             if List.contains i graphemes
@@ -94,14 +94,15 @@ module Validate =
 
     let word state =
         let _, guess = List.item state.Round state.Guesses
+        let guessWord = Guess.guessToWord guess
 
-        let fiveLetterWords =
+        let validWords =
             words
-            |> Seq.filter (fun (l: string) -> l.Length = 5)
+            |> Seq.filter (fun (l: string) -> l.Length = guessWord.Length)
             |> Seq.map Letter.toUpper
             |> Seq.toList
 
-        List.contains (Guess.guessToWord guess) fiveLetterWords
+        List.contains guessWord validWords
 
 module Score = 
     /// Calculated the answer mask for the guessed word, based on the current 'wordle'
@@ -201,7 +202,7 @@ module State =
             updatedGuess, updatedState, updatedUsedLetters
 
         if Validate.round numberOfRounds state then
-            //validate.allletters separately to valiedate.word as you want to
+            //validate.allLetters separately to validate.word as you want to
             //handle invalid letters differently - i.e. do nothing
             //can turn this into a active pattern and match
             if not <| Validate.allLetters state then 
