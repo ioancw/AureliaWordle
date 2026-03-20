@@ -1,0 +1,39 @@
+# Environment variables — NEVER commit credentials
+.env
+
+# Betfair SSL certificates — NEVER commit
+*.crt
+*.key
+*.p12
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs — generated at runtime
+logs/
+*.log
+*.log.gz
+
+# Data — stream files and tick databases can be large
+data/*.db
+data/*.sqlite3
+data/*.bz2
+
+# IDE
+.idea/
+.vscode/
+*.swp

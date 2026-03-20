@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "betfair-bot"
+version = "0.1.0"
+description = "Betfair pre-race trading bot — price signal layer"
+requires-python = ">=3.11"
+dependencies = [
+    "flumine>=2.3.0",
+    "betfairlightweight>=2.20.0",
+    "python-dotenv>=1.0.0",
+    "loguru>=0.7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-mock>=3.12.0",
+]
