@@ -9,6 +9,7 @@ type Modal =
     | Info
     | Help
     | Stats
+    | Reminders
 
 type Status =
     | Green

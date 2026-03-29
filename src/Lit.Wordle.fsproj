@@ -8,6 +8,7 @@
     <Compile Include="common.fs" />
     <Compile Include="persistence.fs" />
     <Compile Include="displayelements.fs" />
+    <Compile Include="reminders.fs" />
     <Compile Include="modals.fs" />
     <Compile Include="game.fs" />
     <Compile Include="App.fs" />

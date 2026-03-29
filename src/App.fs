@@ -8,6 +8,7 @@ open Common
 open Persistence
 open Display
 open Modals
+open Reminders
 open Fable.Core
 
 JsInterop.importSideEffects "./index.css"
@@ -29,6 +30,7 @@ let MatchComponent () =
     let writeState state =
         // modal states
         let showHelpModal, setShowHelpModal = Hook.useState false
+        let showRemindersModal, setShowRemindersModal = Hook.useState false
         let showInfoModal, setShowInfoModal = Hook.useState false
         let showStatsModal, setShowStatsModal = Hook.useState false
         
@@ -62,7 +64,8 @@ let MatchComponent () =
                 match modalType with
                 | Info -> setShowInfoModal (showInfoModal <> true)
                 | Stats -> setShowStatsModal (showStatsModal <> true)
-                | Help -> setShowHelpModal (showHelpModal <> true))            
+                | Help -> setShowHelpModal (showHelpModal <> true)
+                | Reminders -> setShowRemindersModal (showRemindersModal <> true))            
                         
         let keyboardKey = keyboardChar state.UsedLetters onKeyClick
 
@@ -71,11 +74,18 @@ let MatchComponent () =
             <div class="flex flex-col bg-stone-900" style="height:100vh;height:100dvh;">
                 <div class="flex-none mb-1">
                     <div class="relative flex items-center justify-between h-12 px-2">
-                        <button @click={onModalClick Info} aria-label="About" class="p-2 text-white">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </button>
+                        <div class="flex">
+                            <button @click={onModalClick Info} aria-label="About" class="p-2 text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </button>
+                            <button @click={onModalClick Reminders} aria-label="Reminders" class="p-2 text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </button>
+                        </div>
                         <div class="aurelia-header">Aureliadle</div>
                         <div class="flex">
                             <button @click={onModalClick Stats} aria-label="Statistics" class="p-2 text-white mr-1">
@@ -96,6 +106,7 @@ let MatchComponent () =
                 {modal "About" infoText showInfoModal (onModalClick Info)}
                 {modal "Game Statistics" (statsText state) showStatsModal (onModalClick Stats)}
                 {modal "Grapheme Phoneme Correspondence" (helpText state) showHelpModal (onModalClick Help)}
+                {modal "School Reminders" remindersText showRemindersModal (onModalClick Reminders)}
                 {LostModal state}
 
                 <div class="flex-1 flex flex-col justify-center">
