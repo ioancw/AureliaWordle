@@ -1,0 +1,41 @@
+{
+  "slug": "deploy-to-production",
+  "version": 1,
+  "title": "Deploy to Production",
+  "description": "A compact release checklist. Pause points between pre-flight, release, and post-release.",
+  "created_at": "2026-04-18T00:00:00+00:00",
+  "updated_at": "2026-04-18T00:00:00+00:00",
+  "phases": [
+    {
+      "name": "Pre-flight",
+      "mode": "read-do",
+      "items": [
+        {"id": "pre-1", "text": "Confirm release ticket is in Ready state", "critical": false},
+        {"id": "pre-2", "text": "Verify CI is green on the target commit", "critical": true},
+        {"id": "pre-3", "text": "Post #releases announcement with commit SHA and rollback plan", "critical": true},
+        {"id": "pre-4", "text": "Confirm DB migrations are backwards-compatible", "critical": true},
+        {"id": "pre-5", "text": "Run smoke tests against staging build", "critical": false}
+      ]
+    },
+    {
+      "name": "Release",
+      "mode": "do-confirm",
+      "items": [
+        {"id": "rel-1", "text": "Tag the release and push the tag", "critical": false},
+        {"id": "rel-2", "text": "Deploy to 5% canary and watch error rate for 10 minutes", "critical": true},
+        {"id": "rel-3", "text": "Promote to 100% if canary stable", "critical": true},
+        {"id": "rel-4", "text": "Verify key user journeys on prod (login, checkout)", "critical": true}
+      ]
+    },
+    {
+      "name": "Post-release",
+      "mode": "read-do",
+      "items": [
+        {"id": "post-1", "text": "Close release ticket and link the tag", "critical": false},
+        {"id": "post-2", "text": "Confirm on-call is briefed", "critical": false},
+        {"id": "post-3", "text": "Update the status page if user-visible changes shipped", "critical": false}
+      ]
+    }
+  ],
+  "retro_notes": []
+}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}All runs{% endblock %}
+{% block content %}
+<h1>All runs</h1>
+{% if runs %}
+<table class="runs">
+  <thead><tr><th>Checklist</th><th>Status</th><th>Started</th><th>Completed</th><th>Steps</th><th></th></tr></thead>
+  <tbody>
+    {% for r in runs %}
+    <tr>
+      <td>{{ r.checklist_title }} <span class="muted">v{{ r.checklist_version }}</span></td>
+      <td><span class="status status-{{ r.status }}">{{ r.status.replace('_',' ') }}</span></td>
+      <td class="muted">{{ r.started_at|datetimefmt }}</td>
+      <td class="muted">{{ r.completed_at|datetimefmt if r.completed_at else '—' }}</td>
+      <td>{{ r.steps|length }}</td>
+      <td><a href="{{ url_for('run_view', run_id=r.id) }}">open</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">No runs yet.</p>
+{% endif %}
+{% endblock %}

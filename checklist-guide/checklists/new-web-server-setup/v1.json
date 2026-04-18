@@ -1,0 +1,41 @@
+{
+  "slug": "new-web-server-setup",
+  "version": 1,
+  "title": "New Web Server Setup",
+  "description": "Bring up a fresh Linux VM as a hardened web server.",
+  "created_at": "2026-04-18T00:00:00+00:00",
+  "updated_at": "2026-04-18T00:00:00+00:00",
+  "phases": [
+    {
+      "name": "Base hardening",
+      "mode": "read-do",
+      "items": [
+        {"id": "h-1", "text": "Create non-root admin user with sudo", "critical": true},
+        {"id": "h-2", "text": "Install SSH public key; disable password auth in sshd_config", "critical": true},
+        {"id": "h-3", "text": "Enable unattended security upgrades", "critical": false},
+        {"id": "h-4", "text": "Configure UFW: allow 22, 80, 443; deny inbound default", "critical": true},
+        {"id": "h-5", "text": "Set timezone and enable chrony/ntp", "critical": false}
+      ]
+    },
+    {
+      "name": "Web stack",
+      "mode": "read-do",
+      "items": [
+        {"id": "w-1", "text": "Install nginx", "critical": false},
+        {"id": "w-2", "text": "Install certbot and issue TLS cert for the domain", "critical": true},
+        {"id": "w-3", "text": "Deploy application user + systemd service", "critical": false},
+        {"id": "w-4", "text": "Configure nginx reverse proxy and reload", "critical": false}
+      ]
+    },
+    {
+      "name": "Verification",
+      "mode": "do-confirm",
+      "items": [
+        {"id": "v-1", "text": "curl https://<domain> returns 200 with valid cert", "critical": true},
+        {"id": "v-2", "text": "Confirm only 22/80/443 open from external scan", "critical": true},
+        {"id": "v-3", "text": "Set up log shipping / monitoring alerts", "critical": false}
+      ]
+    }
+  ],
+  "retro_notes": []
+}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Pause point — {{ run.checklist_title }}{% endblock %}
+{% block content %}
+<div class="runner">
+  <h1>Pause point</h1>
+  <p class="lede">End of phase <strong>{{ phase.name }}</strong>. Review before moving on.</p>
+
+  <ol class="items review">
+    {% for step in run.steps %}
+      {% if step.phase == cursor.phase %}
+      <li>
+        <span class="check">✓</span> {{ step.text }}
+        {% if step.note %}<span class="muted">— {{ step.note }}</span>{% endif %}
+      </li>
+      {% endif %}
+    {% endfor %}
+  </ol>
+
+  <form method="post" action="{{ url_for('run_advance', run_id=run.id) }}">
+    <button class="primary" type="submit">
+      {% if is_last %}Complete run →{% else %}Start next phase →{% endif %}
+    </button>
+  </form>
+
+  <div class="runner-footer">
+    <form method="post" action="{{ url_for('run_back', run_id=run.id) }}" style="display:inline">
+      <button class="btn" type="submit">← Back to last step</button>
+    </form>
+    <details class="abort">
+      <summary>Stop / flag issue</summary>
+      <form method="post" action="{{ url_for('run_abort', run_id=run.id) }}" class="row">
+        <input type="text" name="reason" placeholder="Why are you stopping?" class="grow" required>
+        <button class="danger" type="submit">Abort run</button>
+      </form>
+    </details>
+  </div>
+</div>
+{% endblock %}

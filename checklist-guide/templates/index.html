@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Checklists{% endblock %}
+{% block content %}
+<h1>Checklists</h1>
+<p class="lede">Pick a checklist to run, or create a new one.</p>
+
+{% if checklists %}
+<ul class="cards">
+  {% for c in checklists %}
+  <li class="card">
+    <div class="card-head">
+      <h2><a href="{{ url_for('checklist_view', slug=c.slug) }}">{{ c.title }}</a></h2>
+      <span class="tag">v{{ c.version }}</span>
+    </div>
+    {% if c.description %}<p>{{ c.description }}</p>{% endif %}
+    {% set ns = namespace(n=0) %}
+    {% for p in c.phases %}{% set ns.n = ns.n + p['items']|length %}{% endfor %}
+    <p class="meta">
+      {{ c.phases|length }} phase{{ c.phases|length != 1 and 's' or '' }} · {{ ns.n }} items
+    </p>
+    <form method="post" action="{{ url_for('run_start') }}">
+      <input type="hidden" name="slug" value="{{ c.slug }}">
+      <button class="primary" type="submit">Run this checklist</button>
+    </form>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="empty">No checklists yet. <a href="{{ url_for('checklist_new') }}">Create one</a>.</p>
+{% endif %}
+
+<h2 class="mt">Recent runs</h2>
+{% if runs %}
+<table class="runs">
+  <thead><tr><th>Checklist</th><th>Status</th><th>Started</th><th></th></tr></thead>
+  <tbody>
+    {% for r in runs %}
+    <tr>
+      <td>{{ r.checklist_title }} <span class="muted">v{{ r.checklist_version }}</span></td>
+      <td><span class="status status-{{ r.status }}">{{ r.status.replace('_',' ') }}</span></td>
+      <td class="muted">{{ r.started_at|datetimefmt }}</td>
+      <td><a href="{{ url_for('run_view', run_id=r.id) }}">open</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">No runs yet.</p>
+{% endif %}
+{% endblock %}

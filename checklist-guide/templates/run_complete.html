@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Completed — {{ run.checklist_title }}{% endblock %}
+{% block content %}
+<div class="runner">
+  <h1>{% if run.retro_note is not none %}Run complete{% else %}Almost done — one quick retro{% endif %}</h1>
+  <p class="lede">
+    <span class="status status-completed">completed</span>
+    <span class="muted">· {{ run.checklist_title }} v{{ run.checklist_version }}
+    · started {{ run.started_at|datetimefmt }}
+    · finished {{ run.completed_at|datetimefmt }}</span>
+  </p>
+
+  {% if run.retro_note is none %}
+  <form method="post" action="{{ url_for('run_retro', run_id=run.id) }}" class="retro">
+    <label>Anything to improve about this checklist? (optional, saved against the checklist)
+      <textarea name="note" rows="3" placeholder="e.g. Step 3 was ambiguous — split into two items."></textarea>
+    </label>
+    <button class="primary" type="submit">Save &amp; finish</button>
+    <button class="btn" type="submit" name="note" value="">Skip</button>
+  </form>
+  {% else %}
+    {% if run.retro_note %}<p class="retro-saved"><strong>Your note:</strong> {{ run.retro_note }}</p>{% endif %}
+    <p><a href="{{ url_for('checklist_view', slug=run.checklist_slug) }}">Back to checklist</a> · <a href="{{ url_for('index') }}">Home</a></p>
+  {% endif %}
+
+  <h2 class="mt">Run log</h2>
+  <ol class="items review">
+    {% for step in run.steps %}
+    <li>
+      <span class="check">✓</span>
+      <span class="muted small">[P{{ step.phase + 1 }}.{{ step.item + 1 }} · {{ step.completed_at|datetimefmt }}]</span>
+      {{ step.text }}
+      {% if step.note %}<span class="muted">— {{ step.note }}</span>{% endif %}
+    </li>
+    {% endfor %}
+  </ol>
+</div>
+{% endblock %}

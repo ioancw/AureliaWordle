@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}{{ mode == 'new' and 'New checklist' or 'Edit: ' + checklist.title }}{% endblock %}
+{% block content %}
+<h1>{{ mode == 'new' and 'New checklist' or ('Edit: ' + checklist.title) }}</h1>
+{% if mode == 'edit' %}<p class="muted">Saving creates version {{ (checklist.version or 1) + 1 }}.</p>{% endif %}
+{% if error %}<p class="error">{{ error }}</p>{% endif %}
+
+<form method="post" id="checklist-form" class="editor">
+  <label>Title
+    <input name="title" value="{{ checklist.title or '' }}" required>
+  </label>
+  <label>Description
+    <textarea name="description" rows="2">{{ checklist.description or '' }}</textarea>
+  </label>
+
+  <div id="phases">
+    {% for phase in checklist.phases %}
+      {% set p = loop.index0 %}
+      <fieldset class="phase-edit" data-phase="{{ p }}">
+        <legend>Phase {{ p + 1 }}</legend>
+        <label>Name
+          <input name="phase_name[{{ p }}]" value="{{ phase.name or '' }}">
+        </label>
+        <label>Mode
+          <select name="phase_mode[{{ p }}]">
+            <option value="read-do" {{ 'selected' if phase.mode == 'read-do' else '' }}>READ-DO (read each, then do)</option>
+            <option value="do-confirm" {{ 'selected' if phase.mode == 'do-confirm' else '' }}>DO-CONFIRM (do from memory, confirm at pause)</option>
+          </select>
+        </label>
+        <div class="items-edit" data-count="{{ phase['items']|length }}">
+          {% for it in phase['items'] %}
+            {% set i = loop.index0 %}
+            <div class="item-row">
+              <input type="text" name="item_text[{{ p }}][{{ i }}]" placeholder="Concise action..." value="{{ it.text or '' }}">
+              <label class="crit-toggle">
+                <input type="checkbox" name="item_critical[{{ p }}][{{ i }}]" {{ 'checked' if it.critical else '' }}> critical
+              </label>
+              <button type="button" class="linklike remove-item">remove</button>
+            </div>
+          {% endfor %}
+        </div>
+        <button type="button" class="btn add-item">+ add item</button>
+        <button type="button" class="linklike remove-phase">remove phase</button>
+        <p class="warn phase-warn" hidden>Phase has more than 9 items. Consider splitting — the manifesto recommends 5–9 killer items per pause point.</p>
+      </fieldset>
+    {% endfor %}
+  </div>
+
+  <button type="button" class="btn" id="add-phase">+ add phase</button>
+
+  <div class="actions">
+    <button class="primary" type="submit">Save</button>
+    <a class="btn" href="{{ mode == 'edit' and url_for('checklist_view', slug=checklist.slug) or url_for('index') }}">Cancel</a>
+  </div>
+</form>
+
+<script>
+(function() {
+  const phasesEl = document.getElementById('phases');
+
+  function phaseCount() { return phasesEl.querySelectorAll('.phase-edit').length; }
+
+  function reindex() {
+    const phases = phasesEl.querySelectorAll('.phase-edit');
+    phases.forEach((fs, p) => {
+      fs.dataset.phase = p;
+      fs.querySelector('legend').textContent = 'Phase ' + (p + 1);
+      fs.querySelectorAll('[name^="phase_name"]')[0].name = `phase_name[${p}]`;
+      fs.querySelectorAll('[name^="phase_mode"]')[0].name = `phase_mode[${p}]`;
+      const rows = fs.querySelectorAll('.item-row');
+      rows.forEach((row, i) => {
+        row.querySelector('input[type="text"]').name = `item_text[${p}][${i}]`;
+        row.querySelector('input[type="checkbox"]').name = `item_critical[${p}][${i}]`;
+      });
+      checkPhaseLimit(fs);
+    });
+  }
+
+  function checkPhaseLimit(fs) {
+    const count = fs.querySelectorAll('.item-row').length;
+    fs.querySelector('.phase-warn').hidden = count <= 9;
+  }
+
+  function addItem(fs) {
+    const wrap = fs.querySelector('.items-edit');
+    const row = document.createElement('div');
+    row.className = 'item-row';
+    row.innerHTML = `
+      <input type="text" placeholder="Concise action...">
+      <label class="crit-toggle"><input type="checkbox"> critical</label>
+      <button type="button" class="linklike remove-item">remove</button>`;
+    wrap.appendChild(row);
+    reindex();
+  }
+
+  function addPhase() {
+    const p = phaseCount();
+    const fs = document.createElement('fieldset');
+    fs.className = 'phase-edit';
+    fs.dataset.phase = p;
+    fs.innerHTML = `
+      <legend>Phase ${p + 1}</legend>
+      <label>Name <input name="phase_name[${p}]" value="Phase ${p + 1}"></label>
+      <label>Mode
+        <select name="phase_mode[${p}]">
+          <option value="read-do">READ-DO (read each, then do)</option>
+          <option value="do-confirm">DO-CONFIRM (do from memory, confirm at pause)</option>
+        </select>
+      </label>
+      <div class="items-edit">
+        <div class="item-row">
+          <input type="text" placeholder="Concise action...">
+          <label class="crit-toggle"><input type="checkbox"> critical</label>
+          <button type="button" class="linklike remove-item">remove</button>
+        </div>
+      </div>
+      <button type="button" class="btn add-item">+ add item</button>
+      <button type="button" class="linklike remove-phase">remove phase</button>
+      <p class="warn phase-warn" hidden>Phase has more than 9 items. Consider splitting — the manifesto recommends 5–9 killer items per pause point.</p>`;
+    phasesEl.appendChild(fs);
+    reindex();
+  }
+
+  document.getElementById('add-phase').addEventListener('click', addPhase);
+
+  phasesEl.addEventListener('click', (e) => {
+    if (e.target.matches('.add-item')) {
+      addItem(e.target.closest('.phase-edit'));
+    } else if (e.target.matches('.remove-item')) {
+      const fs = e.target.closest('.phase-edit');
+      const rows = fs.querySelectorAll('.item-row');
+      if (rows.length > 1) e.target.closest('.item-row').remove();
+      reindex();
+    } else if (e.target.matches('.remove-phase')) {
+      if (phaseCount() > 1 && confirm('Remove this phase?')) {
+        e.target.closest('.phase-edit').remove();
+        reindex();
+      }
+    }
+  });
+
+  reindex();
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Run: {{ run.checklist_title }}{% endblock %}
+{% block content %}
+<div class="runner">
+  <div class="runner-head">
+    <h1>{{ run.checklist_title }} <span class="muted">v{{ run.checklist_version }}</span></h1>
+    <div>
+      <span class="tag">Phase {{ cursor.phase + 1 }}/{{ phases|length }}</span>
+      <span class="tag mode-{{ phase.mode }}">{{ phase.mode }}</span>
+    </div>
+  </div>
+
+  <p class="muted">{{ phase.name }}</p>
+
+  <div class="progressbar">
+    <div class="progressbar-fill" style="width: {{ progress.pct }}%"></div>
+  </div>
+  <p class="muted small">{{ progress.done }}/{{ progress.total }} items done</p>
+
+  <div class="step-card {% if item.critical %}critical{% endif %}">
+    <div class="step-label">Step {{ cursor.item + 1 }} of {{ phase['items']|length }}</div>
+    <h2 class="step-text">{{ item.text }}</h2>
+    {% if item.critical %}<p class="crit-banner">Critical — double-check before proceeding.</p>{% endif %}
+    {% if phase.mode == 'do-confirm' %}
+      <p class="muted"><em>DO-CONFIRM:</em> complete from memory, then confirm here.</p>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('run_advance', run_id=run.id) }}" class="row">
+      <input type="text" name="note" placeholder="Optional note..." class="grow">
+      <button class="primary" type="submit">✓ Done</button>
+    </form>
+  </div>
+
+  <div class="runner-footer">
+    <form method="post" action="{{ url_for('run_back', run_id=run.id) }}" style="display:inline">
+      <button class="btn" type="submit" {% if not run.steps %}disabled{% endif %}>← Back</button>
+    </form>
+    <details class="abort">
+      <summary>Stop / flag issue</summary>
+      <form method="post" action="{{ url_for('run_abort', run_id=run.id) }}" class="row">
+        <input type="text" name="reason" placeholder="Why are you stopping?" class="grow" required>
+        <button class="danger" type="submit">Abort run</button>
+      </form>
+    </details>
+  </div>
+</div>
+{% endblock %}

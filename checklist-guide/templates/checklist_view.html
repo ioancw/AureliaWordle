@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}{{ checklist.title }}{% endblock %}
+{% block content %}
+<div class="head-row">
+  <h1>{{ checklist.title }}</h1>
+  <div>
+    <span class="tag">v{{ checklist.version }}</span>
+    {% if checklist.available_versions and checklist.available_versions|length > 1 %}
+      <span class="muted"> · versions:
+      {% for v in checklist.available_versions %}
+        <a href="{{ url_for('checklist_view', slug=checklist.slug, v=v) }}">v{{ v }}</a>{% if not loop.last %},{% endif %}
+      {% endfor %}
+      </span>
+    {% endif %}
+  </div>
+</div>
+{% if checklist.description %}<p class="lede">{{ checklist.description }}</p>{% endif %}
+
+<div class="actions">
+  <form method="post" action="{{ url_for('run_start') }}" style="display:inline">
+    <input type="hidden" name="slug" value="{{ checklist.slug }}">
+    <button class="primary" type="submit">Run</button>
+  </form>
+  <a class="btn" href="{{ url_for('checklist_edit', slug=checklist.slug) }}">Edit (creates new version)</a>
+  <form method="post" action="{{ url_for('checklist_delete', slug=checklist.slug) }}" style="display:inline"
+        onsubmit="return confirm('Delete this checklist and all versions?');">
+    <button class="danger" type="submit">Delete</button>
+  </form>
+</div>
+
+{% for phase in checklist.phases %}
+<section class="phase">
+  <h2>{{ loop.index }}. {{ phase.name }}
+    <span class="mode mode-{{ phase.mode }}">{{ phase.mode }}</span>
+  </h2>
+  <ol class="items">
+    {% for item in phase['items'] %}
+    <li class="{% if item.critical %}critical{% endif %}">
+      {{ item.text }}
+      {% if item.critical %}<span class="tag crit">critical</span>{% endif %}
+    </li>
+    {% endfor %}
+  </ol>
+  {% if phase['items']|length > 9 %}
+    <p class="warn">This phase has {{ phase['items']|length }} items. Manifesto rule of thumb: keep each phase to 5–9 killer items.</p>
+  {% endif %}
+</section>
+{% endfor %}
+
+{% if checklist.retro_notes %}
+<section class="retros">
+  <h2>Retrospective notes</h2>
+  <ul>
+  {% for n in checklist.retro_notes %}
+    <li><span class="muted">{{ n.at|datetimefmt }} · from run <a href="{{ url_for('run_view', run_id=n.run_id) }}">{{ n.run_id }}</a> (ran v{{ n.ran_version }}):</span> {{ n.note }}</li>
+  {% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endblock %}
