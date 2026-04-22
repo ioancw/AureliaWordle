@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>New checklist</title>
+  <style>:root {
+  --bg: #f7f7f5;
+  --fg: #1c1c1c;
+  --muted: #6b6b6b;
+  --border: #e0e0dc;
+  --card: #ffffff;
+  --accent: #2b6cb0;
+  --accent-fg: #ffffff;
+  --danger: #b03030;
+  --warn: #a06400;
+  --crit: #b03030;
+  --ok: #2f7a3a;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 900px; margin: 0 auto; padding: 24px 20px 64px; }
+h1 { margin: 0 0 12px; font-size: 1.8rem; }
+h2 { margin: 24px 0 8px; font-size: 1.3rem; }
+.mt { margin-top: 40px; }
+.muted { color: var(--muted); }
+.small { font-size: 0.85rem; }
+.lede { color: var(--muted); margin-top: 0; }
+.empty { color: var(--muted); font-style: italic; }
+.error { color: var(--danger); background: #fde7e7; padding: 8px 12px; border-radius: 4px; }
+.warn { color: var(--warn); background: #fff4d9; padding: 8px 12px; border-radius: 4px; margin: 8px 0; }
+
+.topbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: var(--card); border-bottom: 1px solid var(--border); }
+.brand { font-weight: 700; text-decoration: none; color: var(--fg); }
+.topbar nav a { margin-left: 16px; color: var(--accent); text-decoration: none; }
+.foot { padding: 24px; text-align: center; color: var(--muted); }
+
+button, .btn {
+  display: inline-block; padding: 8px 14px; border-radius: 6px;
+  border: 1px solid var(--border); background: var(--card); color: var(--fg);
+  font: inherit; cursor: pointer; text-decoration: none;
+}
+button:hover, .btn:hover { border-color: #b8b8b2; }
+button.primary, .btn.primary { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+button.primary:hover { background: #245b96; }
+button.danger { background: #fde7e7; color: var(--danger); border-color: #f1bcbc; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+button.linklike { background: none; border: 0; color: var(--accent); padding: 4px; cursor: pointer; }
+
+.tag { display: inline-block; padding: 2px 8px; font-size: 0.75rem; background: #eee; color: #444; border-radius: 10px; margin-left: 6px; }
+.tag.crit { background: #fde7e7; color: var(--crit); }
+.status { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; }
+.status-in_progress { background: #e7f0fd; color: #1f4b7e; }
+.status-completed { background: #e6f5e8; color: var(--ok); }
+.status-aborted { background: #fde7e7; color: var(--danger); }
+.mode { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; background: #eceff5; color: #3a476a; }
+.mode-do-confirm { background: #f1e8fa; color: #5a2e87; }
+
+.cards { list-style: none; padding: 0; display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+.card-head { display: flex; justify-content: space-between; align-items: start; }
+.card h2 { margin: 0; font-size: 1.1rem; }
+.card h2 a { color: var(--fg); text-decoration: none; }
+.card h2 a:hover { color: var(--accent); }
+.card .meta { color: var(--muted); font-size: 0.85rem; margin: 8px 0 12px; }
+
+.head-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.actions { display: flex; gap: 8px; margin: 12px 0 24px; flex-wrap: wrap; }
+
+.phase { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin: 12px 0; }
+.items { margin: 0; padding-left: 22px; }
+.items li { margin: 4px 0; }
+.items li.critical { color: var(--fg); }
+.items li.critical::before { content: "!"; color: var(--crit); font-weight: bold; margin-right: 4px; }
+.items.review { list-style: none; padding-left: 0; }
+.items.review li { padding: 4px 0; }
+.items.review .check { color: var(--ok); font-weight: bold; margin-right: 6px; }
+
+.runs { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.runs th, .runs td { padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+.runs tr:last-child td { border-bottom: 0; }
+
+.retros { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px; margin-top: 20px; }
+
+/* Editor */
+.editor label { display: block; margin: 10px 0; }
+.editor input[type=text], .editor input:not([type]), .editor textarea, .editor select { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 4px; background: var(--card); font: inherit; }
+.editor textarea { resize: vertical; }
+.phase-edit { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; margin: 14px 0; }
+.phase-edit legend { font-weight: 600; padding: 0 6px; }
+.item-row { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+.item-row input[type=text] { flex: 1; }
+.crit-toggle { font-size: 0.85rem; color: var(--muted); white-space: nowrap; display: flex; align-items: center; gap: 4px; margin: 0; width: auto; }
+
+/* Runner */
+.runner { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; }
+.runner-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+.progressbar { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin: 12px 0 4px; }
+.progressbar-fill { height: 100%; background: var(--accent); transition: width 0.2s; }
+.step-card { border: 2px solid var(--border); border-radius: 10px; padding: 24px; margin: 20px 0; background: #fafafa; }
+.step-card.critical { border-color: var(--crit); background: #fff5f5; }
+.step-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.step-text { font-size: 1.6rem; margin: 8px 0 14px; line-height: 1.3; }
+.crit-banner { color: var(--crit); font-weight: 600; margin: 4px 0 10px; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.grow { flex: 1; min-width: 180px; padding: 8px; border: 1px solid var(--border); border-radius: 4px; font: inherit; }
+.runner-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; gap: 8px; flex-wrap: wrap; }
+.abort summary { cursor: pointer; color: var(--muted); }
+.retro textarea { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 4px; font: inherit; }
+.retro-saved { background: #f0f4fa; padding: 10px 12px; border-radius: 6px; }
+
+@media (max-width: 560px) {
+  main { padding: 16px 12px 48px; }
+  .step-text { font-size: 1.3rem; }
+}
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html">Checklist Guide</a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="editor.html">New checklist</a>
+      <a href="runs_all.html">All runs</a>
+    </nav>
+  </header>
+  <main>
+    
+<h1>New checklist</h1>
+
+
+
+<form method="post" id="checklist-form" class="editor">
+  <label>Title
+    <input name="title" value="" required>
+  </label>
+  <label>Description
+    <textarea name="description" rows="2"></textarea>
+  </label>
+
+  <div id="phases">
+    
+      
+      <fieldset class="phase-edit" data-phase="0">
+        <legend>Phase 1</legend>
+        <label>Name
+          <input name="phase_name[0]" value="Phase 1">
+        </label>
+        <label>Mode
+          <select name="phase_mode[0]">
+            <option value="read-do" selected>READ-DO (read each, then do)</option>
+            <option value="do-confirm" >DO-CONFIRM (do from memory, confirm at pause)</option>
+          </select>
+        </label>
+        <div class="items-edit" data-count="1">
+          
+            
+            <div class="item-row">
+              <input type="text" name="item_text[0][0]" placeholder="Concise action..." value="">
+              <label class="crit-toggle">
+                <input type="checkbox" name="item_critical[0][0]" > critical
+              </label>
+              <button type="button" class="linklike remove-item">remove</button>
+            </div>
+          
+        </div>
+        <button type="button" class="btn add-item">+ add item</button>
+        <button type="button" class="linklike remove-phase">remove phase</button>
+        <p class="warn phase-warn" hidden>Phase has more than 9 items. Consider splitting — the manifesto recommends 5–9 killer items per pause point.</p>
+      </fieldset>
+    
+  </div>
+
+  <button type="button" class="btn" id="add-phase">+ add phase</button>
+
+  <div class="actions">
+    <button class="primary" type="submit">Save</button>
+    <a class="btn" href="index.html">Cancel</a>
+  </div>
+</form>
+
+<script>
+(function() {
+  const phasesEl = document.getElementById('phases');
+
+  function phaseCount() { return phasesEl.querySelectorAll('.phase-edit').length; }
+
+  function reindex() {
+    const phases = phasesEl.querySelectorAll('.phase-edit');
+    phases.forEach((fs, p) => {
+      fs.dataset.phase = p;
+      fs.querySelector('legend').textContent = 'Phase ' + (p + 1);
+      fs.querySelectorAll('[name^="phase_name"]')[0].name = `phase_name[${p}]`;
+      fs.querySelectorAll('[name^="phase_mode"]')[0].name = `phase_mode[${p}]`;
+      const rows = fs.querySelectorAll('.item-row');
+      rows.forEach((row, i) => {
+        row.querySelector('input[type="text"]').name = `item_text[${p}][${i}]`;
+        row.querySelector('input[type="checkbox"]').name = `item_critical[${p}][${i}]`;
+      });
+      checkPhaseLimit(fs);
+    });
+  }
+
+  function checkPhaseLimit(fs) {
+    const count = fs.querySelectorAll('.item-row').length;
+    fs.querySelector('.phase-warn').hidden = count <= 9;
+  }
+
+  function addItem(fs) {
+    const wrap = fs.querySelector('.items-edit');
+    const row = document.createElement('div');
+    row.className = 'item-row';
+    row.innerHTML = `
+      <input type="text" placeholder="Concise action...">
+      <label class="crit-toggle"><input type="checkbox"> critical</label>
+      <button type="button" class="linklike remove-item">remove</button>`;
+    wrap.appendChild(row);
+    reindex();
+  }
+
+  function addPhase() {
+    const p = phaseCount();
+    const fs = document.createElement('fieldset');
+    fs.className = 'phase-edit';
+    fs.dataset.phase = p;
+    fs.innerHTML = `
+      <legend>Phase ${p + 1}</legend>
+      <label>Name <input name="phase_name[${p}]" value="Phase ${p + 1}"></label>
+      <label>Mode
+        <select name="phase_mode[${p}]">
+          <option value="read-do">READ-DO (read each, then do)</option>
+          <option value="do-confirm">DO-CONFIRM (do from memory, confirm at pause)</option>
+        </select>
+      </label>
+      <div class="items-edit">
+        <div class="item-row">
+          <input type="text" placeholder="Concise action...">
+          <label class="crit-toggle"><input type="checkbox"> critical</label>
+          <button type="button" class="linklike remove-item">remove</button>
+        </div>
+      </div>
+      <button type="button" class="btn add-item">+ add item</button>
+      <button type="button" class="linklike remove-phase">remove phase</button>
+      <p class="warn phase-warn" hidden>Phase has more than 9 items. Consider splitting — the manifesto recommends 5–9 killer items per pause point.</p>`;
+    phasesEl.appendChild(fs);
+    reindex();
+  }
+
+  document.getElementById('add-phase').addEventListener('click', addPhase);
+
+  phasesEl.addEventListener('click', (e) => {
+    if (e.target.matches('.add-item')) {
+      addItem(e.target.closest('.phase-edit'));
+    } else if (e.target.matches('.remove-item')) {
+      const fs = e.target.closest('.phase-edit');
+      const rows = fs.querySelectorAll('.item-row');
+      if (rows.length > 1) e.target.closest('.item-row').remove();
+      reindex();
+    } else if (e.target.matches('.remove-phase')) {
+      if (phaseCount() > 1 && confirm('Remove this phase?')) {
+        e.target.closest('.phase-edit').remove();
+        reindex();
+      }
+    }
+  });
+
+  reindex();
+})();
+</script>
+
+  </main>
+  <footer class="foot">
+    <small>Inspired by Atul Gawande, <em>The Checklist Manifesto</em>.</small>
+  </footer>
+</body>
+</html>
