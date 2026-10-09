@@ -370,3 +370,39 @@ type TestTypeGrapheme () =
         let actual = DisplayUtils.parseWordGrapheme grapheme word
         let expectedZip = List.zip (word |> Seq.toList) expected
         actual |> should equal expectedZip   
+let private guessRow (word: string) statuses =
+    5, { Letters = List.zip (List.ofSeq word) statuses |> List.map (fun (c, s) -> { Letter = Some(string c); Status = s }) }
+
+let private emptyRow = 0, { Letters = List.init 5 (fun _ -> { Letter = None; Status = Black }) }
+
+let private finishedGame state round guesses =
+    { Wordle = "CHEAP"
+      Phonics = { Hint = "/ee/"; Grapheme = "ea" }
+      Guesses = guesses @ List.init (6 - List.length guesses) (fun _ -> emptyRow)
+      UsedLetters = Map.empty
+      State = state
+      Round = round
+      GamesWon = 0
+      GamesLost = 0
+      WinDistribution = List.init 6 (fun _ -> 0) }
+
+[<Fact>]
+let ``Share text has the score and one emoji row per guess`` () =
+    let state =
+        finishedGame Won 1
+            [ guessRow "CRANE" [ Green; Grey; Yellow; Grey; Yellow ]
+              guessRow "CHEAP" [ Green; Green; Green; Green; Green ] ]
+
+    shareText false state |> should endWith "2/6\n\n🟩⬛🟨⬛🟨\n🟩🟩🟩🟩🟩"
+    shareText true state |> should endWith "2/6\n\n🟧⬛🟦⬛🟦\n🟧🟧🟧🟧🟧"
+
+[<Fact>]
+let ``Share text shows X when the game is lost`` () =
+    let rows = List.init 6 (fun _ -> guessRow "CRANE" [ Green; Grey; Yellow; Grey; Yellow ])
+    shareText false (finishedGame Lost 5 rows) |> should haveSubstring "X/6"
+
+[<Fact>]
+let ``Only dictionary words are valid guesses`` () =
+    let withGuess word = { finishedGame Started 0 [ guessRow word (List.init 5 (fun _ -> Black)) ] with State = Started }
+    Validate.word (withGuess "CHEAP") |> should equal true
+    Validate.word (withGuess "XQZZZ") |> should equal false

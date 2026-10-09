@@ -92,16 +92,16 @@ module Validate =
         guess.Letters
         |> List.forall (fun gl -> gl.Letter <> None)
 
+    /// Every valid five-letter guess, built once rather than on every guess.
+    let private fiveLetterWords =
+        words
+        |> Seq.filter (fun (l: string) -> l.Length = 5)
+        |> Seq.map Letter.toUpper
+        |> Set.ofSeq
+
     let word state =
         let _, guess = List.item state.Round state.Guesses
-
-        let fiveLetterWords =
-            words
-            |> Seq.filter (fun (l: string) -> l.Length = 5)
-            |> Seq.map Letter.toUpper
-            |> Seq.toList
-
-        List.contains (Guess.guessToWord guess) fiveLetterWords
+        Set.contains (Guess.guessToWord guess) fiveLetterWords
 
 module Score = 
     /// Calculated the answer mask for the guessed word, based on the current 'wordle'

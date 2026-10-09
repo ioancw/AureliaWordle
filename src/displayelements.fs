@@ -45,19 +45,37 @@ let keyboardChar usedLetters handler (c: string) =
         | Green -> "cell-green"
         | _ -> "bg-gray-400"
 
-    let width =
+    let width, label, ariaLabel =
         match c with
-        | "Del"
-        | "Ent" -> "key-other-size"
-        | _ -> "key-size"
+        | "Ent" -> "key-other-size", html $"Enter", "Enter"
+        | "Del" ->
+            "key-other-size",
+            html
+                $"""
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9.75 14.25 12m0 0 2.25 2.25M14.25 12l2.25-2.25M14.25 12 12 14.25m-2.58 4.92-6.374-6.375a1.125 1.125 0 0 1 0-1.59L9.42 4.83c.21-.211.497-.33.795-.33H19.5a2.25 2.25 0 0 1 2.25 2.25v10.5a2.25 2.25 0 0 1-2.25 2.25h-9.284c-.298 0-.585-.119-.795-.33Z" />
+                </svg>
+            """,
+            "Delete"
+        | _ -> "key-size", html $"{c}", c
 
     html
         $"""
-        <button @click={handler c} class="keyboard {width} {colour}">
-            {c}
+        <button @click={handler c} class="keyboard {width} {colour}" aria-label={ariaLabel}>
+            {label}
         </button>
     """
-    
+
+/// A short message shown over the board, e.g. "Not in word list".
+let toastView (message: string option) =
+    match message with
+    | Some m ->
+        html
+            $"""
+            <div class="toast" role="status">{m}</div>
+        """
+    | None -> Lit.nothing
+
 /// Creates a mini boxed character to be used when displaying graphemes and phonemes. 
 let littleBoxedChar (c, status) =
     let colourBorder =
@@ -70,5 +88,5 @@ let littleBoxedChar (c, status) =
 
     html
         $"""
-        <div class="little-tile font-sans {colourBorder}">{c}</button>
+        <div class="little-tile font-sans {colourBorder}">{c}</div>
     """    

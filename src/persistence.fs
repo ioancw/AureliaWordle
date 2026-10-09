@@ -68,3 +68,11 @@ let loadGameStateLocalStorage () =
     match localState with
     | null -> None
     | _ -> Some(localState |> JS.JSON.parse :?> LocalStorageGameState)
+
+let private highContrastKey = "aureliaHighContrast"
+
+let loadHighContrast () =
+    Browser.WebStorage.localStorage.getItem highContrastKey = "true"
+
+let saveHighContrast (enabled: bool) =
+    Browser.WebStorage.localStorage.setItem (highContrastKey, (if enabled then "true" else "false"))
