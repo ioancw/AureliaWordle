@@ -119,6 +119,37 @@
     border-color: var(--default-cell-border-color);
 }
 
+/* Layout sizing. Tiles and keys are sized from both the viewport width and
+   height so the whole game (header + board + keyboard) always fits on screen,
+   from 280px folding phones to large phones, in portrait or landscape. */
+.game {
+    --header-h: 54px;
+    --key-gap: 6px;
+    --key-h: clamp(40px, 7.5vh, 58px);
+    --kb-h: calc(3 * (var(--key-h) + var(--key-gap)) + 4px + env(safe-area-inset-bottom, 0px));
+    --tile-by-width: calc((100vw - 24px) / 5 - 5px);
+    --tile-by-height: calc((100vh - var(--header-h) - var(--kb-h) - 16px) / 6 - 6px);
+    --tile: max(20px, min(62px, var(--tile-by-width), var(--tile-by-height)));
+    height: 100vh;
+}
+
+@supports (height: 100dvh) {
+    .game {
+        --key-h: clamp(40px, 7.5dvh, 58px);
+        --tile-by-height: calc((100dvh - var(--header-h) - var(--kb-h) - 16px) / 6 - 6px);
+        height: 100dvh;
+    }
+}
+
+/* Short screens (phones in landscape): shrink the keyboard to leave room for the board. */
+@media (max-height: 500px) {
+    .game {
+        --header-h: 46px;
+        --key-gap: 4px;
+        --key-h: 32px;
+    }
+}
+
 .tile {
     justify-content: center;
     display: flex;
@@ -126,30 +157,30 @@
     border-style: solid;
     border-width: 2px;
     font-weight: bold;
-    font-size: 2.25rem;
+    font-size: calc(var(--tile) * 0.55);
+    line-height: 1;
     color: rgb(255 255 255);
     margin-left: 2.5px;
     margin-right: 2.5px;
     margin-top: 0.75px;
     margin-bottom: 0.75px;
-    width: 63px;
-    height: 63px;
+    width: var(--tile);
+    height: var(--tile);
     z-index: auto;
 }
 
 .aurelia-header {
     font-family: Georgia, Times, 'Times New Roman', serif;
     font-weight: 700;
-    font-size: 26px;
+    font-size: clamp(18px, 6.5vw, 26px);
     line-height: 100%;
     letter-spacing: 0.01em;
-    /* text-align: center; */
-    justify-content: center;
-    margin-left: 40px;
-    right: 0;
     pointer-events: none;
-    position: relative;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     color: rgb(255 255 255);
+    white-space: nowrap;
 }
 
 .little-tile {
@@ -168,14 +199,36 @@
     color: rgb(255 255 255);
 }
 
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto var(--key-gap);
+    padding: 0 6px;
+}
+
+.keyboard-spacer {
+    flex: 0.5 1 0;
+}
+
 .key-size {
-    width: 34px;
-    height: 60px;
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 44px;
+    height: var(--key-h);
 }
 
 .key-other-size {
-    width: 54px;
-    height: 60px;
+    flex: 1.5 1 0;
+    min-width: 0;
+    max-width: 66px;
+    height: var(--key-h);
+}
+
+.keyboard.key-other-size {
+    font-size: 0.75rem;
 }
 
 .keyboard {
@@ -184,12 +237,20 @@
     align-items: center;
     border-radius: 0.3rem;
     color: rgb(255 255 255);
-    margin-left: 2.5px;
-    margin-right: 2.5px;
+    padding: 0;
     font-weight: bold;
+    font-size: clamp(0.8rem, 3.6vw, 1rem);
     text-transform: uppercase;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
     transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
     transition-duration: 2000ms;
+}
+
+.keyboard-safe-area {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .cell-yellow {
@@ -487,44 +548,6 @@ svg.cursor-pointer:hover {
     }
 }
 
-@keyframes slideDown {
-    0% {
-        transform: translateY(0%)
-    }
-    90% {
-        transform: translateY(0%)
-    }
-    100% {
-        transform: translateY(100%)
-    }
-}
-
-@keyframes flyIn {
-    0% {
-        opacity: 0
-    }
-    100% {
-        opacity: 1
-    }
-}
-
-@keyframes flyOut {
-    0% {
-        opacity: 1
-    }
-    100% {
-        opacity: 0
-    }
-}
-
-@keyframes fadeIn {
-    0% {
-        opacity: 0
-    }
-    15% {
-        opacity: 0
-    }
-    100% {
-        opacity: 1
-    }
+.max-h-screen-3\/4 {
+    max-height: 75vh;
 }
