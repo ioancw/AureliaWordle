@@ -358,3 +358,7 @@ MigrationBackup/
 *.fs.js
 *.fs.js.map
 fable_modules/
+
+# Bolero build output
+bolero/wwwroot/css/
+dist-bolero/

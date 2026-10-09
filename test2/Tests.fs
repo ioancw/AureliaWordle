@@ -394,13 +394,13 @@ let ``Share text has the score and one emoji row per guess`` () =
             [ guessRow "CRANE" [ Green; Grey; Yellow; Grey; Yellow ]
               guessRow "CHEAP" [ Green; Green; Green; Green; Green ] ]
 
-    shareText false state |> should endWith "2/6\n\n🟩⬛🟨⬛🟨\n🟩🟩🟩🟩🟩"
-    shareText true state |> should endWith "2/6\n\n🟧⬛🟦⬛🟦\n🟧🟧🟧🟧🟧"
+    Game.shareText false state |> should endWith "2/6\n\n🟩⬛🟨⬛🟨\n🟩🟩🟩🟩🟩"
+    Game.shareText true state |> should endWith "2/6\n\n🟧⬛🟦⬛🟦\n🟧🟧🟧🟧🟧"
 
 [<Fact>]
 let ``Share text shows X when the game is lost`` () =
     let rows = List.init 6 (fun _ -> guessRow "CRANE" [ Green; Grey; Yellow; Grey; Yellow ])
-    shareText false (finishedGame Lost 5 rows) |> should haveSubstring "X/6"
+    Game.shareText false (finishedGame Lost 5 rows) |> should haveSubstring "X/6"
 
 [<Fact>]
 let ``Only dictionary words are valid guesses`` () =

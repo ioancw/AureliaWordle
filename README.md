@@ -36,14 +36,34 @@ The F# in `src/` is compiled in this order:
 | `Phonics.fs` | Finding a grapheme (spelling) inside a word |
 | `GameRules.fs` | Building, validating and scoring guesses; turning key presses into the next state |
 | `Daily.fs` | Which puzzle is today's |
-| `Storage.fs` | Saving and loading via local storage, using Thoth.Json |
+| `Storage.fs` | The saved game's JSON format, using Thoth.Json |
 | `Game.fs` | Resuming today's game from a save, or starting a fresh one |
+| `LocalStorage.fs` | Reading and writing the browser's local storage |
 | `Components.fs` | Tiles, keyboard keys and messages |
 | `Modals.fs` | The About, Help, Statistics and answer pop-ups |
 | `App.fs` | The app component: state, keyboard input and layout |
 
 Saved games use the same JSON shape as earlier versions, so players keep their stats.
 `Storage` and `Game` are tested on .NET with the same Thoth.Json decoders the browser uses.
+
+## Bolero version (experimental)
+
+`bolero/` is the same game written with [Bolero](https://fsbolero.io), which runs .NET itself in the browser
+via WebAssembly instead of compiling F# to JavaScript. It shares the game's core unchanged
+(`Domain`, `Words`, `Phonics`, `GameRules`, `Daily`, `Storage`, `Game`) and `public/main.css`;
+only the view layer differs, written in the Elmish (Model-View-Update) style in `bolero/Main.fs` and `bolero/Views.fs`.
+
+```bash
+npm run start:bolero   # dev server
+npm run build:bolero   # publish to dist-bolero/
+```
+
+| | Lit (Fable → JavaScript) | Bolero (.NET → WebAssembly) |
+|---|---|---|
+| First download (gzip) | ~60 KB | ~2.7 MB (cached afterwards) |
+| Start-up (local, no network delay) | ~0.1 s | ~1 s |
+| Code | HTML templates in strings | Type-checked F# HTML builders |
+| State | Hooks | Elmish: one `update` for every message |
 
 ## Deployment
 

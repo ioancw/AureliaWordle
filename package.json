@@ -5,7 +5,9 @@
         "build": "dotnet fable src -o build/client -e .js --run vite build",
         "start": "dotnet fable watch src -s -o build/client -e .js --run vite",
         "test": "dotnet test test2",
-        "publish": "npm run build -- --base=/AureliaWordle/ && npx gh-pages -d dist"
+        "publish": "npm run build -- --base=/AureliaWordle/ && npx gh-pages -d dist",
+        "build:bolero": "tailwindcss -i public/main.css -o bolero/wwwroot/css/main.css --minify && dotnet publish bolero -c Release -o dist-bolero",
+        "start:bolero": "tailwindcss -i public/main.css -o bolero/wwwroot/css/main.css && dotnet run --project bolero"
     },
     "dependencies": {
         "lit": "^2.8.0",

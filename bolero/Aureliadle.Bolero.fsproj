@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <!-- Smaller download: no globalization data or debugger support needed for this game. -->
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
+    <!-- Storage.fs uses Thoth.Json's System.Text.Json backend here, which Blazor already ships. -->
+    <DefineConstants>$(DefineConstants);SYSTEM_TEXT_JSON</DefineConstants>
+    <!-- Trim unused code from every library (FSharp.Core and Bolero too), not just .NET itself. -->
+    <TrimMode>full</TrimMode>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- The game's core, shared unchanged with the Fable (Lit) version in ../src. -->
+    <Compile Include="../src/Domain.fs" Link="Shared/Domain.fs" />
+    <Compile Include="../src/Words.fs" Link="Shared/Words.fs" />
+    <Compile Include="../src/Phonics.fs" Link="Shared/Phonics.fs" />
+    <Compile Include="../src/GameRules.fs" Link="Shared/GameRules.fs" />
+    <Compile Include="../src/Daily.fs" Link="Shared/Daily.fs" />
+    <Compile Include="../src/Storage.fs" Link="Shared/Storage.fs" />
+    <Compile Include="../src/Game.fs" Link="Shared/Game.fs" />
+    <Compile Include="Interop.fs" />
+    <Compile Include="Views.fs" />
+    <Compile Include="Main.fs" />
+    <Compile Include="Startup.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Bolero" Version="0.25.65" />
+    <PackageReference Include="Bolero.Build" Version="0.25.65" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.31" />
+    <PackageReference Include="Thoth.Json.Core" Version="0.7.1" />
+    <PackageReference Include="Thoth.Json.System.Text.Json" Version="0.2.2" />
+  </ItemGroup>
+</Project>

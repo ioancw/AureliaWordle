@@ -10,6 +10,7 @@
     <Compile Include="Daily.fs" />
     <Compile Include="Storage.fs" />
     <Compile Include="Game.fs" />
+    <Compile Include="LocalStorage.fs" />
     <Compile Include="Components.fs" />
     <Compile Include="Modals.fs" />
     <Compile Include="App.fs" />

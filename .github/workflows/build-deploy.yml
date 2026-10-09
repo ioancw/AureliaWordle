@@ -36,6 +36,10 @@ jobs:
       - name: Build site
         run: npm run build -- --base=/AureliaWordle/
 
+      # The experimental Bolero (WebAssembly) version; built to check it still compiles, not deployed.
+      - name: Build Bolero version
+        run: npm run build:bolero
+
       - uses: actions/upload-artifact@v4
         with:
           name: site

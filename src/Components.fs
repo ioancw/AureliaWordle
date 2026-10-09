@@ -4,19 +4,6 @@ module Components
 open Lit
 open Domain
 
-type KeyBoard =
-    { Top: string list
-      Middle: string list
-      Bottom: string list }
-
-let keyBoard =
-    { Top =
-        [ "q"; "w"; "e"; "r"; "t"; "y"; "u"; "i"; "o"; "p" ]
-      Middle =
-        [ "a"; "s"; "d"; "f"; "g"; "h"; "j"; "k"; "l" ]
-      Bottom =
-        [ "Ent"; "z"; "x"; "c"; "v"; "b"; "n"; "m"; "Del" ] }
-
 /// Creates a game tile that displays the guessed word's status.
 let gameTile position (c, status) =
     let isValid = not <| (status = Status.Invalid)

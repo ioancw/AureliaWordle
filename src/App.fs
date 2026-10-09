@@ -14,33 +14,12 @@ JsInterop.importSideEffects "./index.css"
 /// Time for a submitted row to finish flipping; matches --row-reveal-duration in main.css.
 let rowRevealMs = 1700
 
-/// Shown after a win, indexed by the round the word was guessed in.
-let winMessages = [| "Genius!"; "Magnificent!"; "Impressive!"; "Splendid!"; "Great!"; "Phew!" |]
-
 /// Shares the text on phones (share sheet) or copies it to the clipboard elsewhere.
 /// Resolves to "shared", "copied", "cancelled" or "failed".
 [<Emit("""(navigator.share && matchMedia('(pointer: coarse)').matches
     ? navigator.share({ text: $0 }).then(() => 'shared', () => 'cancelled')
     : navigator.clipboard.writeText($0).then(() => 'copied', () => 'failed'))""")>]
 let shareOrCopy (text: string) : JS.Promise<string> = jsNative
-
-/// Today's result as an emoji grid, like Wordle's share text.
-let shareText highContrast state =
-    let square status =
-        match status with
-        | Green -> if highContrast then "🟧" else "🟩"
-        | Yellow -> if highContrast then "🟦" else "🟨"
-        | _ -> "⬛"
-
-    let score = if state.State = Won then string (state.Round + 1) else "X"
-
-    let grid =
-        state.Guesses
-        |> List.take (state.Round + 1)
-        |> List.map (fun (_, guess) -> guess.Letters |> List.map (fun l -> square l.Status) |> String.concat "")
-        |> String.concat "\n"
-
-    $"Aureliadle {Daily.dayNumber ()} {score}/{numberOfRounds}\n\n{grid}"
 
 /// Maps a physical key press to the on-screen key it stands for.
 let keyFromKeyboardEvent (ev: Browser.Types.KeyboardEvent) =
@@ -63,13 +42,13 @@ let MatchComponent () =
     // Starts a new game, or resumes today's game from local storage.
     let state, setState =
         Hook.useState (init = fun () ->
-            let game = Game.load ()
-            Game.save game
+            let game = LocalStorage.loadGame ()
+            LocalStorage.saveGame game
             game)
     let showHelpModal, setShowHelpModal = Hook.useState false
     let showInfoModal, setShowInfoModal = Hook.useState false
     let showStatsModal, setShowStatsModal = Hook.useState false
-    let highContrast, setHighContrast = Hook.useState (init = fun () -> Storage.loadHighContrast ())
+    let highContrast, setHighContrast = Hook.useState (init = fun () -> LocalStorage.loadHighContrast ())
     let toast, setToast = Hook.useState (None: string option)
     let toastId = Hook.useRef 0
     // Latest key handler, so the window keydown listener (added once) never sees stale state.
@@ -78,7 +57,7 @@ let MatchComponent () =
     // Every change is saved straight away, so storage always holds the latest game
     // (key presses start from storage; see handleKey).
     let setGameState next =
-        Game.save next
+        LocalStorage.saveGame next
         setState next
 
     let showToast durationMs message =
@@ -99,13 +78,13 @@ let MatchComponent () =
 
         // Celebrate once the winning row has finished flipping and bouncing, then show the stats.
         if next.State = Won && current.State <> Won then
-            JS.setTimeout (fun () -> showToast 2000 winMessages.[next.Round]) (rowRevealMs + 600) |> ignore
+            JS.setTimeout (fun () -> showToast 2000 Game.winMessages.[next.Round]) (rowRevealMs + 600) |> ignore
             JS.setTimeout (fun () -> setShowStatsModal true) (rowRevealMs + 2600) |> ignore
 
     let handleKey (key: string) =
         // Start from the latest saved game, so a tab that's out of date (another tab played,
         // or it's a new day) never writes old progress or stats over newer ones.
-        let current = Game.refresh state
+        let current = LocalStorage.refreshGame state
 
         match key with
         | "Ent" -> submitEnter current
@@ -117,7 +96,7 @@ let MatchComponent () =
 
     refreshHandler.Value <-
         (fun () ->
-            let latest = Game.refresh state
+            let latest = LocalStorage.refreshGame state
             if latest <> state then setGameState latest)
 
     let anyModalOpen = showHelpModal || showInfoModal || showStatsModal
@@ -185,14 +164,14 @@ let MatchComponent () =
 
     let onToggleHighContrast =
         Ev (fun _ ->
-            Storage.saveHighContrast (not highContrast)
+            LocalStorage.saveHighContrast (not highContrast)
             setHighContrast (not highContrast))
 
     let onShare =
         Ev (fun ev ->
             ev.preventDefault ()
 
-            shareOrCopy (shareText highContrast state)
+            shareOrCopy (Game.shareText highContrast state)
             |> Promise.iter (fun result ->
                 match result with
                 | "copied" -> showToast 1500 "Copied results to clipboard"

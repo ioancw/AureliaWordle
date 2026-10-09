@@ -129,3 +129,14 @@ let ``Each day has one puzzle, and the day changes at midnight`` () =
     Daily.dayNumberOn morning - Daily.dayNumberOn evening |> should equal 1
     // clocks going back in autumn doesn't skip or repeat a day
     Daily.dayNumberOn (System.DateTime(2026, 10, 26)) - Daily.dayNumberOn (System.DateTime(2026, 10, 25)) |> should equal 1
+
+[<Fact>]
+let ``Refreshing picks up a newer save from another tab`` () =
+    let here = Game.today None
+    let otherTab = here |> play (typeWord "crane")
+    Game.refresh (Some(Game.toSaved otherTab)) here |> should equal otherTab
+
+[<Fact>]
+let ``Refreshing without a readable save keeps the game in memory`` () =
+    let here = Game.today None |> play [ "c"; "r" ]
+    Game.refresh None here |> should equal here

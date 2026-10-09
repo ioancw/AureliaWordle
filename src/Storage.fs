@@ -1,4 +1,4 @@
-/// Saving and loading the game and settings in the browser's local storage.
+/// The saved game's JSON format. Reading and writing browser storage is done by each front end.
 module Storage
 
 open Domain
@@ -93,37 +93,24 @@ let toJson (game: SavedGame) =
 let fromJson (json: string) =
     Thoth.Json.JavaScript.Decode.fromString gameDecoder json |> Result.toOption
 #else
+#if SYSTEM_TEXT_JSON
+// Bolero (WebAssembly) build: System.Text.Json is already part of the download, unlike Newtonsoft.
+let toJson (game: SavedGame) =
+    Thoth.Json.System.Text.Json.Encode.toString 0 (encodeGame game)
+
+let fromJson (json: string) =
+    Thoth.Json.System.Text.Json.Decode.fromString gameDecoder json |> Result.toOption
+#else
+// .NET tests
 let toJson (game: SavedGame) =
     Thoth.Json.Newtonsoft.Encode.toString 0 (encodeGame game)
 
 let fromJson (json: string) =
     Thoth.Json.Newtonsoft.Decode.fromString gameDecoder json |> Result.toOption
 #endif
+#endif
 
 /// The local storage key holding the saved game. Other tabs watch it for changes.
 let gameKey = "gameStateAureliav3"
 
-let private highContrastKey = "aureliaHighContrast"
-
-// Storage can be unavailable or full (e.g. some private browsing modes); the game still works without it.
-let private tryGetItem key =
-    try
-        Browser.WebStorage.localStorage.getItem key |> Option.ofObj
-    with _ ->
-        None
-
-let private trySetItem key value =
-    try
-        Browser.WebStorage.localStorage.setItem (key, value)
-    with _ ->
-        ()
-
-/// The saved game, or None if there isn't one or it can't be read.
-let loadGame () = tryGetItem gameKey |> Option.bind fromJson
-
-let saveGame (game: SavedGame) = trySetItem gameKey (toJson game)
-
-let loadHighContrast () = tryGetItem highContrastKey = Some "true"
-
-let saveHighContrast (enabled: bool) =
-    trySetItem highContrastKey (if enabled then "true" else "false")
+let highContrastKey = "aureliaHighContrast"
