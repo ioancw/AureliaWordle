@@ -99,22 +99,22 @@ let MatchComponent () =
                 {LostModal state}
 
                 <div class="flex-1 min-h-0 flex flex-col justify-center">
-                    <div class="flex justify-center mb-1">
+                    <div class="board-row flex justify-center mb-1">
                         {List.item 0 state.Guesses |> letterToDisplayBox}
                     </div>
-                    <div class="flex justify-center mb-1">
+                    <div class="board-row flex justify-center mb-1">
                         {List.item 1 state.Guesses |> letterToDisplayBox}
                     </div>
-                    <div class="flex justify-center mb-1">
+                    <div class="board-row flex justify-center mb-1">
                         {List.item 2 state.Guesses |> letterToDisplayBox}
                     </div>
-                    <div class="flex justify-center mb-1">
+                    <div class="board-row flex justify-center mb-1">
                         {List.item 3 state.Guesses |> letterToDisplayBox}
                     </div>
-                    <div class="flex justify-center mb-1">
+                    <div class="board-row flex justify-center mb-1">
                         {List.item 4 state.Guesses |> letterToDisplayBox}
                     </div>
-                    <div class="flex justify-center mb-1">
+                    <div class="board-row flex justify-center mb-1">
                         {List.item 5 state.Guesses |> letterToDisplayBox}
                     </div>
                 </div>
