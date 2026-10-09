@@ -8,10 +8,6 @@ If the wordle is RAINS, then the phonic hint with be /ai/.
 The sound /ai/ is also a phonic hint for the AY graphemes, so it would also be a valid
 hint for SPRAY and.
 
-TODO
-* Properly structure the code into modules etc.
-* Use a JSON streamer capable or writing and reading F# types.
-
 Further ideas
 * phonic keyboard, i.e. the button represents the phonic, which also allows you to choose the corresponding grapheme
     e.g. if the button is /ai/ then it would show AI, AY etc
@@ -28,6 +24,26 @@ npm start       # dev server with live reload
 npm test        # run the F# unit tests in test2/
 npm run build   # optimised site in dist/
 ```
+
+## Code layout
+
+The F# in `src/` is compiled in this order:
+
+| File | What it does |
+|---|---|
+| `Domain.fs` | The game's types |
+| `Words.fs` | The daily wordles, their phonic hints, and the dictionary of valid guesses |
+| `Phonics.fs` | Finding a grapheme (spelling) inside a word |
+| `GameRules.fs` | Building, validating and scoring guesses; turning key presses into the next state |
+| `Daily.fs` | Which puzzle is today's |
+| `Storage.fs` | Saving and loading via local storage, using Thoth.Json |
+| `Game.fs` | Resuming today's game from a save, or starting a fresh one |
+| `Components.fs` | Tiles, keyboard keys and messages |
+| `Modals.fs` | The About, Help, Statistics and answer pop-ups |
+| `App.fs` | The app component: state, keyboard input and layout |
+
+Saved games use the same JSON shape as earlier versions, so players keep their stats.
+`Storage` and `Game` are tested on .NET with the same Thoth.Json decoders the browser uses.
 
 ## Deployment
 

@@ -1,10 +1,5 @@
 module Domain
 
-type KeyBoard =
-    { Top: string list
-      Middle: string list
-      Bottom: string list }
-
 type Modal =
     | Info
     | Help
