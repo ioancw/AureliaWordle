@@ -7,13 +7,14 @@
     --flip-duration: 500ms;
     --flip-stagger: 300ms;
     --row-reveal-duration: calc(4 * var(--flip-stagger) + var(--flip-duration));
-    --filled-cell-border-color: #737373;
+    --background: #121213;
+    --filled-cell-border-color: #565758;
     --green: #538d4e;
     --darkendYellow: #b59f3b;
-    --grey: theme('colors.neutral.700');
+    --grey: #3a3a3c;
     --keyboard-default: #818384;
-    --default-cell-bg-color: theme('colors.stone.900');
-    --default-cell-border-color: theme('colors.neutral.700');
+    --default-cell-bg-color: var(--background);
+    --default-cell-border-color: #3a3a3c;
 }
 
 .cell-green {
@@ -42,21 +43,35 @@
 .game {
     --header-h: 46px;
     --hint-h: 30px;
-    --key-gap: 6px;
-    --key-h: clamp(40px, 7.5vh, 58px);
+    --key-gap: 8px;
+    --key-h: clamp(40px, 8.5vh, 66px);
     --kb-h: calc(3 * (var(--key-h) + var(--key-gap)) + 4px + env(safe-area-inset-bottom, 0px));
     --tile-by-width: calc((100vw - 16px) / 5 - 5px);
     --tile-by-height: calc((100vh - var(--header-h) - var(--hint-h) - var(--kb-h) - 8px) / 6 - 5px);
     /* 66px matches Wordle's 350px-wide board */
-    --tile: max(20px, min(66px, var(--tile-by-width), var(--tile-by-height)));
+    --tile: max(20px, min(72px, var(--tile-by-width), var(--tile-by-height)));
     height: 100vh;
 }
 
 @supports (height: 100dvh) {
     .game {
-        --key-h: clamp(40px, 7.5dvh, 58px);
+        --key-h: clamp(40px, 8.5dvh, 66px);
         --tile-by-height: calc((100dvh - var(--header-h) - var(--hint-h) - var(--kb-h) - 8px) / 6 - 5px);
         height: 100dvh;
+    }
+}
+
+/* Where supported, size tiles from the space the board actually has (it fills whatever
+   the header and keyboard leave), rather than estimating it from the screen height.
+   That estimate comes out too small in some browsers, e.g. iPhone Safari. */
+@supports (container-type: size) {
+    .board {
+        container-type: size;
+    }
+
+    .game {
+        --tile-by-width: calc((100cqw - 32px) / 5 - 5px);
+        --tile-by-height: calc((100cqh - 8px) / 6 - 5px);
     }
 }
 
@@ -126,7 +141,7 @@
 .keyboard-row {
     display: flex;
     justify-content: center;
-    gap: 5px;
+    gap: 6px;
     width: 100%;
     max-width: 500px;
     margin: 0 auto var(--key-gap);
@@ -163,7 +178,7 @@
     color: rgb(255 255 255);
     padding: 0;
     font-weight: bold;
-    font-size: clamp(0.8rem, 3.6vw, 1rem);
+    font-size: clamp(0.85rem, 5.2vw, 1.4rem);
     text-transform: uppercase;
     user-select: none;
     -webkit-user-select: none;
@@ -309,7 +324,7 @@
     gap: 8px;
     padding: 2px 4px 2px 12px;
     border-radius: 9999px;
-    background-color: theme('colors.stone.800');
+    background-color: #2c2c2e;
     color: rgb(255 255 255);
     font-size: 0.85rem;
     line-height: 1.5;
