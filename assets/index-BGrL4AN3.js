@@ -155,9 +155,9 @@ Reason: `+s.fields[2]:s.tag===3?it(t,s.fields[0],s.fields[1],!0):s.tag===4?it(t,
 `,F(n=>ke("",F(o=>{switch(o.Status.tag){case 0:return t?"🟧":"🟩";case 1:return t?"🟦":"🟨";default:return"⬛"}},n[1].Letters)),wa(e.Round+1,e.Guesses)));return`Aureliadle ${bn()} ${s}/${me}
 
 ${r}`}function wu(t){if(!(t.ctrlKey||t.metaKey||t.altKey)){const e=t.key;switch(e){case"Enter":return"Ent";case"Backspace":return"Del";default:if(e.length===1){const s=e.toLocaleLowerCase();return s>="a"&&s<="z"?s:void 0}else return}}}new nu("wordle-app").Decorate(function(){this.init(x=>(x.useShadowDom=!1,Promise.resolve(void 0)));const t=ue(this).useState(()=>{const x=El();return $r(x),x}),e=t[0],s=ue(this).useState(()=>!1),r=s[0],n=ue(this).useState(()=>!1),o=n[0],a=ue(this).useState(()=>!1),l=a[0],i=a[1],u=ue(this).useState(_l),c=u[0],d=ue(this).useState(()=>{}),f=d[1],p=ue(this).useRef(()=>0),m=ue(this).useRef(()=>x=>{}),g=x=>{$r(x),t[1](x)},b=(x,U)=>{p.contents=p.contents+1|0;const N=p.contents|0;f(U),setTimeout(()=>{p.contents===N&&f(void 0)},x)},_=x=>{const U=xr(e);switch(x){case"Ent":{const N=U;Ds(me,N)&&(Tn(N)?In(N)||b(1e3,"Not in word list"):b(1e3,"Not enough letters"));const V=Vi(me,pt,N);g(V),k(V.State,new G(2,[]))&&!k(N.State,new G(2,[]))&&(setTimeout(()=>{b(2e3,Te(V.Round,bu))},Vr+600),setTimeout(()=>{i(!0)},Vr+2600));break}case"Del":{g(qi(me,pt,U));break}default:g(Hi(me,pt,x,U))}},O=ue(this).useRef(()=>()=>{});O.contents=()=>{const x=xr(e);k(x,e)||g(x)};const K=r||o?!0:l;m.contents=x=>{K||_(x)},ue(this).useEffectOnce(()=>{const x=Ct=>{const ot=Ct,Fs=wu(ot);if(Fs!=null){const eo=Fs;ot.preventDefault(),m.contents(eo)}},U=Ct=>{const ot=Ct;(ot.key==null||ot.key===Hs)&&O.contents()},N=Ct=>{document.visibilityState==="visible"&&O.contents()},V=window;V.addEventListener("keydown",x),V.addEventListener("storage",U),V.addEventListener("pageshow",N),document.addEventListener("visibilitychange",N);const Us=setInterval(()=>{O.contents()},6e4)|0;return{Dispose(){V.removeEventListener("keydown",x),V.removeEventListener("storage",U),V.removeEventListener("pageshow",N),document.removeEventListener("visibilitychange",N),clearInterval(Us)}}});const fe=x=>U=>{switch(U.preventDefault(),x.tag){case 2:{i(!l);break}case 1:{s[1](!r);break}default:n[1](!o)}},Ee=x=>uu(e.UsedLetters,U=>N=>{let V;N.preventDefault(),(V=N,V.currentTarget).blur(),_(U)},x);return q(H`
-        <div class="game ${c?"high-contrast":""} flex flex-col bg-stone-900">
+        <div class="game ${c?"high-contrast":""} flex flex-col" style="background-color: var(--background)">
             <div class="flex-none">
-                <div class="relative flex items-center justify-between px-2 border-b border-neutral-600" style="height:var(--header-h)">
+                <div class="relative flex items-center justify-between px-2 " style="height: var(--header-h); border-bottom: 1px solid #3a3a3c">
                     <button @click=${fe(new je(0,[]))} aria-label="About and settings" class="p-2 text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -191,7 +191,7 @@ ${r}`}function wu(t){if(!(t.ctrlKey||t.metaKey||t.altKey)){const e=t.key;switch(
             ${gu(e)}
             ${cu(d[0])}
 
-            <div class="flex-1 min-h-0 flex flex-col justify-center">
+            <div class="board flex-1 min-h-0 flex flex-col justify-center">
                 ${F(x=>{let U;return q(H`
             <div class="board-row flex justify-center">${Ms((N,V)=>lu(N,V[0],V[1]),(U=x,Ri(U[0],U[1])))}</div>
         `)},e.Guesses)}
