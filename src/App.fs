@@ -68,9 +68,9 @@ let MatchComponent () =
 
         html
             $"""
-            <div class="flex flex-col bg-stone-900" style="height:100vh;height:100dvh;">
+            <div class="game flex flex-col bg-stone-900">
                 <div class="flex-none mb-1">
-                    <div class="relative flex items-center justify-between h-12 px-2">
+                    <div class="relative flex items-center justify-between px-2" style="height:calc(var(--header-h) - 6px)">
                         <button @click={onModalClick Info} aria-label="About" class="p-2 text-white">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -98,7 +98,7 @@ let MatchComponent () =
                 {modal "Grapheme Phoneme Correspondence" (helpText state) showHelpModal (onModalClick Help)}
                 {LostModal state}
 
-                <div class="flex-1 flex flex-col justify-center">
+                <div class="flex-1 min-h-0 flex flex-col justify-center">
                     <div class="flex justify-center mb-1">
                         {List.item 0 state.Guesses |> letterToDisplayBox}
                     </div>
@@ -120,13 +120,15 @@ let MatchComponent () =
                 </div>
 
                 <div class="flex-none keyboard-safe-area">
-                    <div class="flex justify-center mb-1.5">
+                    <div class="keyboard-row">
                         {keyBoard.Top |> List.map keyboardKey}
                     </div>
-                    <div class="flex justify-center mb-1.5">
+                    <div class="keyboard-row">
+                        <div class="keyboard-spacer"></div>
                         {keyBoard.Middle |> List.map keyboardKey}
+                        <div class="keyboard-spacer"></div>
                     </div>
-                    <div class="flex justify-center mb-1.5">
+                    <div class="keyboard-row">
                         {keyBoard.Bottom |> List.map keyboardKey}
                     </div>
                 </div>
