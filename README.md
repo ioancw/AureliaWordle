@@ -10,7 +10,6 @@ hint for SPRAY and.
 
 TODO
 * Properly structure the code into modules etc.
-* Sharing the results.
 * Use a JSON streamer capable or writing and reading F# types.
 
 Further ideas

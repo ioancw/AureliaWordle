@@ -2,16 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* @layer base {
-    @font-face {
-        font-family: Proxima Nova;
-        font-weight: 400;
-        src: url(/fonts/proxima-nova/400-regular.woff) format("woff");
-    }
-} */
-
 :root {
-    --animation-speed: 1500ms;
     --animation-speed-fast: 210ms;
     --flip-duration: 500ms;
     --flip-stagger: 300ms;
@@ -19,83 +10,10 @@
     --filled-cell-border-color: #737373;
     --green: #538d4e;
     --darkendYellow: #b59f3b;
-    --red: theme('colors.red.700');
-    --grey: theme('colors.neutral.700');
-    --black-key: theme('colors.neutral.500');
-    --grey4: theme('colors.gray.400');
     --grey: theme('colors.neutral.700');
     --keyboard-default: #818384;
     --default-cell-bg-color: theme('colors.stone.900');
     --default-cell-border-color: theme('colors.neutral.700');
-    --default-cell-text-color: theme('colors.stone.900');
-    --absent-cell-bg-color: theme('colors.neutral.700');
-    --correct-cell-bg-color: --green;
-    --present-cell-bg-color: --yellow;
-}
-
-:root {}
-
-@keyframes revealAbsentCharCell {
-    0% {
-        transform: rotateX(0deg);
-        background-color: var(--default-cell-bg-color);
-        border-color: var(--default-cell-border-color);
-        color: var(--default-cell-text-color);
-    }
-    50% {
-        background-color: var(--default-cell-bg-color);
-        border-color: var(--default-cell-border-color);
-        color: var(--default-cell-text-color);
-    }
-    50.1% {
-        background-color: var(--absent-cell-bg-color);
-        border-color: var(--absent-cell-bg-color);
-    }
-    100% {
-        transform: rotateX(180deg);
-    }
-}
-
-@keyframes revealCorrectCharCell {
-    0% {
-        transform: rotateX(0deg);
-        background-color: var(--default-cell-bg-color);
-        border-color: var(--default-cell-border-color);
-        color: var(--default-cell-text-color);
-    }
-    50% {
-        background-color: var(--default-cell-bg-color);
-        border-color: var(--default-cell-border-color);
-        color: var(--default-cell-text-color);
-    }
-    50.1% {
-        background-color: var(--correct-cell-bg-color);
-        border-color: var(--correct-cell-bg-color);
-    }
-    100% {
-        transform: rotateX(180deg);
-    }
-}
-
-@keyframes revealPresentCharCell {
-    0% {
-        transform: rotateX(0deg);
-        background-color: var(--default-cell-bg-color);
-        border-color: var(--default-cell-border-color);
-        color: var(--default-cell-text-color);
-    }
-    50% {
-        background-color: var(--default-cell-bg-color);
-        border-color: var(--default-cell-border-color);
-        color: var(--default-cell-text-color);
-    }
-    50.1% {
-        background-color: var(--present-cell-bg-color);
-        border-color: var(--present-cell-bg-color);
-    }
-    100% {
-        transform: rotateX(180deg);
-    }
 }
 
 .cell-green {
@@ -106,11 +24,6 @@
 .keyboard-grey {
     background-color: var(--keyboard-default);
     border-color: var(--keyboard-default);
-}
-
-.cell-red {
-    background-color: var(--red);
-    border-color: var(--red);
 }
 
 .cell-grey {
@@ -127,12 +40,13 @@
    height so the whole game (header + board + keyboard) always fits on screen,
    from 280px folding phones to large phones, in portrait or landscape. */
 .game {
-    --header-h: 54px;
+    --header-h: 46px;
+    --hint-h: 30px;
     --key-gap: 6px;
     --key-h: clamp(40px, 7.5vh, 58px);
     --kb-h: calc(3 * (var(--key-h) + var(--key-gap)) + 4px + env(safe-area-inset-bottom, 0px));
     --tile-by-width: calc((100vw - 16px) / 5 - 5px);
-    --tile-by-height: calc((100vh - var(--header-h) - var(--kb-h) - 8px) / 6 - 5px);
+    --tile-by-height: calc((100vh - var(--header-h) - var(--hint-h) - var(--kb-h) - 8px) / 6 - 5px);
     /* 66px matches Wordle's 350px-wide board */
     --tile: max(20px, min(66px, var(--tile-by-width), var(--tile-by-height)));
     height: 100vh;
@@ -141,7 +55,7 @@
 @supports (height: 100dvh) {
     .game {
         --key-h: clamp(40px, 7.5dvh, 58px);
-        --tile-by-height: calc((100dvh - var(--header-h) - var(--kb-h) - 8px) / 6 - 5px);
+        --tile-by-height: calc((100dvh - var(--header-h) - var(--hint-h) - var(--kb-h) - 8px) / 6 - 5px);
         height: 100dvh;
     }
 }
@@ -149,7 +63,8 @@
 /* Short screens (phones in landscape): shrink the keyboard to leave room for the board. */
 @media (max-height: 500px) {
     .game {
-        --header-h: 46px;
+        --header-h: 40px;
+        --hint-h: 26px;
         --key-gap: 4px;
         --key-h: 32px;
     }
@@ -237,7 +152,7 @@
 }
 
 .keyboard.key-other-size {
-    font-size: 0.75rem;
+    font-size: clamp(0.6rem, 2.9vw, 0.75rem);
 }
 
 .keyboard {
@@ -267,96 +182,10 @@
     border-color: var(--darkendYellow);
 }
 
-.cell-fill-animation {
-    animation: onTypeCell linear;
-    animation-duration: 0.55s;
-}
-
-.cell-reveal {
-    animation-duration: 0.55s;
-    animation-timing-function: linear;
-    animation-fill-mode: backwards;
-}
-
-.cell-reveal-absent {
-    animation-name: revealAbsentCharCell;
-    animation-duration: 250ms;
-    animation-timing-function: ease-in-out;
-}
-
-.cell-reveal-correct {
-    animation-name: revealCorrectCharCell;
-    animation-duration: 250ms;
-    animation-timing-function: ease-in-out;
-}
-
-.cell-reveal-present {
-    animation-name: revealPresentCharCell;
-    animation-duration: 250ms;
-    animation-timing-function: ease-in-out;
-}
-
-svg.cursor-pointer {
-    transition: all var(--animation-speed-fast);
-}
-
-svg.cursor-pointer:hover {
-    transform: scale(1.2);
-}
-
 .jiggle {
     animation: jiggle;
     animation-timing-function: ease-in-out;
     animation-duration: var(--animation-speed-fast);
-}
-
-.slide-down {
-    animation: slideDown linear;
-    animation-duration: var(--animation-speed-fast);
-}
-
-.navbar {
-    margin-bottom: 2%;
-}
-
-.navbar-content {
-    display: flex;
-    height: 3rem;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.right-icons {
-    display: flex;
-}
-
-
-/* Additional animation on the child div to avoid letters turning upside down/snapping back to upright visual glitch */
-
-@keyframes offsetLetterFlip {
-    0% {
-        transform: rotateX(0deg);
-    }
-    100% {
-        transform: rotateX(180deg);
-    }
-}
-
-.cell-reveal>.letter-container {
-    animation: offsetLetterFlip 0.55s linear;
-    animation-fill-mode: backwards;
-}
-
-@keyframes onTypeCell {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.1);
-    }
-    100% {
-        transform: scale(1);
-    }
 }
 
 @keyframes jiggle {
@@ -374,54 +203,6 @@ svg.cursor-pointer:hover {
     }
     100% {
         transform: translate(0, 0);
-    }
-}
-
-
-/*  */
-
-
-/*  */
-
-@keyframes slideDown {
-    0% {
-        transform: translateY(0%)
-    }
-    90% {
-        transform: translateY(0%)
-    }
-    100% {
-        transform: translateY(100%)
-    }
-}
-
-@keyframes flyIn {
-    0% {
-        opacity: 0
-    }
-    100% {
-        opacity: 1
-    }
-}
-
-@keyframes flyOut {
-    0% {
-        opacity: 1
-    }
-    100% {
-        opacity: 0
-    }
-}
-
-@keyframes fadeIn {
-    0% {
-        opacity: 0
-    }
-    15% {
-        opacity: 0
-    }
-    100% {
-        opacity: 1
     }
 }
 
@@ -508,8 +289,90 @@ svg.cursor-pointer:hover {
     100% { transform: translateY(0); }
 }
 
+/* High contrast: Wordle's orange/blue palette for colour vision differences. */
+.game.high-contrast {
+    --green: #f5793a;
+    --darkendYellow: #85c0f9;
+}
+
+/* Today's phonic sound, under the header. Tapping it opens the spellings. */
+.hint-bar {
+    height: var(--hint-h);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hint-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 2px 4px 2px 12px;
+    border-radius: 9999px;
+    background-color: theme('colors.stone.800');
+    color: rgb(255 255 255);
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.hint-sound {
+    padding: 0 10px;
+    border-radius: 9999px;
+    background-color: theme('colors.yellow.600');
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+/* Short message over the board, e.g. "Not in word list". */
+.toast {
+    position: fixed;
+    top: calc(var(--header-h) + var(--hint-h) + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 60;
+    padding: 12px 16px;
+    border-radius: 6px;
+    background-color: rgb(255 255 255);
+    color: theme('colors.stone.900');
+    font-weight: 700;
+    white-space: nowrap;
+    pointer-events: none;
+    animation: toast-in 150ms ease-out;
+}
+
+@keyframes toast-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.share-button {
+    padding: 10px 32px;
+    border-radius: 9999px;
+    background-color: var(--green);
+    color: rgb(255 255 255);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* The lost pop-up waits for the last row to finish flipping. */
+.modal-after-reveal:not(.hidden) {
+    animation: appear-after-reveal 200ms ease-out var(--row-reveal-duration) backwards;
+}
+
+@keyframes appear-after-reveal {
+    from { opacity: 0; visibility: hidden; }
+    to { opacity: 1; visibility: visible; }
+}
+
+@media (max-height: 500px) {
+    .hint-button { font-size: 0.75rem; }
+    .hint-sound { font-size: 0.85rem; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-    .tile {
+    .tile,
+    .modal-after-reveal:not(.hidden) {
         animation: none !important;
     }
     .keyboard {

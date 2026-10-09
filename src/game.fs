@@ -6,6 +6,14 @@ open Domain
 open Common
 open Persistence
 
+/// Days since the first puzzle; also the puzzle number shown when sharing.
+let dayNumber () =
+    let today = DateTime.Now
+    let startDate = DateTime(2022, 6, 4)
+    let todayDate = DateTime(today.Year, today.Month, today.Day)
+    let millisInDay = 60 * 60 * 24 * 1000 |> double
+    round ((todayDate - startDate).TotalMilliseconds / millisInDay) |> int
+
 // starts a new game and loads the persisted state if it exists
 let startNewGame numberOfLetters numberOfRounds =
     // set up all the world tiles depending on the number of rounds.
@@ -14,16 +22,9 @@ let startNewGame numberOfLetters numberOfRounds =
     
     let guesses = emptyGuesses
 
-    // Function to select Today's wordle from the array of daily words.
+    // Today's wordle from the list of daily words.
     let wordle () : string * string * string =
-        let today = DateTime.Now
-        let startDate = DateTime(2022, 6, 4)
-        let todayDate = DateTime(today.Year, today.Month, today.Day)
-        let differenceMilli = (todayDate - startDate).TotalMilliseconds
-        let millisInDay = 60 * 60 * 24 * 1000 |> double
-        let differenceDays = round (differenceMilli / millisInDay) |> int
-        let index = differenceDays % wordles.Length
-        wordles.[index]
+        wordles.[dayNumber () % wordles.Length]
 
     // Sets the wordle, the phonic hint and the corresponding grapheme
     let wordle, hint, grapheme = wordle ()
