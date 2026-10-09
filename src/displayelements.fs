@@ -24,8 +24,8 @@ let gameTile position (c, status) =
 
     html
         $"""
-        <div class="tile {classes}">
-            <div">
+        <div class="tile {classes}" data-letter="{c}">
+            <div>
                 {c}
             </div>
         </div>
