@@ -1,10 +1,10 @@
 module Modals
 
 open Lit
-open Wordles
+open Words
 open Domain
-open Common
-open Display
+open Phonics
+open Components
 
 /// Creates the modal HTML. extraClass is added to the outer element, e.g. to delay its appearance.
 let modalWithClass extraClass customHead bodyText modalDisplayState handler =
@@ -85,7 +85,7 @@ let helpText state =
                 $"""
                 <div class="flex justify-left mb-1">
                     {padded |> Seq.map littleBoxedChar}
-                    {exampleWord |> DisplayUtils.parseWordGrapheme grapheme |> Seq.map littleBoxedChar}
+                    {exampleWord |> parseWordGrapheme grapheme |> Seq.map littleBoxedChar}
                 </div>
               """ ]
 
@@ -197,7 +197,7 @@ let LostModal state =
             <div class="modal-body p-2 text-slate-800 text-center">
                 <p>Oh well, never mind.</p>
                 <div class="flex justify-center my-2">
-                    {wordle |> DisplayUtils.parseWordGrapheme grapheme |> Seq.map littleBoxedChar}
+                    {wordle |> parseWordGrapheme grapheme |> Seq.map littleBoxedChar}
                 </div>
                 <p>Better luck next time.</p>
             </div>

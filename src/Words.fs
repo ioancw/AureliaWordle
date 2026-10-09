@@ -1,4 +1,4 @@
-﻿module Wordles
+module Words
 
 module Phoneme =
     // vowels

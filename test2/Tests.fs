@@ -4,9 +4,10 @@ open System
 open Xunit
 open FsUnit.Xunit
 open Lit.Wordle
-open Wordles
+open Words
 open Domain
-open Common
+open GameRules
+open Phonics
 
 
 [<Fact>]
@@ -93,7 +94,7 @@ let ``Keyboard status when letters have been used`` ()=
         ]
         |> Map.ofList
 
-    State.updateKeyboardState guesses keyboardStatus |> should equal expectedKeyboardStatus
+    Play.updateKeyboardState guesses keyboardStatus |> should equal expectedKeyboardStatus
 
 [<Fact>]
 let ``Keyboard status new Yellow status `` ()=
@@ -128,7 +129,7 @@ let ``Keyboard status new Yellow status `` ()=
         ]
         |> Map.ofList
 
-    State.updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
+    Play.updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
 
 [<Fact>]
 let ``Keyboard status old Yellow is now Green `` ()=
@@ -167,7 +168,7 @@ let ``Keyboard status old Yellow is now Green `` ()=
         ]
         |> Map.ofList
 
-    State.updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
+    Play.updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
 
 [<Fact>]
 let ``Keyboard status old Green is still Green when mask letter is Yellow `` ()=
@@ -206,7 +207,7 @@ let ``Keyboard status old Green is still Green when mask letter is Yellow `` ()=
         ]
         |> Map.ofList
 
-    State.updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
+    Play.updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
 
 [<Fact>]
 let ``Keyboard status existing greens in same position `` ()=
@@ -245,7 +246,7 @@ let ``Keyboard status existing greens in same position `` ()=
         ]
         |> Map.ofList
 
-    State.updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
+    Play.updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
 
 [<Fact>]
 let ``Keyboard status existing greens new yellows`` ()=
@@ -287,7 +288,7 @@ let ``Keyboard status existing greens new yellows`` ()=
         ]
         |> Map.ofList
 
-    State.updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
+    Play.updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
 
 [<Fact>]
 let ``All yellows go green`` ()=
@@ -332,7 +333,7 @@ let ``All yellows go green`` ()=
         ]
         |> Map.ofList
 
-    State.updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
+    Play.updateKeyboardState guesses initialKeyboardStatus |> should equal expectedKeyboardStatus
 
 [<Fact>]
 let ``Find phoneme in string`` () =
@@ -347,7 +348,7 @@ let ``Find phoneme in string`` () =
             ('d', DarkGreen)
         ]
     
-    let test = DisplayUtils.parseWordGrapheme grapheme word
+    let test = parseWordGrapheme grapheme word
     test |> should equal expected
     
 type TestTypeGrapheme () =
@@ -367,7 +368,7 @@ type TestTypeGrapheme () =
     [<Theory>]
     [<MemberData("TestProperty")>]
     member t.TestMethod (word: string) (grapheme: string) (expected: HelpTextColour list) =
-        let actual = DisplayUtils.parseWordGrapheme grapheme word
+        let actual = parseWordGrapheme grapheme word
         let expectedZip = List.zip (word |> Seq.toList) expected
         actual |> should equal expectedZip   
 let private guessRow (word: string) statuses =

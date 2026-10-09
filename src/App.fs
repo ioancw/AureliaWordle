@@ -2,19 +2,14 @@ module Lit.Wordle
 
 open System
 open Lit
-open Game
 open Domain
-open Common
-open Persistence
-open Display
+open GameRules
+open Game
+open Components
 open Modals
 open Fable.Core
 
 JsInterop.importSideEffects "./index.css"
-
-let numberOfRounds = 6
-
-let numberOfLetters = 5
 
 /// Time for a submitted row to finish flipping; matches --row-reveal-duration in main.css.
 let rowRevealMs = 1700
@@ -45,7 +40,7 @@ let shareText highContrast state =
         |> List.map (fun (_, guess) -> guess.Letters |> List.map (fun l -> square l.Status) |> String.concat "")
         |> String.concat "\n"
 
-    $"Aureliadle {dayNumber ()} {score}/{numberOfRounds}\n\n{grid}"
+    $"Aureliadle {Daily.dayNumber ()} {score}/{numberOfRounds}\n\n{grid}"
 
 /// Maps a physical key press to the on-screen key it stands for.
 let keyFromKeyboardEvent (ev: Browser.Types.KeyboardEvent) =
@@ -66,17 +61,25 @@ let MatchComponent () =
     let _ = LitElement.init (fun cfg -> cfg.useShadowDom <- false)
 
     // Starts a new game, or resumes today's game from local storage.
-    let state, setGameState = Hook.useState (init = fun () -> startNewGame numberOfLetters numberOfRounds)
+    let state, setState =
+        Hook.useState (init = fun () ->
+            let game = Game.load ()
+            Game.save game
+            game)
     let showHelpModal, setShowHelpModal = Hook.useState false
     let showInfoModal, setShowInfoModal = Hook.useState false
     let showStatsModal, setShowStatsModal = Hook.useState false
-    let highContrast, setHighContrast = Hook.useState (init = fun () -> loadHighContrast ())
+    let highContrast, setHighContrast = Hook.useState (init = fun () -> Storage.loadHighContrast ())
     let toast, setToast = Hook.useState (None: string option)
     let toastId = Hook.useRef 0
     // Latest key handler, so the window keydown listener (added once) never sees stale state.
     let keyHandler = Hook.useRef (fun (_: string) -> ())
 
-    saveGameStateLocalStorage state
+    // Every change is saved straight away, so storage always holds the latest game
+    // (key presses start from storage; see handleKey).
+    let setGameState next =
+        Game.save next
+        setState next
 
     let showToast durationMs message =
         toastId.Value <- toastId.Value + 1
@@ -84,26 +87,38 @@ let MatchComponent () =
         setToast (Some message)
         JS.setTimeout (fun () -> if toastId.Value = id then setToast None) durationMs |> ignore
 
-    let submitEnter () =
-        if Validate.round numberOfRounds state then
-            if not (Validate.allLetters state) then
+    let submitEnter current =
+        if Validate.round numberOfRounds current then
+            if not (Validate.allLetters current) then
                 showToast 1000 "Not enough letters"
-            elif not (Validate.word state) then
+            elif not (Validate.word current) then
                 showToast 1000 "Not in word list"
 
-        let next = State.submitEnter numberOfRounds numberOfLetters state
+        let next = Play.submitEnter numberOfRounds numberOfLetters current
         setGameState next
 
         // Celebrate once the winning row has finished flipping and bouncing, then show the stats.
-        if next.State = Won && state.State <> Won then
+        if next.State = Won && current.State <> Won then
             JS.setTimeout (fun () -> showToast 2000 winMessages.[next.Round]) (rowRevealMs + 600) |> ignore
             JS.setTimeout (fun () -> setShowStatsModal true) (rowRevealMs + 2600) |> ignore
 
     let handleKey (key: string) =
+        // Start from the latest saved game, so a tab that's out of date (another tab played,
+        // or it's a new day) never writes old progress or stats over newer ones.
+        let current = Game.refresh state
+
         match key with
-        | "Ent" -> submitEnter ()
-        | "Del" -> state |> State.submitDelete numberOfRounds numberOfLetters |> setGameState
-        | letter -> state |> State.submitLetter numberOfRounds numberOfLetters letter |> setGameState
+        | "Ent" -> submitEnter current
+        | "Del" -> current |> Play.submitDelete numberOfRounds numberOfLetters |> setGameState
+        | letter -> current |> Play.submitLetter numberOfRounds numberOfLetters letter |> setGameState
+
+    // Latest refresh, for listeners added once.
+    let refreshHandler = Hook.useRef (fun () -> ())
+
+    refreshHandler.Value <-
+        (fun () ->
+            let latest = Game.refresh state
+            if latest <> state then setGameState latest)
 
     let anyModalOpen = showHelpModal || showInfoModal || showStatsModal
     keyHandler.Value <- (fun key -> if not anyModalOpen then handleKey key)
@@ -117,10 +132,29 @@ let MatchComponent () =
                 keyHandler.Value key
             | None -> ()
 
-        Browser.Dom.window.addEventListener ("keydown", onKeyDown)
+        // Pick up changes made elsewhere: another tab saving, the page coming back into view
+        // (phones keep pages open for days), or the date changing while the page is open.
+        let onStorage (ev: Browser.Types.Event) =
+            let ev = ev :?> Browser.Types.StorageEvent
+            if isNull ev.key || ev.key = Storage.gameKey then refreshHandler.Value ()
+
+        let onVisible (_: Browser.Types.Event) =
+            if Browser.Dom.document.visibilityState = "visible" then refreshHandler.Value ()
+
+        let window = Browser.Dom.window
+        window.addEventListener ("keydown", onKeyDown)
+        window.addEventListener ("storage", onStorage)
+        window.addEventListener ("pageshow", onVisible)
+        Browser.Dom.document.addEventListener ("visibilitychange", onVisible)
+        let timer = JS.setInterval (fun () -> refreshHandler.Value ()) 60000
 
         { new IDisposable with
-            member _.Dispose() = Browser.Dom.window.removeEventListener ("keydown", onKeyDown) })
+            member _.Dispose() =
+                window.removeEventListener ("keydown", onKeyDown)
+                window.removeEventListener ("storage", onStorage)
+                window.removeEventListener ("pageshow", onVisible)
+                Browser.Dom.document.removeEventListener ("visibilitychange", onVisible)
+                JS.clearInterval timer })
 
     let letterToDisplayBox (letters: (Position * Guess)) =
         letters
@@ -151,7 +185,7 @@ let MatchComponent () =
 
     let onToggleHighContrast =
         Ev (fun _ ->
-            saveHighContrast (not highContrast)
+            Storage.saveHighContrast (not highContrast)
             setHighContrast (not highContrast))
 
     let onShare =

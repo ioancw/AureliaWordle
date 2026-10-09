@@ -3,19 +3,27 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="domain.fs" />
-    <Compile Include="words.fs" />
-    <Compile Include="common.fs" />
-    <Compile Include="persistence.fs" />
-    <Compile Include="displayelements.fs" />
-    <Compile Include="modals.fs" />
-    <Compile Include="game.fs" />
+    <Compile Include="Domain.fs" />
+    <Compile Include="Words.fs" />
+    <Compile Include="Phonics.fs" />
+    <Compile Include="GameRules.fs" />
+    <Compile Include="Daily.fs" />
+    <Compile Include="Storage.fs" />
+    <Compile Include="Game.fs" />
+    <Compile Include="Components.fs" />
+    <Compile Include="Modals.fs" />
     <Compile Include="App.fs" />
     <Content Include="index.css" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Fable.Lit" Version="1.4.2" />
-    <PackageReference Include="Fable.Lit.Elmish" Version="1.4.0" />
-    <PackageReference Include="Thoth.Json" Version="7.0.0" />
+    <PackageReference Include="Thoth.Json.Core" Version="0.7.1" />
+  </ItemGroup>
+  <!-- The same JSON encoders/decoders run on JavaScript in the browser and on .NET in the tests. -->
+  <ItemGroup Condition="'$(FABLE_COMPILER)' == 'true'">
+    <PackageReference Include="Thoth.Json.JavaScript" Version="0.4.1" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(FABLE_COMPILER)' != 'true'">
+    <PackageReference Include="Thoth.Json.Newtonsoft" Version="0.3.3" />
   </ItemGroup>
 </Project>

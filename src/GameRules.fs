@@ -1,35 +1,8 @@
-module Common
+/// The rules of the game: building guesses, validating them and scoring them.
+module GameRules
 
 open Domain
-open Wordles
-
-module DisplayUtils =
-    let parseWordGrapheme grapheme word =
-
-        let word = word |> Seq.toList
-        let wordLength = word |> List.length
-
-        let graphemes =
-            let graphemeList = grapheme |> Seq.toList
-            let graphemeLength = List.length graphemeList
-            let foundIndex =
-                List.windowed graphemeLength word
-                |> List.tryFindIndex (fun w ->
-                    match (w, graphemeList) with
-                    | t, g when t = g -> true
-                    | h :: m :: t, h1 :: m1 :: t1 when m1 = '-' && h = h1 && t = t1 -> true 
-                    | _ -> false)
-            match foundIndex with
-            | Some index -> List.init graphemeLength (fun i -> i + index)
-            | None -> []
-        
-        //assume all yellows, then populate the greens if any
-        List.init wordLength (fun _ -> DarkGreen)
-        |> List.mapi (fun i v ->
-            if List.contains i graphemes
-            then DarkRed
-            else v)
-        |> List.zip word 
+open Words
 
 module Letter =
     let toString guessLetter = defaultArg guessLetter.Letter ""
@@ -129,7 +102,8 @@ module Score =
             |> Seq.toList
             |> List.map (fun (a, m) -> { Letter = Some(string a); Status = m }) }
 
-module State = 
+/// Turns a key press into the next game state.
+module Play =
     // Updates the colour of the relevant keyboard keys based on the current guess
     // Note this may update a state set previously, i.e. Yellow goes to Green in the current round.
     let updateKeyboardState guesses (keyBoardState: Map<string, Status>) =
@@ -251,11 +225,3 @@ module State =
                 { state with Guesses = List.set state.Guesses (numberOfLetters, updated) state.Round }
         else
             state
-
-let keyBoard =
-    { Top =
-        [ "q"; "w"; "e"; "r"; "t"; "y"; "u"; "i"; "o"; "p" ]
-      Middle =
-        [ "a"; "s"; "d"; "f"; "g"; "h"; "j"; "k"; "l" ]
-      Bottom =
-        [ "Ent"; "z"; "x"; "c"; "v"; "b"; "n"; "m"; "Del" ] }
