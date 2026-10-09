@@ -1,19 +1,20 @@
 {
     "private": true,
     "scripts": {
-        "install": "dotnet tool restore",
-        "build": "dotnet fable src -o build/client --run vite build",
-        "start": "dotnet fable watch src -s -o build/client --run vite",
+        "postinstall": "dotnet tool restore",
+        "build": "dotnet fable src -o build/client -e .js --run vite build",
+        "start": "dotnet fable watch src -s -o build/client -e .js --run vite",
+        "test": "dotnet test test2",
         "publish": "npm run build -- --base=/AureliaWordle/ && npx gh-pages -d dist"
     },
     "dependencies": {
-        "lit": "^2.0.0",
-    	"lit-html": "2.0.0"
+        "lit": "^2.8.0",
+        "lit-html": "^2.8.0"
     },
     "devDependencies": {
-        "autoprefixer": "^10.4.2",
-        "postcss": "^8.4.6",
-        "tailwindcss": "^3.0.18",
-        "vite": "^2.6.1"
+        "autoprefixer": "^10.6.1",
+        "postcss": "^8.5.29",
+        "tailwindcss": "^3.4.19",
+        "vite": "^5.4.21"
     }
 }

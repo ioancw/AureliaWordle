@@ -12,32 +12,26 @@ TODO
 * Properly structure the code into modules etc.
 * Sharing the results.
 * Use a JSON streamer capable or writing and reading F# types.
-* Upgrade to dotnet6 (so that it works with VSCode)
 
 Further ideas
 * phonic keyboard, i.e. the button represents the phonic, which also allows you to choose the corresponding grapheme
     e.g. if the button is /ai/ then it would show AI, AY etc
 * Automated parsing of words into phonemes.
 
-[Fable.Lit](https://github.com/fable-compiler/Fable.Lit) app. To start a development server run:
+## Development
 
-```
-npm install && npm start
-```
-
-Other commands:
+Requires the [.NET 8 SDK](https://dotnet.microsoft.com/download) and Node.js 20+.
+[Fable](https://fable.io) compiles the F# in `src/` to JavaScript, and [Fable.Lit](https://github.com/fable-compiler/Fable.Lit) renders it.
 
 ```bash
-npm run build   # Build optimized site for deployment and put in dist/
-npm run publish # Build and publish to github pages
+npm install     # also restores the Fable tool
+npm start       # dev server with live reload
+npm test        # run the F# unit tests in test2/
+npm run build   # optimised site in dist/
 ```
 
-## Vite.js repository structure conventions
+## Deployment
 
-- Put static files in `public/` folder
-- Put `index.html` in app root (next to `package.json`)
-- Add a reference to the entry JS file (relative path is important):
-
-```html
-<script type="module" src="./build/client/App.js"></script>
-```
+GitHub Actions (`.github/workflows/build-deploy.yml`) runs the tests and builds the site on every pull request.
+Every merge to `main` is also deployed to GitHub Pages (the `gh-pages` branch), so there's no need to publish by hand.
+`npm run publish` still works as a manual fallback.
