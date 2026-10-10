@@ -93,6 +93,12 @@ let board (state: State) =
                                         | _ -> "Apostrophe challenge"
                                     )
                                 ]
+                                if isPractice state then
+                                    Html.span [
+                                        prop.className "ww-practice"
+                                        prop.title "You got this one wrong before: have another go"
+                                        prop.text "🔁 Practice"
+                                    ]
                             ]
                         ]
                         sentenceView s false ""
@@ -174,6 +180,20 @@ let help (state: State) =
                     Html.ul [ prop.className "ww-help-list"; prop.children (s.Choices |> List.map meaning) ]
                 ]
             | _ -> Html.none
+            if not state.Practice.IsEmpty then
+                Html.div [
+                    Html.p [ prop.className "font-medium"; prop.text "Words you're practising:" ]
+                    Html.p (
+                        state.Practice
+                        |> List.map (fun i -> bank.[i].Choices |> String.concat " / ")
+                        |> List.distinct
+                        |> String.concat ", "
+                    )
+                    Html.p [
+                        prop.className "text-sm"
+                        prop.text "Sentences you get wrong come back on another day, marked 🔁. Get one right first time and it's done."
+                    ]
+                ]
             Html.p "Tip: if a word has an apostrophe, try saying it the long way. They're → they are, could've → could have. The apostrophe goes where letters are missing."
         ]
     ]

@@ -54,7 +54,10 @@ type DailyGame<'Puzzle, 'State, 'Input> =
       ShareGrid: bool -> 'State -> string
       /// Optional: a storage key and converter for saves in an older format, read when
       /// there's no save in the current one. The converter gets the JSON and today's day.
-      Legacy: (string * (string -> int -> Saved<'State> option)) option }
+      Legacy: (string * (string -> int -> Saved<'State> option)) option
+      /// Optional: when a new day starts, carry something over from the last game played
+      /// (e.g. sentences to practise). Given that game and today's fresh one, returns today's.
+      CarryOver: ('State -> 'State -> 'State) option }
 
 // Days and puzzles
 
@@ -111,8 +114,13 @@ let resume game day (saved: Saved<'State> option) =
     match saved with
     | Some s when s.Day = day -> s
     | Some s ->
+        let fresh = game.Start(puzzleFor game day)
+
         { Day = day
-          State = game.Start(puzzleFor game day)
+          State =
+            match game.CarryOver with
+            | Some carry -> carry s.State fresh
+            | None -> fresh
           Stats = s.Stats }
     | None ->
         { Day = day

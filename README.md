@@ -9,7 +9,8 @@ Originally forked from https://aaronmu.github.io/MathGame/.
 - **Which Witch?** (`whichwitch/`): pick the right word for each sentence: their / there / they're,
   its / it's, to / too / two, could've (not could of), didn't (not did'nt), the dog's bone or three dogs...
   Six sentences a day getting harder (two warm-ups, two tricky, two apostrophe challenges), three hearts,
-  and a child-friendly explanation whenever a wrong word is picked.
+  and a child-friendly explanation whenever a wrong word is picked. Sentences she gets wrong come back
+  on a later day (marked 🔁 Practice) until she gets them right first time.
 - **Numberdle** (`numberdle/`): guess the number from 1 to 100 in seven tries, told higher or lower and how close.
 
 The ☰ menu moves between them. Each has daily puzzles, stats and streaks, sharing, and a high contrast setting.

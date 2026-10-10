@@ -145,4 +145,5 @@ let game: DailyGame<int, State, Input> =
       Decoder = decoder
       ScoreText = attemptsScore attempts
       ShareGrid = shareGrid
-      Legacy = None }
+      Legacy = None
+      CarryOver = None }

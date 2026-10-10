@@ -102,4 +102,5 @@ let game: DailyGame<Puzzle, State, Input> =
       Decoder = decoder
       ScoreText = attemptsScore rounds
       ShareGrid = shareGrid
-      Legacy = Some(Storage.gameKey, fromLiveVersion puzzles) }
+      Legacy = Some(Storage.gameKey, fromLiveVersion puzzles)
+      CarryOver = None }

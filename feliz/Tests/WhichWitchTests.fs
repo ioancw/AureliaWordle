@@ -114,3 +114,92 @@ let ``A whole day played through the engine updates the stats once`` () =
     finished.Stats.Won |> should equal 1
     finished.Stats.Distribution |> should equal [ 1; 0; 0 ]
     shareText game false finished |> should equal "Which Witch? 0 no mistakes\n\n🟩🟩🟩🟩🟩🟩 ❤️❤️❤️"
+
+// Practising sentences got wrong
+
+/// Plays a whole day: a wrong pick first on each listed position, then the right answer everywhere.
+let private playDay missAt (state: State) =
+    (state, [ 0 .. state.Questions.Length - 1 ])
+    ||> List.fold (fun s i ->
+        let s = if List.contains i missAt then missNow s |> fst else s
+        answerNow s |> fst)
+
+let private levelsOf (s: State) = s.Questions |> List.map (fun i -> bank.[i].Level)
+
+[<Fact>]
+let ``A sentence got wrong comes back the next day, at the same level`` () =
+    let day1 = start puzzles.[10] |> playDay [ 0 ]
+    let missed = day1.Questions.[0]
+    let day2 = carryOver day1 (start puzzles.[11])
+
+    day2.Practice |> should equal [ missed ]
+    day2.Questions |> should contain missed
+    bank.[missed].Level |> should equal 1
+    levelsOf day2 |> should equal [ 1; 1; 2; 2; 3; 3 ]
+    day2.Questions |> List.exists (fun i -> bank.[i].Family = theirFamily) |> should equal true
+
+[<Fact>]
+let ``The practice sentence is marked when it comes up`` () =
+    let day1 = start puzzles.[10] |> playDay [ 0 ]
+    let day2 = carryOver day1 (start puzzles.[11])
+    let position = day2.Questions |> List.findIndex ((=) day1.Questions.[0])
+    let atPractice = (day2, [ 1..position ]) ||> List.fold (fun s _ -> answerNow s |> fst)
+    isPractice atPractice |> should equal true
+
+[<Fact>]
+let ``Answered right first time, it leaves the practice list`` () =
+    let day1 = start puzzles.[10] |> playDay [ 0 ]
+    let day2 = carryOver day1 (start puzzles.[11]) |> playDay []
+    let day3 = carryOver day2 (start puzzles.[12])
+    day3.Practice |> List.isEmpty |> should equal true
+
+[<Fact>]
+let ``Got wrong again, it stays on the list`` () =
+    let day1 = start puzzles.[10] |> playDay [ 0 ]
+    let missed = day1.Questions.[0]
+    let day2 = carryOver day1 (start puzzles.[11])
+    let position = day2.Questions |> List.findIndex ((=) missed)
+    let day3 = carryOver (day2 |> playDay [ position ]) (start puzzles.[12])
+    day3.Practice |> should equal [ missed ]
+    day3.Questions |> should contain missed
+
+[<Fact>]
+let ``Skipped days don't lose the practice list`` () =
+    let day1 = start puzzles.[10] |> playDay [ 2; 4 ]
+    let later = carryOver day1 (start puzzles.[20])
+    later.Practice |> should equal [ day1.Questions.[2]; day1.Questions.[4] ]
+    later.Questions |> should contain day1.Questions.[2]
+    later.Questions |> should contain day1.Questions.[4]
+
+[<Fact>]
+let ``At most two practice sentences a day; the rest wait for later days`` () =
+    let today = start puzzles.[11]
+    // four sentences waiting to be practised, none of them already in today's six
+    let waiting =
+        [ 1; 2; 3; 3 ]
+        |> List.mapi (fun n level ->
+            bank
+            |> Array.indexed
+            |> Array.filter (fun (i, s) -> s.Level = level && s.Family <> theirFamily && not (List.contains i today.Questions))
+            |> Array.item n
+            |> fst)
+
+    let last = { start puzzles.[10] with Practice = waiting }
+    let next = carryOver last today
+    next.Practice |> should equal waiting
+    next.Questions |> List.filter (fun q -> List.contains q waiting) |> should equal (List.take 2 waiting)
+    levelsOf next |> should equal [ 1; 1; 2; 2; 3; 3 ]
+
+[<Fact>]
+let ``The engine carries the practice list into a new day`` () =
+    let day0 = { resume game 0 None with State = start puzzles.[0] |> playDay [ 1 ] }
+    let next = resume game 1 (Some day0)
+    next.State.Practice |> should equal [ day0.State.Questions.[1] ]
+    next.State.Questions |> should contain day0.State.Questions.[1]
+
+[<Fact>]
+let ``The practice list is saved, and older saves without it still load`` () =
+    let s = { resume game 0 None with State = { start puzzles.[0] with Practice = [ 3; 40 ] } }
+    (s |> toJson game |> fromJson game).Value.State.Practice |> should equal [ 3; 40 ]
+    let old = (toJson game s).Replace(",\"practice\":[3,40]", "")
+    (fromJson game old).Value.State.Practice |> List.isEmpty |> should equal true

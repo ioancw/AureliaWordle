@@ -342,7 +342,10 @@ type State =
       /// Sentences (by position) that needed more than one try.
       Missed: int list
       /// Wrong picks on the current sentence, most recent first.
-      Wrong: string list }
+      Wrong: string list
+      /// Sentences (bank numbers) got wrong on earlier days, oldest first. Up to two are
+      /// practised each day; one leaves the list when it's answered right first time.
+      Practice: int list }
 
 /// The position (0, 1, 2) of a choice in the current sentence.
 type Input = Choose of int
@@ -352,7 +355,68 @@ let start questions =
       Current = 0
       Mistakes = 0
       Missed = []
-      Wrong = [] }
+      Wrong = []
+      Practice = [] }
+
+let practicePerDay = 2
+
+/// The most sentences kept to practise; the oldest drop off beyond this.
+let practiceLimit = 12
+
+/// Today's sentences with up to two practice ones swapped in. Each takes the place of one of
+/// today's at the same level (preferring the same word family), so the day still gets harder,
+/// and the day's their / there / they're sentence is only replaced by another of those.
+let withPractice (practice: int list) (questions: int list) =
+    let toPlace =
+        practice
+        |> List.filter (fun p -> not (List.contains p questions))
+        |> List.truncate (max 0 (practicePerDay - (practice |> List.filter (fun p -> List.contains p questions) |> List.length)))
+
+    let place (qs: int list, replaced: int list) (p: int) =
+        let fits i =
+            not (List.contains i replaced)
+            && bank.[qs.[i]].Level = bank.[p].Level
+            && (bank.[qs.[i]].Family <> theirFamily || bank.[p].Family = theirFamily)
+
+        let positions = [ 0 .. qs.Length - 1 ] |> List.filter fits
+
+        let chosen =
+            positions
+            |> List.tryFind (fun i -> bank.[qs.[i]].Family = bank.[p].Family)
+            |> Option.orElse (List.tryHead positions)
+
+        match chosen with
+        | Some i -> List.updateAt i p qs, i :: replaced
+        | None -> qs, replaced
+
+    toPlace |> List.fold place (questions, []) |> fst
+
+/// A new day: sentences got wrong last time join the practice list, practice sentences answered
+/// right first time leave it, and up to two are swapped into today's sentences.
+let carryOver (last: State) (today: State) =
+    let doneFirstTime =
+        [ for i in 0 .. min last.Current last.Questions.Length - 1 do
+              if not (List.contains i last.Missed) then
+                  last.Questions.[i] ]
+
+    let missed = last.Missed |> List.choose (fun i -> List.tryItem i last.Questions)
+
+    let practice =
+        (last.Practice |> List.filter (fun p -> not (List.contains p doneFirstTime))) @ missed
+        |> List.distinct
+        |> List.rev
+        |> List.truncate practiceLimit
+        |> List.rev
+
+    { today with
+        Questions = withPractice practice today.Questions
+        Practice = practice }
+
+/// Whether the current sentence is one being practised.
+let isPractice state =
+    match List.tryItem state.Current state.Questions with
+    | Some q -> List.contains q state.Practice
+    | None -> false
 
 let currentSentence state =
     state.Questions |> List.tryItem state.Current |> Option.map (fun i -> bank.[i])
@@ -385,7 +449,8 @@ let encode state =
           "current", Encode.int state.Current
           "mistakes", Encode.int state.Mistakes
           "missed", state.Missed |> List.map Encode.int |> Encode.list
-          "wrong", state.Wrong |> List.map Encode.string |> Encode.list ]
+          "wrong", state.Wrong |> List.map Encode.string |> Encode.list
+          "practice", state.Practice |> List.map Encode.int |> Encode.list ]
 
 // Fields are read first and checked afterwards (Thoth's object builder keeps running after a failure).
 let decoder: Decoder<State> =
@@ -394,15 +459,20 @@ let decoder: Decoder<State> =
         get.Required.Field "current" Decode.int,
         get.Required.Field "mistakes" Decode.int,
         get.Optional.Field "missed" (Decode.list Decode.int),
-        get.Optional.Field "wrong" (Decode.list Decode.string))
-    |> Decode.andThen (fun (questions, current, mistakes, missed, wrong) ->
-        if questions |> List.forall (fun i -> i >= 0 && i < bank.Length) && current >= 0 && mistakes >= 0 then
+        get.Optional.Field "wrong" (Decode.list Decode.string),
+        // saves from before practice was added don't have it
+        get.Optional.Field "practice" (Decode.list Decode.int))
+    |> Decode.andThen (fun (questions, current, mistakes, missed, wrong, practice) ->
+        let inBank = List.forall (fun i -> i >= 0 && i < bank.Length)
+
+        if inBank questions && current >= 0 && mistakes >= 0 then
             Decode.succeed
                 { Questions = questions
                   Current = min current questions.Length
                   Mistakes = mistakes
                   Missed = missed |> Option.defaultValue []
-                  Wrong = wrong |> Option.defaultValue [] }
+                  Wrong = wrong |> Option.defaultValue []
+                  Practice = practice |> Option.defaultValue [] |> List.filter (fun i -> i >= 0 && i < bank.Length) }
         else
             Decode.fail "Invalid Which Witch? game")
 
@@ -440,4 +510,5 @@ let game: DailyGame<int list, State, Input> =
       Decoder = decoder
       ScoreText = scoreText
       ShareGrid = shareGrid
-      Legacy = None }
+      Legacy = None
+      CarryOver = Some carryOver }
