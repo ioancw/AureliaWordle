@@ -42,7 +42,7 @@
    from 280px folding phones to large phones, in portrait or landscape. */
 .game {
     --header-h: 46px;
-    --hint-h: 30px;
+    --hint-h: 44px;
     --key-gap: 8px;
     --key-h: clamp(40px, 8.5vh, 66px);
     --kb-h: calc(3 * (var(--key-h) + var(--key-gap)) + 4px + env(safe-area-inset-bottom, 0px));
@@ -79,7 +79,7 @@
 @media (max-height: 500px) {
     .game {
         --header-h: 40px;
-        --hint-h: 26px;
+        --hint-h: 34px;
         --key-gap: 4px;
         --key-h: 32px;
     }
