@@ -2,19 +2,11 @@
 <html lang="en">
 
 <head>
-    <title>Wordle</title>
-    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <title>Aureliadle</title>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#121213">
-
-    <link rel="shortcut icon" href="fable.ico" />
-
-    <!-- Used to hide custom components until they are defined and prevent a flash of unstyled content -->
     <style>
-        *:not(:defined) {
-            display: none
-        }
-        
         html,
         body {
             overflow: hidden;
@@ -23,12 +15,13 @@
             background-color: #121213;
         }
     </style>
-  <script type="module" crossorigin src="/AureliaWordle/assets/index-BGrL4AN3.js"></script>
-  <link rel="stylesheet" crossorigin href="/AureliaWordle/assets/index-DDdsLHZW.css">
+  <script type="module" crossorigin src="./assets/aureliadle-CNqvkAJg.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/client-pH4kxn3f.js">
+  <link rel="stylesheet" crossorigin href="./assets/client-BDZ5q_6o.css">
 </head>
 
 <body>
-    <wordle-app></wordle-app>
+    <div id="app"></div>
 </body>
 
 </html>
