@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Engine.fs" />
+    <Compile Include="BrowserStorage.fs" />
+    <Compile Include="Shell.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Feliz" Version="2.9.0" />
+    <PackageReference Include="Fable.Elmish.React" Version="4.0.0" />
+    <PackageReference Include="Fable.Browser.Dom" Version="2.18.0" />
+    <PackageReference Include="Fable.Browser.WebStorage" Version="1.3.0" />
+    <PackageReference Include="Thoth.Json.Core" Version="0.7.1" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(FABLE_COMPILER)' == 'true'">
+    <PackageReference Include="Thoth.Json.JavaScript" Version="0.4.1" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(FABLE_COMPILER)' != 'true'">
+    <PackageReference Include="Thoth.Json.Newtonsoft" Version="0.3.3" />
+  </ItemGroup>
+</Project>

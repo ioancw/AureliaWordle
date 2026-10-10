@@ -36,6 +36,13 @@ jobs:
       - name: Build site
         run: npm run build -- --base=/AureliaWordle/
 
+      # The experimental Feliz daily-games engine (feliz/); tested and built, not deployed.
+      - name: Test daily-games engine
+        run: npm run test:feliz
+
+      - name: Build Feliz games
+        run: npm run build:feliz
+
       - uses: actions/upload-artifact@v4
         with:
           name: site

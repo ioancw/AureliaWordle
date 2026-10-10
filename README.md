@@ -45,6 +45,31 @@ The F# in `src/` is compiled in this order:
 Saved games use the same JSON shape as earlier versions, so players keep their stats.
 `Storage` and `Game` are tested on .NET with the same Thoth.Json decoders the browser uses.
 
+## Daily-games engine with Feliz (experimental)
+
+`feliz/` is a generic engine for "puzzle of the day" games, with Aureliadle ported onto it and a
+second game, Numberdle, to prove it's generic. Built with Fable, [Feliz](https://zaid-ajaj.github.io/Feliz/) (React)
+and Elmish.
+
+| Folder | What it is |
+|---|---|
+| `feliz/Engine/Engine.fs` | Pure F#: today's puzzle, saving (Thoth.Json), resuming, new days, stats and streaks |
+| `feliz/Engine/BrowserStorage.fs` | Local storage, including reading a game's older save format |
+| `feliz/Engine/Shell.fs` | The app around any game (Feliz + Elmish): header, pop-ups, messages, stats, share, settings, keyboard and tab sync |
+| `feliz/Aureliadle/` | Aureliadle's rules (reusing `src/` unchanged) and its board, keyboard and help |
+| `feliz/Numberdle/` | Guess the number from 1 to 100: rules, board and keypad |
+| `feliz/Tests/` | Engine and game tests on .NET |
+| `feliz/site/` | The HTML pages |
+
+A game is a `DailyGame` record (its rules: start, apply an input, outcome, save format, share grid)
+plus a `GameView` (its board, controls and help). Everything else comes from the engine.
+Aureliadle on the engine reads saves from the live version, so players keep their stats.
+
+```bash
+npm run test:feliz    # engine and game tests
+npm run build:feliz   # both games into dist-feliz/
+```
+
 ## Deployment
 
 GitHub Actions (`.github/workflows/build-deploy.yml`) runs the tests and builds the site on every pull request.
