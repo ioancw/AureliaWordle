@@ -42,6 +42,23 @@
     animation: ww-in 300ms ease-out;
 }
 
+.ww-level {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+    color: #c7c7c9;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.ww-stars {
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
 .ww-sentence {
     font-size: clamp(1.35rem, 6vw, 2rem);
     font-weight: 600;

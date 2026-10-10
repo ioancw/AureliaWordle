@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Lit.Wordle", "src\Lit.Wordle.fsproj", "{24A40DF6-E09B-4685-B045-306DE5C67EA8}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Aureliadle.Core", "src\Aureliadle.Core.fsproj", "{24A40DF6-E09B-4685-B045-306DE5C67EA8}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "test2", "test2\test2.fsproj", "{C9049B64-F5C5-493A-B263-FFB382313858}"
 EndProject

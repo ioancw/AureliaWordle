@@ -29,7 +29,9 @@ type GameView<'State, 'Input> =
       WinMessage: int -> string
       /// The stats chart's title and row labels (rows are numbered by attempts, from 1).
       DistributionTitle: string
-      DistributionLabel: int -> string }
+      DistributionLabel: int -> string
+      /// The path from this game's page to the site root, for the menu links: "./" or "../".
+      SiteRoot: string }
 
 type Modal =
     | About
@@ -227,7 +229,7 @@ let private menuIcon =
     """<svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>"""
 
 /// The ☰ menu: a drawer listing the suite's games.
-let private menu (currentId: string) (isOpen: bool) dispatch =
+let private menu (siteRoot: string) (currentId: string) (isOpen: bool) dispatch =
     React.Fragment [
         Html.div [
             prop.className [ "menu-backdrop"; if not isOpen then "hidden" ]
@@ -253,7 +255,7 @@ let private menu (currentId: string) (isOpen: bool) dispatch =
                 for g in Suite.games ->
                     Html.a [
                         prop.key g.Id
-                        prop.href g.Path
+                        prop.href (siteRoot + g.Path)
                         prop.tabIndex (if isOpen then 0 else -1)
                         prop.className [ "menu-item"; if g.Id = currentId then "current" ]
                         prop.children [
@@ -403,7 +405,7 @@ let view game (gameView: GameView<'State, 'Input>) (model: Model<'State>) dispat
                 ]
             ]
 
-            menu game.Id model.MenuOpen dispatch
+            menu gameView.SiteRoot game.Id model.MenuOpen dispatch
             modal "" "About" (model.Modal = Some About) close (Html.div [ gameView.About; settings model dispatch ])
             modal "" "Statistics" (model.Modal = Some Stats) close (statsBody game gameView model dispatch)
             modal "" gameView.HelpTitle (model.Modal = Some Help) close (gameView.Help state)

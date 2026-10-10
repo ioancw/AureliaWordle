@@ -2,16 +2,12 @@
     "private": true,
     "scripts": {
         "postinstall": "dotnet tool restore",
-        "build": "dotnet fable src -o build/client -e .js --run vite build",
-        "start": "dotnet fable watch src -s -o build/client -e .js --run vite",
-        "test": "dotnet test test2",
-        "publish": "npm run build -- --base=/AureliaWordle/ && npx gh-pages -d dist",
-        "build:feliz": "dotnet fable feliz/Aureliadle -o build/feliz/aureliadle -e .js && dotnet fable feliz/Numberdle -o build/feliz/numberdle -e .js && dotnet fable feliz/WhichWitch -o build/feliz/whichwitch -e .js && vite build -c vite.feliz.config.mjs",
-        "test:feliz": "dotnet test feliz/Tests"
+        "build": "dotnet fable feliz/Aureliadle -o build/feliz/aureliadle -e .js && dotnet fable feliz/WhichWitch -o build/feliz/whichwitch -e .js && dotnet fable feliz/Numberdle -o build/feliz/numberdle -e .js && vite build",
+        "start": "dotnet fable watch feliz/Aureliadle -o build/feliz/aureliadle -e .js --run vite",
+        "test": "dotnet test test2 && dotnet test feliz/Tests",
+        "publish": "npm run build && npx gh-pages -d dist"
     },
     "dependencies": {
-        "lit": "^2.8.0",
-        "lit-html": "^2.8.0",
         "react": "^18.3.1",
         "react-dom": "^18.3.1"
     },

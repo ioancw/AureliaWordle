@@ -80,6 +80,21 @@ let board (state: State) =
                     prop.key state.Current
                     prop.className "ww-card"
                     prop.children [
+                        Html.div [
+                            prop.className "ww-level"
+                            prop.ariaLabel $"Level {s.Level} of {levels}"
+                            prop.children [
+                                Html.span [ prop.className "ww-stars"; prop.text (String.replicate s.Level "⭐") ]
+                                Html.span [
+                                    prop.text (
+                                        match s.Level with
+                                        | 1 -> "Warm-up"
+                                        | 2 -> "Tricky"
+                                        | _ -> "Apostrophe challenge"
+                                    )
+                                ]
+                            ]
+                        ]
                         sentenceView s false ""
                         if not state.Wrong.IsEmpty then
                             Html.div [
@@ -150,6 +165,7 @@ let help (state: State) =
         prop.className "modal-body p-2 text-slate-800 space-y-3"
         prop.children [
             Html.p $"Each day there are {perDay} sentences with a missing word. Tap the right word to fill the gap."
+            Html.p "They get harder as you go: two warm-ups ⭐, two tricky ones ⭐⭐, then two apostrophe challenges ⭐⭐⭐."
             Html.p $"You have {hearts} hearts. A wrong word costs a heart, shows what that word means, and you try again."
             match currentSentence state, outcome state with
             | Some s, None ->
@@ -158,7 +174,7 @@ let help (state: State) =
                     Html.ul [ prop.className "ww-help-list"; prop.children (s.Choices |> List.map meaning) ]
                 ]
             | _ -> Html.none
-            Html.p "Tip: if a word has an apostrophe, try saying it the long way. They're → they are."
+            Html.p "Tip: if a word has an apostrophe, try saying it the long way. They're → they are, could've → could have. The apostrophe goes where letters are missing."
         ]
     ]
 
@@ -166,7 +182,7 @@ let about =
     Html.div [
         prop.className "modal-body p-2 text-slate-800 space-y-3"
         prop.children [
-            Html.p "Which Witch? practises words that sound the same but are spelt differently: their, there and they're; its and it's; your and you're; to, too and two; and more."
+            Html.p "Which Witch? practises words that sound the same but are spelt differently (their, there and they're; its and it's; to, too and two) and apostrophes (could've, not could of; didn't, not did'nt; the dog's bone, but three dogs)."
             Html.p "It's built on the same F# daily-game engine as Aureliadle and Numberdle."
         ]
     ]
@@ -200,4 +216,5 @@ let gameView: Shell.GameView<State, Input> =
       CelebrateAfterMs = 700
       WinMessage = fun attempts -> winMessages.[attempts - 1]
       DistributionTitle = "Mistakes"
-      DistributionLabel = fun attempts -> string (attempts - 1) }
+      DistributionLabel = fun attempts -> string (attempts - 1)
+      SiteRoot = "../" }

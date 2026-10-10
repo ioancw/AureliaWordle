@@ -2,7 +2,7 @@ name: Build, test and deploy
 
 on:
   push:
-    branches: [main, claude/feliz-engine]
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -30,23 +30,13 @@ jobs:
       # Also restores the Fable tool (postinstall runs `dotnet tool restore`).
       - run: npm ci
 
+      # Aureliadle's rules (test2), and the games engine and every game's rules (feliz/Tests)
       - name: Run tests
         run: npm test
 
+      # Aureliadle at the site root, the other games in subfolders
       - name: Build site
-        run: npm run build -- --base=/AureliaWordle/
-
-      # The experimental Feliz daily-games engine (feliz/); tested and built, not deployed.
-      - name: Test daily-games engine
-        run: npm run test:feliz
-
-      - name: Build Feliz games
-        run: npm run build:feliz
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: games
-          path: dist-feliz
+        run: npm run build
 
       - uses: actions/upload-artifact@v4
         with:
@@ -71,25 +61,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: dist
           commit_message: Deploy ${{ github.sha }}
-
-  # Preview of the Feliz games suite at /AureliaWordle/games/, from the engine branch.
-  # keep_files leaves the rest of the site (the live game) untouched.
-  deploy-games-preview:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/claude/feliz-engine'
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: games
-          path: games
-
-      - uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: games
-          destination_dir: games
-          keep_files: true
-          commit_message: Preview games ${{ github.sha }}

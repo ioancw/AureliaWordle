@@ -31,12 +31,33 @@ let ``Every word that can be picked has an explanation`` () =
             meanings |> Map.containsKey c |> should equal true
 
 [<Fact>]
-let ``Each day has six different sentences from different groups, including their/there/they're`` () =
+let ``Each day has six different sentences from different word families, including their/there/they're`` () =
     for day in puzzles do
         day |> List.length |> should equal perDay
         day |> List.distinct |> List.length |> should equal perDay
-        day |> List.map (fun i -> bank.[i].Group) |> List.distinct |> List.length |> should equal perDay
-        day |> List.exists (fun i -> bank.[i].Group = 0) |> should equal true
+        day |> List.map (fun i -> bank.[i].Family) |> List.distinct |> List.length |> should equal perDay
+        day |> List.exists (fun i -> bank.[i].Family = theirFamily) |> should equal true
+
+[<Fact>]
+let ``Each day gets harder: two easy, two medium, two apostrophe sentences`` () =
+    for day in puzzles do
+        day |> List.map (fun i -> bank.[i].Level) |> should equal [ 1; 1; 2; 2; 3; 3 ]
+
+[<Fact>]
+let ``Every level has enough word families to fill its places`` () =
+    let familiesAt level = bank |> Array.filter (fun s -> s.Level = level) |> Array.distinctBy (fun s -> s.Family) |> Array.length
+    familiesAt 1 |> should be (greaterThanOrEqualTo 2)
+    familiesAt 2 |> should be (greaterThanOrEqualTo 2)
+    familiesAt 3 |> should be (greaterThanOrEqualTo 2)
+
+[<Fact>]
+let ``The apostrophe challenges include could've and apostrophe placement`` () =
+    let answers = bank |> Array.filter (fun s -> s.Level = 3) |> Array.map (fun s -> s.Answer)
+    answers |> should contain "could've"
+    answers |> should contain "didn't"
+    answers |> should contain "dog's"
+    // and a wrong-placement option is never the answer
+    bank |> Array.exists (fun s -> s.Answer.Contains "'nt") |> should equal false
 
 [<Fact>]
 let ``A right answer moves on with some praise`` () =

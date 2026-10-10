@@ -1,80 +1,65 @@
-# Lit.AureliaWordle
+# Aureliadle and friends
 
-Originally forked from https://aaronmu.github.io/MathGame/
+Daily word and number games for children, played at https://ioancw.github.io/AureliaWordle/.
+Originally forked from https://aaronmu.github.io/MathGame/.
 
-This is designed for R and Y1/Y2 children to use phonics, so that a hint is provided for one of the phonic sounds in the word.
-As an example:
-If the wordle is RAINS, then the phonic hint with be /ai/.
-The sound /ai/ is also a phonic hint for the AY graphemes, so it would also be a valid
-hint for SPRAY and.
+- **Aureliadle** (the site root): a wordle designed for Reception and Y1/Y2 children learning phonics.
+  A hint is given for one of the phonic sounds in the word: if the wordle is RAINS, the hint is /ai/.
+  The sound /ai/ is also the hint for the AY grapheme, so it would be a valid hint for SPRAY too.
+- **Which Witch?** (`whichwitch/`): pick the right word for each sentence: their / there / they're,
+  its / it's, to / too / two, could've (not could of), didn't (not did'nt), the dog's bone or three dogs...
+  Six sentences a day getting harder (two warm-ups, two tricky, two apostrophe challenges), three hearts,
+  and a child-friendly explanation whenever a wrong word is picked.
+- **Numberdle** (`numberdle/`): guess the number from 1 to 100 in seven tries, told higher or lower and how close.
+
+The ☰ menu moves between them. Each has daily puzzles, stats and streaks, sharing, and a high contrast setting.
 
 Further ideas
-* phonic keyboard, i.e. the button represents the phonic, which also allows you to choose the corresponding grapheme
-    e.g. if the button is /ai/ then it would show AI, AY etc
+* Phonics keyboard: a button per sound, which then lets you choose the grapheme,
+  e.g. the /ai/ button would offer AI, AY etc.
 * Automated parsing of words into phonemes.
 
 ## Development
 
 Requires the [.NET 10 SDK](https://dotnet.microsoft.com/download) and Node.js 20+.
-[Fable](https://fable.io) compiles the F# in `src/` to JavaScript, and [Fable.Lit](https://github.com/fable-compiler/Fable.Lit) renders it.
+The games are written in F#, compiled to JavaScript by [Fable](https://fable.io), with
+[Feliz](https://zaid-ajaj.github.io/Feliz/) (React) and Elmish for the views.
 
 ```bash
 npm install     # also restores the Fable tool
-npm start       # dev server with live reload
-npm test        # run the F# unit tests in test2/
-npm run build   # optimised site in dist/
+npm start       # dev server for Aureliadle with live reload
+npm test        # all the F# tests
+npm run build   # the whole site in dist/
 ```
 
 ## Code layout
 
-The F# in `src/` is compiled in this order:
+A game is a `DailyGame` record (its rules: starting, applying an input, the outcome, its save format
+and share grid) plus a `GameView` (its board, controls and help pop-up). The engine does the rest:
+today's puzzle, saving and resuming, new days, stats and streaks, keeping tabs in sync, and the app
+around the game (header, menu, pop-ups, messages, sharing and settings).
 
-| File | What it does |
-|---|---|
-| `Domain.fs` | The game's types |
-| `Words.fs` | The daily wordles, their phonic hints, and the dictionary of valid guesses |
-| `Phonics.fs` | Finding a grapheme (spelling) inside a word |
-| `GameRules.fs` | Building, validating and scoring guesses; turning key presses into the next state |
-| `Daily.fs` | Which puzzle is today's |
-| `Storage.fs` | Saving and loading via local storage, using Thoth.Json |
-| `Game.fs` | Resuming today's game from a save, or starting a fresh one |
-| `Components.fs` | Tiles, keyboard keys and messages |
-| `Modals.fs` | The About, Help, Statistics and answer pop-ups |
-| `App.fs` | The app component: state, keyboard input and layout |
-
-Saved games use the same JSON shape as earlier versions, so players keep their stats.
-`Storage` and `Game` are tested on .NET with the same Thoth.Json decoders the browser uses.
-
-## Daily-games engine with Feliz (experimental)
-
-`feliz/` is a generic engine for "puzzle of the day" games: Aureliadle ported onto it, plus
-Numberdle and Which Witch?, with a ☰ menu to move between them. A preview is published from the
-`claude/feliz-engine` branch to `/AureliaWordle/games/`. Built with Fable, [Feliz](https://zaid-ajaj.github.io/Feliz/) (React)
-and Elmish.
-
-| Folder | What it is |
+| Path | What it is |
 |---|---|
 | `feliz/Engine/Engine.fs` | Pure F#: today's puzzle, saving (Thoth.Json), resuming, new days, stats and streaks |
 | `feliz/Engine/BrowserStorage.fs` | Local storage, including reading a game's older save format |
-| `feliz/Engine/Shell.fs` | The app around any game (Feliz + Elmish): header, pop-ups, messages, stats, share, settings, keyboard and tab sync |
-| `feliz/Aureliadle/` | Aureliadle's rules (reusing `src/` unchanged) and its board, keyboard and help |
-| `feliz/Numberdle/` | Guess the number from 1 to 100: rules, board and keypad |
-| `feliz/WhichWitch/` | Which Witch?: pick the right word (their / there / they're ...), with explanations |
+| `feliz/Engine/Shell.fs` | The app around any game (Feliz + Elmish) |
 | `feliz/Engine/Suite.fs` | The games listed in the ☰ menu |
-| `feliz/Tests/` | Engine and game tests on .NET |
-| `feliz/site/` | The HTML pages |
+| `feliz/Aureliadle/` | Aureliadle's board, keyboard and help; its rules are in `src/` |
+| `feliz/WhichWitch/` | Which Witch?: the sentence bank and explanations (`Rules.fs`), board and word buttons |
+| `feliz/Numberdle/` | Numberdle: rules, board and keypad |
+| `feliz/site/` | The HTML pages and each game's CSS (shared styles are in `public/main.css`) |
+| `src/` | Aureliadle's rules: word list and phonics (`Words.fs`, `Phonics.fs`), scoring (`GameRules.fs`), save format (`Storage.fs`, `Game.fs`) |
+| `test2/` | Tests for Aureliadle's rules |
+| `feliz/Tests/` | Tests for the engine and every game, run on .NET with the same code the browser runs |
 
-A game is a `DailyGame` record (its rules: start, apply an input, outcome, save format, share grid)
-plus a `GameView` (its board, controls and help). Everything else comes from the engine.
-Aureliadle on the engine reads saves from the live version, so players keep their stats.
+Adding sentences to Which Witch? is a one-line change in `feliz/WhichWitch/Rules.fs`; the tests check
+every sentence has one blank, a valid answer and an explanation for each choice.
 
-```bash
-npm run test:feliz    # engine and game tests
-npm run build:feliz   # both games into dist-feliz/
-```
+Aureliadle reads saves from its previous version (the `gameStateAureliav3` key), so players keep their stats.
 
 ## Deployment
 
-GitHub Actions (`.github/workflows/build-deploy.yml`) runs the tests and builds the site on every pull request.
-Every merge to `main` is also deployed to GitHub Pages (the `gh-pages` branch), so there's no need to publish by hand.
+GitHub Actions (`.github/workflows/build-deploy.yml`) runs the tests and builds the site on every pull request,
+and every merge to `main` is deployed to GitHub Pages (the `gh-pages` branch).
 `npm run publish` still works as a manual fallback.

@@ -1,5 +1,5 @@
-/// Which Witch?: pick the right word for each sentence (their / there / they're, its / it's ...).
-/// Six sentences a day and three hearts. A wrong pick costs a heart and explains that word,
+/// Which Witch?: pick the right word for each sentence (their / there / they're, its / it's,
+/// could've / could of ...). Six sentences a day, getting harder, and three hearts. A wrong pick costs a heart and explains that word,
 /// then you try again, so every sentence ends with the right answer.
 module WhichWitch.Rules
 
@@ -44,37 +44,95 @@ let meanings =
           "write", "put words on paper"
           "right", "correct, or the opposite of left"
           "for", "meant for someone (a gift for you)"
-          "four", "the number 4" ]
+          "four", "the number 4"
+          // apostrophes
+          "we're", "short for we are"
+          "could've", "short for could have"
+          "should've", "short for should have"
+          "would've", "short for would have"
+          "could of", "sounds right, but it's never correct: say could've (could have)"
+          "should of", "sounds right, but it's never correct: say should've (should have)"
+          "would of", "sounds right, but it's never correct: say would've (would have)"
+          "let's", "short for let us (let's go!)"
+          "lets", "allows (Mum lets me play)"
+          "doesn't", "short for does not: the apostrophe is where the o was"
+          "does'nt", "has the apostrophe in the wrong place: does not → doesn't"
+          "can't", "short for cannot: the apostrophe is where the no was"
+          "ca'nt", "has the apostrophe in the wrong place: cannot → can't"
+          "isn't", "short for is not: the apostrophe is where the o was"
+          "is'nt", "has the apostrophe in the wrong place: is not → isn't"
+          "don't", "short for do not: the apostrophe is where the o was"
+          "do'nt", "has the apostrophe in the wrong place: do not → don't"
+          "didn't", "short for did not: the apostrophe is where the o was"
+          "did'nt", "has the apostrophe in the wrong place: did not → didn't"
+          "wasn't", "short for was not: the apostrophe is where the o was"
+          "was'nt", "has the apostrophe in the wrong place: was not → wasn't"
+          "aren't", "short for are not: the apostrophe is where the o was"
+          "are'nt", "has the apostrophe in the wrong place: are not → aren't"
+          "shouldn't", "short for should not: the apostrophe is where the o was"
+          "should'nt", "has the apostrophe in the wrong place: should not → shouldn't"
+          "dog's", "belongs to the dog (the dog's bone)"
+          "dogs", "more than one dog"
+          "brother's", "belongs to my brother"
+          "brothers", "more than one brother"
+          "cat's", "belongs to the cat"
+          "cats", "more than one cat"
+          "cow's", "belongs to the cow"
+          "cows", "more than one cow"
+          "girl's", "belongs to the girl"
+          "girls", "more than one girl"
+          "horse's", "belongs to the horse"
+          "horses", "more than one horse" ]
 
-let private groups =
-    [| [ "their"; "there"; "they're" ]
-       [ "its"; "it's" ]
-       [ "your"; "you're" ]
-       [ "to"; "too"; "two" ]
-       [ "where"; "were"; "wear" ]
-       [ "which"; "witch" ]
-       [ "here"; "hear" ]
-       [ "no"; "know" ]
-       [ "new"; "knew" ]
-       [ "our"; "are" ]
-       [ "of"; "off" ]
-       [ "whose"; "who's" ]
-       [ "see"; "sea" ]
-       [ "write"; "right" ]
-       [ "for"; "four" ] |]
+/// Word families: (level, the usual choices). Level 1 is easy, 2 medium, 3 apostrophes.
+/// Families with no usual choices give each sentence its own (e.g. could've / could of).
+let private families =
+    [| 2, [ "their"; "there"; "they're" ]
+       2, [ "its"; "it's" ]
+       2, [ "your"; "you're" ]
+       2, [ "to"; "too"; "two" ]
+       2, [ "where"; "were"; "wear" ]
+       1, [ "which"; "witch" ]
+       1, [ "here"; "hear" ]
+       1, [ "no"; "know" ]
+       1, [ "new"; "knew" ]
+       2, [ "our"; "are" ]
+       1, [ "of"; "off" ]
+       3, [ "whose"; "who's" ]
+       1, [ "see"; "sea" ]
+       1, [ "write"; "right" ]
+       1, [ "for"; "four" ]
+       3, [ "we're"; "were"; "where" ]
+       3, [] // could've / should've / would've versus "could of"
+       3, [] // where the apostrophe goes: didn't, not did'nt
+       3, [] // belonging or more than one: dog's or dogs
+       3, [ "let's"; "lets" ] |]
+
+/// The their / there / they're family, which every day includes.
+let theirFamily = 0
+
+let levels = 3
 
 type Sentence =
     { /// "___" marks the blank.
       Text: string
-      Group: int
+      /// The word family, so a day's sentences are all different.
+      Family: int
+      /// 1 easy, 2 medium, 3 apostrophes.
+      Level: int
       Choices: string list
       Answer: string }
 
-let private sentence group (text: string) answer =
+let private sentence family (text: string) answer =
     { Text = text
-      Group = group
-      Choices = groups.[group]
+      Family = family
+      Level = fst families.[family]
+      Choices = snd families.[family]
       Answer = answer }
+
+/// A sentence with its own choices, for families that don't have usual ones.
+let private sentenceWith family choices (text: string) answer =
+    { sentence family text answer with Choices = choices }
 
 let bank: Sentence array =
     [| // their / there / they're
@@ -200,10 +258,52 @@ let bank: Sentence array =
        sentence 14 "I have ___ crayons in my pencil case." "four"
        sentence 14 "This present is ___ you." "for"
        sentence 14 "A cat has ___ legs." "four"
-       sentence 14 "We waited ___ the bus." "for" |]
+       sentence 14 "We waited ___ the bus." "for"
+       // we're / were / where
+       sentence 15 "Hurry up, ___ going to be late!" "we're"
+       sentence 15 "I think ___ having pizza for tea." "we're"
+       sentence 15 "Yesterday we ___ at the beach." "were"
+       sentence 15 "Mum says ___ going on holiday soon." "we're"
+       sentence 15 "We ___ so tired after the long walk." "were"
+       sentence 15 "Do you know ___ the park is?" "where"
+       sentence 15 "Look, ___ nearly home!" "we're"
+       // could've / should've / would've
+       sentenceWith 16 [ "could've"; "could of" ] "I ___ won if I had run faster." "could've"
+       sentenceWith 16 [ "should of"; "should've" ] "You ___ seen the size of the cake!" "should've"
+       sentenceWith 16 [ "would've"; "would of" ] "She ___ come if she wasn't ill." "would've"
+       sentenceWith 16 [ "should've"; "should of" ] "We ___ brought our coats." "should've"
+       sentenceWith 16 [ "could of"; "could've" ] "He ___ fallen off the wall!" "could've"
+       sentenceWith 16 [ "would of"; "would've" ] "I ___ liked a bigger slice." "would've"
+       sentenceWith 16 [ "should've"; "should of" ] "They ___ told us sooner." "should've"
+       sentenceWith 16 [ "could've"; "could of" ] "It ___ been worse!" "could've"
+       // where the apostrophe goes
+       sentenceWith 17 [ "does'nt"; "doesn't" ] "The cat ___ want to come in." "doesn't"
+       sentenceWith 17 [ "can't"; "ca'nt" ] "I ___ find my shoes." "can't"
+       sentenceWith 17 [ "isn't"; "is'nt" ] "It ___ raining any more." "isn't"
+       sentenceWith 17 [ "do'nt"; "don't" ] "We ___ go to school on Sundays." "don't"
+       sentenceWith 17 [ "didn't"; "did'nt" ] "She ___ eat her peas." "didn't"
+       sentenceWith 17 [ "was'nt"; "wasn't" ] "He ___ at home yesterday." "wasn't"
+       sentenceWith 17 [ "aren't"; "are'nt" ] "They ___ ready yet." "aren't"
+       sentenceWith 17 [ "should'nt"; "shouldn't" ] "You ___ forget your bag." "shouldn't"
+       // belonging or more than one
+       sentenceWith 18 [ "dog's"; "dogs" ] "The ___ bone is under the sofa." "dog's"
+       sentenceWith 18 [ "dogs"; "dog's" ] "There are three ___ in the garden." "dogs"
+       sentenceWith 18 [ "brother's"; "brothers" ] "My ___ name is Sam." "brother's"
+       sentenceWith 18 [ "brothers"; "brother's" ] "I have two ___ and a sister." "brothers"
+       sentenceWith 18 [ "cats"; "cat's" ] "The ___ tail is very fluffy." "cat's"
+       sentenceWith 18 [ "cow's"; "cows" ] "We saw lots of ___ at the farm." "cows"
+       sentenceWith 18 [ "girls"; "girl's" ] "That ___ hat blew away in the wind!" "girl's"
+       sentenceWith 18 [ "horse's"; "horses" ] "The ___ mane was long and shiny." "horse's"
+       // let's / lets
+       sentence 19 "Come on, ___ go to the park!" "let's"
+       sentence 19 "Mum ___ me stay up late on Fridays." "lets"
+       sentence 19 "I know, ___ play a game!" "let's"
+       sentence 19 "My teacher ___ us play outside." "lets"
+       sentence 19 "It's sunny, so ___ have a picnic." "let's" |]
 
-/// Six sentences for each day of the year, from different word groups, always including a
-/// their / there / they're one. (Park-Miller generator: JavaScript and .NET agree exactly.)
+/// Six sentences for each day of the year, getting harder: two easy, two medium (always
+/// including their / there / they're), then two apostrophe challenges. Each from a different
+/// word family. (Park-Miller generator: JavaScript and .NET agree exactly.)
 let puzzles: int list array =
     Array.init 366 (fun day ->
         let seed = ref (int64 day * 7919L + 17L)
@@ -220,19 +320,19 @@ let puzzles: int list array =
             order.[i] <- order.[j]
             order.[j] <- t
 
-        // the first their/there/they're sentence, then one from each of five other groups
-        let first = order |> Array.find (fun i -> bank.[i].Group = 0)
-
-        let others =
+        let pick level count (except: int list) =
             order
-            |> Array.filter (fun i -> bank.[i].Group <> 0)
-            |> Array.distinctBy (fun i -> bank.[i].Group)
-            |> Array.truncate (perDay - 1)
+            |> Array.filter (fun i -> bank.[i].Level = level && not (List.contains bank.[i].Family except))
+            |> Array.distinctBy (fun i -> bank.[i].Family)
+            |> Array.truncate count
             |> List.ofArray
 
-        // put the their/there/they're sentence somewhere in the middle, not always first
-        let at = int (next () % int64 perDay)
-        List.insertAt at first others)
+        let their = order |> Array.find (fun i -> bank.[i].Family = theirFamily)
+        let medium = pick 2 1 [ theirFamily ]
+        // their / there / they're comes first or second of the medium pair
+        let mediumPair = if next () % 2L = 0L then their :: medium else medium @ [ their ]
+
+        pick 1 2 [] @ mediumPair @ pick 3 2 [])
 
 type State =
     { Questions: int list

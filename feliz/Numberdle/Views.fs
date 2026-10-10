@@ -154,4 +154,5 @@ let gameView: Shell.GameView<State, Input> =
       CelebrateAfterMs = 500
       WinMessage = fun attempts -> winMessages.[attempts - 1]
       DistributionTitle = "Guess Distribution"
-      DistributionLabel = string }
+      DistributionLabel = string
+      SiteRoot = "../" }
