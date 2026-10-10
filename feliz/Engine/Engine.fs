@@ -19,6 +19,13 @@ type Stats =
       MaxStreak: int
       LastWonDay: int option }
 
+/// The usual score for games won in a number of attempts: "3/6", or "X/6" if lost.
+let attemptsScore maxAttempts outcome =
+    match outcome with
+    | Some(Solved n) -> $"{n}/{maxAttempts}"
+    | Some Failed -> $"X/{maxAttempts}"
+    | None -> $"-/{maxAttempts}"
+
 /// What's saved: today's game, and the player's stats across all days.
 type Saved<'State> = { Day: int; State: 'State; Stats: Stats }
 
@@ -41,6 +48,8 @@ type DailyGame<'Puzzle, 'State, 'Input> =
       Outcome: 'State -> Outcome option
       Encode: 'State -> IEncodable
       Decoder: Decoder<'State>
+      /// The score in the share text, e.g. "3/6" (see attemptsScore).
+      ScoreText: Outcome option -> string
       /// The emoji grid in the share text, given the player's high contrast setting.
       ShareGrid: bool -> 'State -> string
       /// Optional: a storage key and converter for saves in an older format, read when
@@ -131,13 +140,7 @@ let refresh game day (latestSave: Saved<'State> option) (current: Saved<'State>)
     resume game day (Some(latestSave |> Option.defaultValue current))
 
 let shareText game highContrast (saved: Saved<'State>) =
-    let score =
-        match game.Outcome saved.State with
-        | Some(Solved n) -> string n
-        | Some Failed -> "X"
-        | None -> "-"
-
-    $"{game.Title} {saved.Day} {score}/{game.MaxAttempts}\n\n{game.ShareGrid highContrast saved.State}"
+    $"{game.Title} {saved.Day} {game.ScoreText(game.Outcome saved.State)}\n\n{game.ShareGrid highContrast saved.State}"
 
 // Saving
 

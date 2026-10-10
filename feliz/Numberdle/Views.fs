@@ -152,4 +152,6 @@ let gameView: Shell.GameView<State, Input> =
       Answer = answer
       KeyToInput = keyToInput
       CelebrateAfterMs = 500
-      WinMessage = fun attempts -> winMessages.[attempts - 1] }
+      WinMessage = fun attempts -> winMessages.[attempts - 1]
+      DistributionTitle = "Guess Distribution"
+      DistributionLabel = string }

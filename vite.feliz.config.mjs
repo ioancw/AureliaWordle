@@ -16,6 +16,7 @@ export default {
                 index: site("index.html"),
                 aureliadle: site("aureliadle/index.html"),
                 numberdle: site("numberdle/index.html"),
+                whichwitch: site("whichwitch/index.html"),
             },
         },
     },

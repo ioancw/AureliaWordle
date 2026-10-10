@@ -47,8 +47,9 @@ Saved games use the same JSON shape as earlier versions, so players keep their s
 
 ## Daily-games engine with Feliz (experimental)
 
-`feliz/` is a generic engine for "puzzle of the day" games, with Aureliadle ported onto it and a
-second game, Numberdle, to prove it's generic. Built with Fable, [Feliz](https://zaid-ajaj.github.io/Feliz/) (React)
+`feliz/` is a generic engine for "puzzle of the day" games: Aureliadle ported onto it, plus
+Numberdle and Which Witch?, with a ☰ menu to move between them. A preview is published from the
+`claude/feliz-engine` branch to `/AureliaWordle/games/`. Built with Fable, [Feliz](https://zaid-ajaj.github.io/Feliz/) (React)
 and Elmish.
 
 | Folder | What it is |
@@ -58,6 +59,8 @@ and Elmish.
 | `feliz/Engine/Shell.fs` | The app around any game (Feliz + Elmish): header, pop-ups, messages, stats, share, settings, keyboard and tab sync |
 | `feliz/Aureliadle/` | Aureliadle's rules (reusing `src/` unchanged) and its board, keyboard and help |
 | `feliz/Numberdle/` | Guess the number from 1 to 100: rules, board and keypad |
+| `feliz/WhichWitch/` | Which Witch?: pick the right word (their / there / they're ...), with explanations |
+| `feliz/Engine/Suite.fs` | The games listed in the ☰ menu |
 | `feliz/Tests/` | Engine and game tests on .NET |
 | `feliz/site/` | The HTML pages |
 

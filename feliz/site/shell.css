@@ -1,0 +1,91 @@
+/* The shell around every game: header buttons and the ☰ games menu. */
+.header-button {
+    padding: 8px;
+}
+
+/* Four header buttons plus the title need a little more room on narrow phones. */
+@media (max-width: 360px) {
+    .header-button {
+        padding: 4px;
+    }
+}
+
+.aurelia-header {
+    font-size: clamp(16px, 5.5vw, 26px);
+}
+
+.menu-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    background: rgb(0 0 0 / 0.5);
+}
+
+.menu-drawer {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 71;
+    width: min(85vw, 320px);
+    padding: 12px;
+    overflow-y: auto;
+    background: #1d1d1f;
+    border-right: 1px solid #3a3a3c;
+    transform: translateX(-105%);
+    transition: transform 200ms ease-out;
+}
+
+.menu-drawer.open {
+    transform: translateX(0);
+}
+
+.menu-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 4px 4px 12px;
+    color: #fff;
+    font-family: Georgia, Times, 'Times New Roman', serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+}
+
+.menu-close {
+    padding: 4px 10px;
+    color: #c7c7c9;
+    font-size: 1.1rem;
+}
+
+.menu-item {
+    display: block;
+    margin-bottom: 8px;
+    padding: 12px;
+    border-radius: 8px;
+    background: #2c2c2e;
+    color: #fff;
+    text-decoration: none;
+}
+
+.menu-item.current {
+    outline: 2px solid var(--green);
+}
+
+.menu-title {
+    display: block;
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+.menu-blurb {
+    display: block;
+    margin-top: 2px;
+    color: #c7c7c9;
+    font-size: 0.85rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .menu-drawer {
+        transition: none;
+    }
+}

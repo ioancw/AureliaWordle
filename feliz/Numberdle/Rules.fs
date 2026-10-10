@@ -143,5 +143,6 @@ let game: DailyGame<int, State, Input> =
       Outcome = outcome
       Encode = encode
       Decoder = decoder
+      ScoreText = attemptsScore attempts
       ShareGrid = shareGrid
       Legacy = None }

@@ -208,4 +208,6 @@ let gameView: Shell.GameView<State, Input> =
       KeyToInput = keyToInput
       // once the winning row has finished flipping and bouncing (see main.css)
       CelebrateAfterMs = 2300
-      WinMessage = fun attempts -> winMessages.[attempts - 1] }
+      WinMessage = fun attempts -> winMessages.[attempts - 1]
+      DistributionTitle = "Guess Distribution"
+      DistributionLabel = string }

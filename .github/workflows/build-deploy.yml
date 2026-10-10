@@ -2,7 +2,7 @@ name: Build, test and deploy
 
 on:
   push:
-    branches: [main]
+    branches: [main, claude/feliz-engine]
   pull_request:
   workflow_dispatch:
 
@@ -45,6 +45,11 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
+          name: games
+          path: dist-feliz
+
+      - uses: actions/upload-artifact@v4
+        with:
           name: site
           path: dist
 
@@ -66,3 +71,25 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: dist
           commit_message: Deploy ${{ github.sha }}
+
+  # Preview of the Feliz games suite at /AureliaWordle/games/, from the engine branch.
+  # keep_files leaves the rest of the site (the live game) untouched.
+  deploy-games-preview:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/claude/feliz-engine'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: games
+          path: games
+
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: games
+          destination_dir: games
+          keep_files: true
+          commit_message: Preview games ${{ github.sha }}

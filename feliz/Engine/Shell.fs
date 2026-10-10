@@ -26,7 +26,10 @@ type GameView<'State, 'Input> =
       /// How long after the winning input to celebrate, e.g. once tiles have finished flipping.
       CelebrateAfterMs: int
       /// Shown after a win, given the number of attempts.
-      WinMessage: int -> string }
+      WinMessage: int -> string
+      /// The stats chart's title and row labels (rows are numbered by attempts, from 1).
+      DistributionTitle: string
+      DistributionLabel: int -> string }
 
 type Modal =
     | About
@@ -36,6 +39,7 @@ type Modal =
 type Model<'State> =
     { Saved: Saved<'State>
       Modal: Modal option
+      MenuOpen: bool
       AnswerDismissed: bool
       HighContrast: bool
       Toast: string option
@@ -46,6 +50,7 @@ type Msg<'Input> =
     | StorageChanged
     | Toggle of Modal
     | CloseModal
+    | ToggleMenu
     | DismissAnswer
     | ToggleHighContrast
     | ShowToast of message: string * durationMs: int
@@ -69,6 +74,7 @@ let init game () =
 
     { Saved = saved
       Modal = None
+      MenuOpen = false
       AnswerDismissed = false
       HighContrast = BrowserStorage.loadHighContrast game
       Toast = None
@@ -77,7 +83,7 @@ let init game () =
 
 let update game (view: GameView<'State, 'Input>) msg (model: Model<'State>) =
     match msg with
-    | Input _ when model.Modal.IsSome -> model, Cmd.none
+    | Input _ when model.Modal.IsSome || model.MenuOpen -> model, Cmd.none
     | Input input ->
         // Start from the latest save, so an out-of-date tab (another tab played, or it's a new
         // day) never writes old progress or stats over newer ones.
@@ -105,6 +111,7 @@ let update game (view: GameView<'State, 'Input>) msg (model: Model<'State>) =
             { model with Saved = latest }, Cmd.none
     | Toggle m -> { model with Modal = (if model.Modal = Some m then None else Some m) }, Cmd.none
     | CloseModal -> { model with Modal = None }, Cmd.none
+    | ToggleMenu -> { model with MenuOpen = not model.MenuOpen }, Cmd.none
     | DismissAnswer -> { model with AnswerDismissed = true }, Cmd.none
     | ToggleHighContrast ->
         BrowserStorage.saveHighContrast game (not model.HighContrast)
@@ -175,7 +182,7 @@ let private helpIcon =
 let private headerButton (label: string) (svg: string) extraClass onClick =
     Html.button [
         prop.ariaLabel label
-        prop.className ("p-2 text-white " + extraClass)
+        prop.className ("header-button text-white " + extraClass)
         prop.onClick (fun _ -> onClick ())
         prop.children [ icon svg ]
     ]
@@ -216,7 +223,49 @@ let modal (extraClass: string) (title: string) (isOpen: bool) (onClose: unit -> 
         ]
     ]
 
-let private statsBody game (model: Model<'State>) dispatch =
+let private menuIcon =
+    """<svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>"""
+
+/// The ☰ menu: a drawer listing the suite's games.
+let private menu (currentId: string) (isOpen: bool) dispatch =
+    React.Fragment [
+        Html.div [
+            prop.className [ "menu-backdrop"; if not isOpen then "hidden" ]
+            prop.onClick (fun _ -> dispatch ToggleMenu)
+        ]
+        Html.nav [
+            prop.className [ "menu-drawer"; if isOpen then "open" ]
+            prop.ariaLabel "Games"
+            prop.ariaHidden (not isOpen)
+            prop.children [
+                yield Html.div [
+                    prop.className "menu-heading"
+                    prop.children [
+                        Html.span "Daily games"
+                        Html.button [
+                            prop.ariaLabel "Close menu"
+                            prop.className "menu-close"
+                            prop.onClick (fun _ -> dispatch ToggleMenu)
+                            prop.text "✕"
+                        ]
+                    ]
+                ]
+                for g in Suite.games ->
+                    Html.a [
+                        prop.key g.Id
+                        prop.href g.Path
+                        prop.tabIndex (if isOpen then 0 else -1)
+                        prop.className [ "menu-item"; if g.Id = currentId then "current" ]
+                        prop.children [
+                            Html.span [ prop.className "menu-title"; prop.text g.Title ]
+                            Html.span [ prop.className "menu-blurb"; prop.text g.Blurb ]
+                        ]
+                    ]
+            ]
+        ]
+    ]
+
+let private statsBody game (gameView: GameView<'State, 'Input>) (model: Model<'State>) dispatch =
     let stats = model.Saved.Stats
     let winRate = if stats.Played = 0 then 0 else int (round (100. * float stats.Won / float stats.Played))
     let mostWins = stats.Distribution |> List.fold max 0
@@ -242,7 +291,7 @@ let private statsBody game (model: Model<'State>) dispatch =
                     stat "Best streak" stats.MaxStreak
                 ]
             ]
-            Html.h4 [ prop.className "flex text-lg justify-center items-center font-medium"; prop.text "Guess Distribution" ]
+            Html.h4 [ prop.className "flex text-lg justify-center items-center font-medium"; prop.text gameView.DistributionTitle ]
             Html.div [
                 prop.className "m-2 text-sm text-white"
                 prop.children [
@@ -254,7 +303,7 @@ let private statsBody game (model: Model<'State>) dispatch =
                             prop.key attempts
                             prop.className "flex m-1"
                             prop.children [
-                                Html.div [ prop.className "w-2"; prop.text (attempts + 1) ]
+                                Html.div [ prop.className "shrink-0 text-right"; prop.style [ style.minWidth (length.em 1) ]; prop.text (gameView.DistributionLabel(attempts + 1)) ]
                                 Html.div [
                                     prop.className "w-full ml-2"
                                     prop.children [
@@ -333,7 +382,13 @@ let view game (gameView: GameView<'State, 'Input>) (model: Model<'State>) dispat
                         prop.className "relative flex items-center justify-between px-2"
                         prop.style [ style.custom ("height", "var(--header-h)"); style.custom ("borderBottom", "1px solid #3a3a3c") ]
                         prop.children [
-                            headerButton "About and settings" infoIcon "" (fun () -> dispatch (Toggle About))
+                            Html.div [
+                                prop.className "flex"
+                                prop.children [
+                                    headerButton "Games" menuIcon "" (fun () -> dispatch ToggleMenu)
+                                    headerButton "About and settings" infoIcon "" (fun () -> dispatch (Toggle About))
+                                ]
+                            ]
                             Html.div [ prop.className "aurelia-header"; prop.text game.Title ]
                             Html.div [
                                 prop.className "flex"
@@ -348,8 +403,9 @@ let view game (gameView: GameView<'State, 'Input>) (model: Model<'State>) dispat
                 ]
             ]
 
+            menu game.Id model.MenuOpen dispatch
             modal "" "About" (model.Modal = Some About) close (Html.div [ gameView.About; settings model dispatch ])
-            modal "" "Statistics" (model.Modal = Some Stats) close (statsBody game model dispatch)
+            modal "" "Statistics" (model.Modal = Some Stats) close (statsBody game gameView model dispatch)
             modal "" gameView.HelpTitle (model.Modal = Some Help) close (gameView.Help state)
             // waits for the last move's animation (see .modal-after-reveal in main.css)
             modal "modal-after-reveal" "Today's Answer" (game.Outcome state = Some Failed && not model.AnswerDismissed) (fun () -> dispatch DismissAnswer) (gameView.Answer state)

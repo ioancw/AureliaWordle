@@ -6,7 +6,7 @@
         "start": "dotnet fable watch src -s -o build/client -e .js --run vite",
         "test": "dotnet test test2",
         "publish": "npm run build -- --base=/AureliaWordle/ && npx gh-pages -d dist",
-        "build:feliz": "dotnet fable feliz/Aureliadle -o build/feliz/aureliadle -e .js && dotnet fable feliz/Numberdle -o build/feliz/numberdle -e .js && vite build -c vite.feliz.config.mjs",
+        "build:feliz": "dotnet fable feliz/Aureliadle -o build/feliz/aureliadle -e .js && dotnet fable feliz/Numberdle -o build/feliz/numberdle -e .js && dotnet fable feliz/WhichWitch -o build/feliz/whichwitch -e .js && vite build -c vite.feliz.config.mjs",
         "test:feliz": "dotnet test feliz/Tests"
     },
     "dependencies": {
