@@ -35,7 +35,7 @@ let private tile (position: int) (letter: string, status) =
     ]
 
 let board (state: State) =
-    React.fragment [
+    React.Fragment [
         for i, guess in List.indexed state.Guesses ->
             Html.div [
                 prop.key i
@@ -84,7 +84,7 @@ let keyboard (state: State) send =
             ]
         ]
 
-    React.fragment [
+    React.Fragment [
         row false keyRows.[0]
         row true keyRows.[1]
         row false keyRows.[2]

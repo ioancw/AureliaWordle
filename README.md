@@ -15,7 +15,7 @@ Further ideas
 
 ## Development
 
-Requires the [.NET 8 SDK](https://dotnet.microsoft.com/download) and Node.js 20+.
+Requires the [.NET 10 SDK](https://dotnet.microsoft.com/download) and Node.js 20+.
 [Fable](https://fable.io) compiles the F# in `src/` to JavaScript, and [Fable.Lit](https://github.com/fable-compiler/Fable.Lit) renders it.
 
 ```bash

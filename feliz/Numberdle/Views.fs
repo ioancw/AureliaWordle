@@ -72,7 +72,7 @@ let private key (label: string) (aria: string) wide send input =
 let keypad (_: State) send =
     let digit d = key (string d) (string d) false send (Digit d)
 
-    React.fragment [
+    React.Fragment [
         Html.div [ prop.className "keyboard-row"; prop.children [ for d in 1..5 -> digit d ] ]
         Html.div [ prop.className "keyboard-row"; prop.children [ for d in [ 6; 7; 8; 9; 0 ] -> digit d ] ]
         Html.div [
