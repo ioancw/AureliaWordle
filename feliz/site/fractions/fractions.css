@@ -1,0 +1,248 @@
+/* Fractions' row of cards, the card to beat and the Higher / Lower buttons. */
+.fr-board {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: min(100% - 24px, 460px);
+    margin: 0 auto;
+    color: #fff;
+}
+
+/* The day's row */
+.fr-row {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 5px;
+}
+
+.fr-mini {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 3 / 4;
+    border-radius: 6px;
+    border: 2px solid #3a3a3c;
+    background: #2c2c2e;
+    font-size: clamp(0.75rem, 3.6vw, 1rem);
+    font-weight: 700;
+}
+
+.fr-mini.fr-down { background: #3f6fa8; border-color: #3f6fa8; }
+.fr-mini.fr-current { border-color: #fff; }
+.fr-mini.fr-right { border-color: var(--green); }
+.fr-mini.fr-wrong { border-color: #c0392b; }
+.fr-mini.fr-pair { border-color: var(--darkendYellow); }
+.fr-mini.fr-current.fr-right, .fr-mini.fr-current.fr-wrong, .fr-mini.fr-current.fr-pair { box-shadow: 0 0 0 2px #fff; }
+
+.fr-mark {
+    position: absolute;
+    top: -8px;
+    right: -6px;
+    width: 18px;
+    height: 18px;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    line-height: 18px;
+    text-align: center;
+    color: #fff;
+}
+
+.fr-right .fr-mark { background: var(--green); }
+.fr-wrong .fr-mark { background: #c0392b; }
+.fr-pair .fr-mark { background: var(--darkendYellow); }
+
+.fr-back {
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 800;
+}
+
+/* A fraction written top over bottom */
+.fr-stack {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.1;
+}
+
+.fr-top {
+    padding: 0 0.15em;
+    border-bottom: 0.1em solid currentColor;
+}
+
+/* Level and hearts */
+.fr-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.fr-status-end { justify-content: flex-end; }
+
+.fr-level {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #c7c7c9;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.fr-stars { font-size: 0.85rem; letter-spacing: 1px; }
+
+.fr-practice {
+    margin-left: 4px;
+    padding: 1px 8px;
+    border-radius: 9999px;
+    background: #3f6fa8;
+    color: #fff;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.fr-hearts { font-size: 1.25rem; letter-spacing: 2px; }
+
+/* The card to beat, and the next one face down */
+.fr-table {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.fr-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: min(38vw, 22vh, 170px);
+    aspect-ratio: 3 / 4;
+    padding: 10px;
+    border-radius: 12px;
+    background: #fff;
+    color: #121213;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+.fr-card-back {
+    background: repeating-linear-gradient(45deg, #3f6fa8 0 10px, #36608f 10px 20px);
+    border: 4px solid #fff;
+    font-size: min(10vw, 6vh, 3rem);
+}
+
+.fr-pie {
+    width: 62%;
+    aspect-ratio: 1;
+}
+
+.fr-pie svg { width: 100%; height: 100%; display: block; }
+.fr-pie path { stroke: #121213; stroke-width: 1.5; stroke-linejoin: round; }
+.fr-pie-on { fill: #e8a33d; }
+.fr-pie-off { fill: #f2f2f2; }
+
+.fr-big {
+    font-size: min(7vw, 4.2vh, 2rem);
+    font-weight: 800;
+}
+
+.fr-vs {
+    color: #c7c7c9;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.fr-flip { animation: fr-flip 450ms ease-out; }
+
+.fr-prompt {
+    text-align: center;
+    color: #c7c7c9;
+    font-size: 1.05rem;
+}
+
+.fr-explain {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border-left: 5px solid #565758;
+    background: #2c2c2e;
+    font-size: 1rem;
+    line-height: 1.45;
+    animation: fr-in 300ms ease-out;
+}
+
+.fr-explain.fr-right { border-left-color: var(--green); }
+.fr-explain.fr-wrong { border-left-color: #c0392b; }
+.fr-explain.fr-pair { border-left-color: var(--darkendYellow); }
+
+.fr-pair-title {
+    font-weight: 700;
+    color: var(--darkendYellow);
+}
+
+/* Finished: the day's flips */
+.fr-review {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.fr-review-row {
+    position: relative;
+    padding: 8px 12px 8px 34px;
+    border-radius: 8px;
+    background: #2c2c2e;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.fr-review-row .fr-mark { top: 9px; left: 8px; right: auto; }
+
+.fr-help-list { list-style: disc; padding-left: 1.2em; }
+
+/* Higher and lower buttons in place of a keyboard */
+.fr-buttons {
+    display: flex;
+    gap: 10px;
+    width: min(100% - 24px, 480px);
+    margin: 0 auto 12px;
+}
+
+.fr-button {
+    flex: 1 1 0;
+    min-width: 0;
+    height: calc(var(--key-h) * 1.4);
+    border-radius: 10px;
+    color: #fff;
+    font-weight: 700;
+    font-size: clamp(1.1rem, 5.5vw, 1.6rem);
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.fr-higher { background: var(--green); }
+.fr-lower { background: #3f6fa8; }
+
+.fr-finished {
+    justify-content: center;
+    align-items: center;
+    height: calc(var(--key-h) * 1.4);
+    color: #c7c7c9;
+    font-size: 1.05rem;
+    text-align: center;
+}
+
+@keyframes fr-flip {
+    from { transform: rotateY(90deg); }
+    to { transform: none; }
+}
+
+@keyframes fr-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fr-flip, .fr-explain { animation: none; }
+}
