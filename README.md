@@ -17,6 +17,10 @@ Originally forked from https://aaronmu.github.io/MathGame/.
   eighths, then close calls like 7/10 and 5/8. Each flip explains why, by making the bottoms the same.
   You get nothing for a pair (1/2 then 2/4), but it doesn't cost one of the three hearts. Comparisons she
   gets wrong come back on a later day until she gets them right.
+- **Silent Letters** (`silentletters/`): spell words with a letter you write but don't say. Each word has a picture,
+  a clue, a 🔊 button to hear it, and a gap where its silent letter goes (?nife); pick the letter from three.
+  Six words a day getting harder (kn and wr, then mb, gn, walk and half, then listen, autumn, scissors, island...),
+  each followed by its rule. Three hearts, and missed words come back on a later day.
 
 The ☰ menu moves between them. Each has daily puzzles, stats and streaks, sharing, and a high contrast setting.
 
@@ -54,6 +58,7 @@ around the game (header, menu, pop-ups, messages, sharing and settings).
 | `feliz/Aureliadle/` | Aureliadle's board, keyboard and help; its rules are in `src/` |
 | `feliz/WhichWitch/` | Which Witch?: the sentence bank and explanations (`Rules.fs`), board and word buttons |
 | `feliz/Numberdle/` | Numberdle: rules, board and keypad |
+| `feliz/SilentLetters/` | Silent Letters: the word bank with pictures, clues and rules (`Rules.fs`), letter tiles and buttons |
 | `feliz/Fractions/` | Fractions: the daily rows, explanations and practice (`Rules.fs`), cards and Higher / Lower buttons |
 | `feliz/site/` | The HTML pages and each game's CSS (shared styles are in `public/main.css`) |
 | `src/` | Aureliadle's rules: word list and phonics (`Words.fs`, `Phonics.fs`), scoring (`GameRules.fs`), save format (`Storage.fs`, `Game.fs`) |

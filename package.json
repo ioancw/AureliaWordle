@@ -2,7 +2,7 @@
     "private": true,
     "scripts": {
         "postinstall": "dotnet tool restore",
-        "build": "dotnet fable feliz/Aureliadle -o build/feliz/aureliadle -e .js && dotnet fable feliz/WhichWitch -o build/feliz/whichwitch -e .js && dotnet fable feliz/Numberdle -o build/feliz/numberdle -e .js && dotnet fable feliz/Fractions -o build/feliz/fractions -e .js && vite build",
+        "build": "dotnet fable feliz/Aureliadle -o build/feliz/aureliadle -e .js && dotnet fable feliz/WhichWitch -o build/feliz/whichwitch -e .js && dotnet fable feliz/Numberdle -o build/feliz/numberdle -e .js && dotnet fable feliz/Fractions -o build/feliz/fractions -e .js && dotnet fable feliz/SilentLetters -o build/feliz/silentletters -e .js && vite build",
         "start": "dotnet fable watch feliz/Aureliadle -o build/feliz/aureliadle -e .js --run vite",
         "test": "dotnet test test2 && dotnet test feliz/Tests",
         "publish": "npm run build && npx gh-pages -d dist"
