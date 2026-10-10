@@ -358,3 +358,7 @@ MigrationBackup/
 *.fs.js
 *.fs.js.map
 fable_modules/
+
+
+# Fable output for the Feliz games
+build/feliz/

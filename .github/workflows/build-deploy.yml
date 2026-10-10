@@ -30,11 +30,13 @@ jobs:
       # Also restores the Fable tool (postinstall runs `dotnet tool restore`).
       - run: npm ci
 
+      # Aureliadle's rules (test2), and the games engine and every game's rules (feliz/Tests)
       - name: Run tests
         run: npm test
 
+      # Aureliadle at the site root, the other games in subfolders
       - name: Build site
-        run: npm run build -- --base=/AureliaWordle/
+        run: npm run build
 
       - uses: actions/upload-artifact@v4
         with:

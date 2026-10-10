@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Aureliadle's existing rules, unchanged -->
+    <Compile Include="../../src/Domain.fs" Link="Shared/Domain.fs" />
+    <Compile Include="../../src/Words.fs" Link="Shared/Words.fs" />
+    <Compile Include="../../src/Phonics.fs" Link="Shared/Phonics.fs" />
+    <Compile Include="../../src/GameRules.fs" Link="Shared/GameRules.fs" />
+    <Compile Include="../../src/Daily.fs" Link="Shared/Daily.fs" />
+    <Compile Include="../../src/Storage.fs" Link="Shared/Storage.fs" />
+    <Compile Include="../../src/Game.fs" Link="Shared/Game.fs" />
+    <!-- the engine and each game's rules (no UI) -->
+    <Compile Include="../Engine/Engine.fs" Link="Engine/Engine.fs" />
+    <Compile Include="../Aureliadle/Rules.fs" Link="Games/AureliadleRules.fs" />
+    <Compile Include="../Numberdle/Rules.fs" Link="Games/NumberdleRules.fs" />
+    <Compile Include="../WhichWitch/Rules.fs" Link="Games/WhichWitchRules.fs" />
+    <Compile Include="EngineTests.fs" />
+    <Compile Include="NumberdleTests.fs" />
+    <Compile Include="AureliadleTests.fs" />
+    <Compile Include="WhichWitchTests.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Thoth.Json.Core" Version="0.9.1" />
+    <PackageReference Include="Thoth.Json.Newtonsoft" Version="0.4.0" />
+    <PackageReference Include="Fable.Browser.WebStorage" Version="1.0.4" />
+    <PackageReference Include="FSUnit.xUnit" Version="6.0.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>

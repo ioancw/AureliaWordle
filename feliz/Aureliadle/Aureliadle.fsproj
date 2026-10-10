@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Aureliadle's existing rules, unchanged -->
+    <Compile Include="../../src/Domain.fs" Link="Shared/Domain.fs" />
+    <Compile Include="../../src/Words.fs" Link="Shared/Words.fs" />
+    <Compile Include="../../src/Phonics.fs" Link="Shared/Phonics.fs" />
+    <Compile Include="../../src/GameRules.fs" Link="Shared/GameRules.fs" />
+    <Compile Include="../../src/Daily.fs" Link="Shared/Daily.fs" />
+    <Compile Include="../../src/Storage.fs" Link="Shared/Storage.fs" />
+    <Compile Include="../../src/Game.fs" Link="Shared/Game.fs" />
+    <Compile Include="Rules.fs" />
+    <Compile Include="Views.fs" />
+    <Compile Include="App.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Engine/Engine.fsproj" />
+  </ItemGroup>
+</Project>
