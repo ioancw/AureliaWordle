@@ -15,7 +15,7 @@ export default {
             input: {
                 aureliadle: site("index.html"),
                 numberdle: site("numberdle/index.html"),
-                whichwitch: site("whichwitch/index.html"),
+                whichwitch: site("whichwitch/index.html"), fractions: site("fractions/index.html"),
                 // redirects from where the games were previewed
                 previewIndex: site("games/index.html"),
                 previewAureliadle: site("aureliadle/index.html"),

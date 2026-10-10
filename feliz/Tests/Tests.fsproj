@@ -16,11 +16,13 @@
     <Compile Include="../Engine/Engine.fs" Link="Engine/Engine.fs" />
     <Compile Include="../Aureliadle/Rules.fs" Link="Games/AureliadleRules.fs" />
     <Compile Include="../Numberdle/Rules.fs" Link="Games/NumberdleRules.fs" />
+    <Compile Include="../Fractions/Rules.fs" Link="Games/FractionsRules.fs" />
     <Compile Include="../WhichWitch/Rules.fs" Link="Games/WhichWitchRules.fs" />
     <Compile Include="EngineTests.fs" />
     <Compile Include="NumberdleTests.fs" />
     <Compile Include="AureliadleTests.fs" />
     <Compile Include="WhichWitchTests.fs" />
+    <Compile Include="FractionsTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Thoth.Json.Core" Version="0.9.1" />

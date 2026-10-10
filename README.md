@@ -12,6 +12,11 @@ Originally forked from https://aaronmu.github.io/MathGame/.
   and a child-friendly explanation whenever a wrong word is picked. Sentences she gets wrong come back
   on a later day (marked 🔁 Practice) until she gets them right first time.
 - **Numberdle** (`numberdle/`): guess the number from 1 to 100 in seven tries, told higher or lower and how close.
+- **Fractions** (`fractions/`): Play Your Cards Right with fractions. A row of eight fraction cards (with pie
+  pictures); guess whether the next one is higher or lower. Halves and quarters first, then thirds, fifths and
+  eighths, then close calls like 7/10 and 5/8. Each flip explains why, by making the bottoms the same.
+  You get nothing for a pair (1/2 then 2/4), but it doesn't cost one of the three hearts. Comparisons she
+  gets wrong come back on a later day until she gets them right.
 
 The ☰ menu moves between them. Each has daily puzzles, stats and streaks, sharing, and a high contrast setting.
 
@@ -49,6 +54,7 @@ around the game (header, menu, pop-ups, messages, sharing and settings).
 | `feliz/Aureliadle/` | Aureliadle's board, keyboard and help; its rules are in `src/` |
 | `feliz/WhichWitch/` | Which Witch?: the sentence bank and explanations (`Rules.fs`), board and word buttons |
 | `feliz/Numberdle/` | Numberdle: rules, board and keypad |
+| `feliz/Fractions/` | Fractions: the daily rows, explanations and practice (`Rules.fs`), cards and Higher / Lower buttons |
 | `feliz/site/` | The HTML pages and each game's CSS (shared styles are in `public/main.css`) |
 | `src/` | Aureliadle's rules: word list and phonics (`Words.fs`, `Phonics.fs`), scoring (`GameRules.fs`), save format (`Storage.fs`, `Game.fs`) |
 | `test2/` | Tests for Aureliadle's rules |
