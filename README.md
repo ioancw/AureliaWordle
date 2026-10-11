@@ -21,6 +21,11 @@ Originally forked from https://aaronmu.github.io/MathGame/.
   a clue, a 🔊 button to hear it, and a gap where its silent letter goes (?nife); pick the letter from three.
   Six words a day getting harder (kn and wr, then mb, gn, walk and half, then listen, autumn, scissors, island...),
   each followed by its rule. Three hearts, and missed words come back on a later day.
+- **11+ Fractions** (`elevenplus/`): ten multiple-choice questions a day like the 11+ maths paper: mixed numbers
+  to improper fractions and back, simplifying, fractions of amounts, multiplying and dividing fractions (including
+  mixed numbers by whole numbers), and which is bigger, a decimal or a fraction. The wrong choices are the usual
+  mistakes (like multiplying only the whole number of a mixed number), and each answer is followed by a worked
+  solution. Scored out of ten; questions got wrong come back on a later day.
 
 The ☰ menu moves between them. Each has daily puzzles, stats and streaks, sharing, and a high contrast setting.
 
@@ -59,6 +64,7 @@ around the game (header, menu, pop-ups, messages, sharing and settings).
 | `feliz/WhichWitch/` | Which Witch?: the sentence bank and explanations (`Rules.fs`), board and word buttons |
 | `feliz/Numberdle/` | Numberdle: rules, board and keypad |
 | `feliz/SilentLetters/` | Silent Letters: the word bank with pictures, clues and rules (`Rules.fs`), letter tiles and buttons |
+| `feliz/ElevenPlus/` | 11+ Fractions: question types, answers, usual mistakes and worked solutions (`Rules.fs`), the question card and answer buttons |
 | `feliz/Fractions/` | Fractions: the daily rows, explanations and practice (`Rules.fs`), cards and Higher / Lower buttons |
 | `feliz/site/` | The HTML pages and each game's CSS (shared styles are in `public/main.css`) |
 | `src/` | Aureliadle's rules: word list and phonics (`Words.fs`, `Phonics.fs`), scoring (`GameRules.fs`), save format (`Storage.fs`, `Game.fs`) |

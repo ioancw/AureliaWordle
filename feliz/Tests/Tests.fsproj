@@ -18,6 +18,7 @@
     <Compile Include="../Numberdle/Rules.fs" Link="Games/NumberdleRules.fs" />
     <Compile Include="../Fractions/Rules.fs" Link="Games/FractionsRules.fs" />
     <Compile Include="../SilentLetters/Rules.fs" Link="Games/SilentLettersRules.fs" />
+    <Compile Include="../ElevenPlus/Rules.fs" Link="Games/ElevenPlusRules.fs" />
     <Compile Include="../WhichWitch/Rules.fs" Link="Games/WhichWitchRules.fs" />
     <Compile Include="EngineTests.fs" />
     <Compile Include="NumberdleTests.fs" />
@@ -25,6 +26,7 @@
     <Compile Include="WhichWitchTests.fs" />
     <Compile Include="FractionsTests.fs" />
     <Compile Include="SilentLettersTests.fs" />
+    <Compile Include="ElevenPlusTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Thoth.Json.Core" Version="0.9.1" />
