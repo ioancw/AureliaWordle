@@ -1,0 +1,206 @@
+/* 11+ Fractions' question card, worked solutions and answer buttons. */
+.ep-board {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: min(100% - 28px, 460px);
+    max-height: 100%;
+    min-height: 0;
+    margin: 0 auto;
+    color: #fff;
+}
+
+.ep-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.ep-dots { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.ep-dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 9999px;
+    border: 2px solid #565758;
+}
+
+.ep-dot-current { border-color: #fff; }
+.ep-dot-right { background-color: var(--green); border-color: var(--green); }
+.ep-dot-wrong { background-color: #c0392b; border-color: #c0392b; }
+.high-contrast .ep-dot-right { background-color: #f5793a; border-color: #f5793a; }
+
+.ep-score { font-weight: 600; font-size: 0.9rem; color: #c7c7c9; white-space: nowrap; }
+
+.ep-card {
+    padding: 14px 14px 20px;
+    border-radius: 10px;
+    background: #2c2c2e;
+    animation: ep-in 300ms ease-out;
+}
+
+.ep-level {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+    color: #c7c7c9;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.ep-qnum { font-weight: 700; color: #fff; }
+.ep-stars { font-size: 0.85rem; letter-spacing: 1px; }
+
+.ep-practice {
+    padding: 1px 8px;
+    border-radius: 9999px;
+    background: #3f6fa8;
+    color: #fff;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+/* The question: words and numbers in a row, wrapping */
+.ep-question {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    column-gap: 0.4em;
+    row-gap: 6px;
+    font-size: clamp(1.3rem, 6.5vw, 1.9rem);
+    font-weight: 600;
+    text-align: center;
+}
+
+.ep-question.ep-small {
+    justify-content: flex-start;
+    font-size: 1rem;
+    font-weight: 500;
+    column-gap: 0.3em;
+}
+
+.ep-mark { margin-left: -0.35em; }
+
+.ep-num { display: inline-flex; align-items: center; gap: 0.12em; }
+
+.ep-frac {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.8em;
+    line-height: 1.05;
+    vertical-align: middle;
+}
+
+.ep-top {
+    padding: 0 0.15em;
+    border-bottom: 0.09em solid currentColor;
+}
+
+/* An answered question and its working */
+.ep-worked {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border-left: 5px solid var(--green);
+    background: #232325;
+    animation: ep-in 300ms ease-out;
+}
+
+.ep-worked.ep-wrong { border-left-color: #c0392b; }
+
+.ep-worked-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ep-tick { font-weight: 800; color: var(--green); }
+.ep-wrong .ep-tick { color: #e06c5f; }
+
+.ep-answer {
+    margin-left: auto;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: #3a3a3c;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.ep-picked { margin-top: 4px; color: #f0b6b0; font-size: 0.9rem; }
+
+.ep-explain {
+    margin-top: 6px;
+    color: #c7c7c9;
+    font-size: 0.95rem;
+    line-height: 1.45;
+}
+
+/* Finished: the day's questions scroll if they don't fit */
+.ep-review {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: 4px;
+}
+
+.ep-in-review { flex: none; animation: none; }
+.ep-in-review.ep-right .ep-explain { display: none; }
+
+.ep-help-list { list-style: disc; padding-left: 1.2em; }
+.ep-help-list li { margin-bottom: 4px; }
+
+/* Answer buttons: two by two (or three for which is bigger) */
+.ep-choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: min(100% - 24px, 480px);
+    margin: 0 auto 12px;
+}
+
+.ep-choices.ep-three { grid-template-columns: 1fr 1fr 1fr; }
+
+.ep-choice {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    height: calc(var(--key-h) * 1.15);
+    padding: 0 6px;
+    border-radius: 10px;
+    background: var(--keyboard-default);
+    color: #fff;
+    font-weight: 700;
+    font-size: clamp(1.15rem, 5.5vw, 1.6rem);
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.ep-three .ep-choice { font-size: clamp(1rem, 4.8vw, 1.4rem); }
+
+.ep-finished {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(var(--key-h) * 1.4);
+    color: #c7c7c9;
+    font-size: 1.05rem;
+    text-align: center;
+}
+
+@keyframes ep-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ep-card, .ep-worked { animation: none; }
+}
